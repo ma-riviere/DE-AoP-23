@@ -1,0 +1,108 @@
+```{r}
+source("../../src/setup.R", echo = FALSE)
+
+Vasc_fig_path <- "PCR/Vasc"
+```
+
+<!---------------------------------------------------------->
+<!---------------------------------------------------------->
+# I. Data:
+***
+
+```{r}
+(Vasc_data_raw <- load_Vasc(max_cq = 33))
+```
+
+
+<!---------------------------------------------------------->
+<!---------------------------------------------------------->
+# II. Models:
+***
+
+**Fit the chosen model to each Gene:**
+
+```{r}
+Vasc_model_cond <- function(data) {
+  form <- "DCq ~ Condition"
+  if ("Experiment" %in% colnames(data) && n_distinct(data$Experiment) >= 2) form <- str_c(form, " + (1 | Experiment)")
+
+  return(glmmTMB(as.formula(form), family = gaussian("identity"), data = data, contrasts = list(Condition = "contr.sum")))
+}
+
+(Vasc_mods_cond <- Vasc_data_raw 
+  |> filter(n() >= 3, .by = c(Stage, Layer, Gene, Condition)) # Checking that there are at least 3 values per Condition
+  |> group_by(Stage, Layer, Gene)
+  |> filter(n_distinct(Condition) >= 2) # Checking that both conditions are present for each Gene
+  |> group_split()
+  |> map_dfr(\(d) suppressMessages({summarize(d, mod = list(Vasc_model_cond(pick(everything()))), .by = c(Stage, Layer, Gene))}), .progress = "Fitting models:")
+  |> filter(!has_na_coefs(mod))
+  |> ungroup()
+)
+```
+
+**Extract the contrasts, p.values, and CI:**
+
+```{r}
+(Vasc_data_cond <- Vasc_mods_cond
+ |> group_split(Stage, Layer, Gene)
+ |> map_dfr(\(d)
+      mutate(d,
+        emmeans(mod[[1]], specs = "Condition", type = "response") |> 
+          contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+          as.data.frame() |> 
+          select(Condition.cont = matches("estimate|risk|odds|^ratio|^difference"), Condition.LCB = lower.CL, Condition.UCB = upper.CL, Condition.p = p.value)
+      ) |> select(-mod),
+      .progress = "Extracting model predictions:"
+  )
+ |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
+ |> right_join(Vasc_data_raw)
+ |> filter(if_all(matches(".p$"), \(x) !is.na(x)))
+ |> add_expression("Condition.p")
+)
+```
+
+
+<!---------------------------------------------------------->
+<!---------------------------------------------------------->
+# III. Plots:
+***
+
+**Generate boxplots (with p-values) for every gene, split by Layer & Stage:**
+
+```{r}
+Vasc_data_cond |> 
+  group_by(Layer, Stage) |> 
+  group_walk(\(d, g) {
+    n.genes <- n_distinct(d$Gene)
+    max.cols <- 6
+    n.cols <- min(n.genes, max.cols)
+    n.rows <- ceiling(n.genes / max.cols)
+  
+    make_boxplot_panel(d, n.cols, n.rows, display_labels = TRUE) |>
+    save_png(
+      glue("[Vasc] BoxPlots [Condition] - {g$Layer} & {g$Stage}"),
+      Vasc_fig_path = "Vasc", width = 1 + n.cols * 2, height = 1 + n.rows * 4
+    )
+  }, .keep = TRUE
+)
+```
+
+**Generate Fold change timelines for each Layer and Pathway:**
+
+```{r fig.width = 7, fig.height = 5}
+Vasc_data_cond |> 
+  filter(any(Condition.p <= alpha), .by = c(Gene, Layer)) |> 
+  mutate(Fold = if_else(Condition.p <= alpha, Fold, NA)) |> 
+  group_by(Layer) |> 
+  group_walk(
+    \(d, g) {
+      width <- 2 + n_distinct(d$Stage)
+      height <- d |> group_by(Pathway) |> group_map(\(d, g) n_distinct(d$Gene) * 0.1 + 1) |> flatten_dbl() |> sum()
+      make_vertical_fold_timeline(d, trans = "log", colors = colors_fold, title = "", size_boost = 2) |> 
+        save_png(
+          glue("[Vasc] Timeline of Fold Change by [Pathway]"), 
+          Vasc_fig_path = "Vasc", width = width, height = height
+        )
+    }
+  )
+```
