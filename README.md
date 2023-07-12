@@ -4,7 +4,7 @@
  <h3><i>Main branch</i></h3>
 
  [![License](https://img.shields.io/badge/license-CCBY-blue.svg)](/LICENSE)
- <!-- [![DOI Code](https://zenodo.org/badge/484983414.svg)](https://zenodo.org/badge/latestdoi/484983414) -->
+ [![DOI](https://zenodo.org/badge/665567093.svg)](https://zenodo.org/badge/latestdoi/665567093)
  
  <!-- <a href = "https://ma-riviere.github.io/DE-AoP-23/">Link to the documentation</a> -->
 
@@ -18,7 +18,7 @@
 
 - **Paper:** *To Be Announced* <!-- Rodriguez-Duboc, A., Basille-Duguay, M., Debonne, A., Rivière, M.-A., Vaudry, D., & Burel, D. (In Press). Apnea of Prematurity induces short and long-term development-related transcriptional changes in the murine cerebellum. *Molecular and Cellular Neuroscience*. -->
 
-- **Code:** *To Be Announced* <!-- Marc-Aurèle Rivière, & Agalic Rodriguez-Duboc. (2023). ma-riviere/DE-AoP-23: alpha release (v0.1). Zenodo. https://doi.org/?????/zenodo.???? -->
+- **Code:** Marc-Aurèle Rivière, & Agalic Rodriguez-Duboc. (2023). ma-riviere/DE-AoP-23: alpha release (v0.2). Zenodo. https://doi.org/10.5281/zenodo.8139284
 
 ## ❔ Requirements:
 
