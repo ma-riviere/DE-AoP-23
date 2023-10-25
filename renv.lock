@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.3.0",
+    "Version": "4.3.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -55,9 +55,21 @@
       ],
       "Hash": "022f78c8698724b326f1838b1a98cafa"
     },
+    "GlobalOptions": {
+      "Package": "GlobalOptions",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "utils"
+      ],
+      "Hash": "c3f7b221e60c28f5f3533d74c6fef024"
+    },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-58.4",
+      "Version": "7.3-60",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -68,11 +80,11 @@
         "stats",
         "utils"
       ],
-      "Hash": "a3142b2a022b8174ca675bc8b80cdc4e"
+      "Hash": "a56a6365b3fa73293ea8d084be0d9bb0"
     },
     "Matrix": {
       "Package": "Matrix",
-      "Version": "1.6-0",
+      "Version": "1.6-1.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -85,7 +97,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "31262fd18481fab05c5e7258dac163ca"
+      "Hash": "1a00d4828f33a9d690806e98bd17150c"
     },
     "MatrixModels": {
       "Package": "MatrixModels",
@@ -476,6 +488,25 @@
         "utils"
       ],
       "Hash": "ca9c113196136f4a9ca9ce6079c2c99e"
+    },
+    "circlize": {
+      "Package": "circlize",
+      "Version": "0.4.15",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "GlobalOptions",
+        "R",
+        "colorspace",
+        "grDevices",
+        "graphics",
+        "grid",
+        "methods",
+        "shape",
+        "stats",
+        "utils"
+      ],
+      "Hash": "2bb47a2fe6ab009b1dcc5566d8c3a988"
     },
     "cli": {
       "Package": "cli",
@@ -888,37 +919,6 @@
       ],
       "Hash": "94af08e0aa9675a16fadbb3aaaa90d2a"
     },
-    "furrr": {
-      "Package": "furrr",
-      "Version": "0.3.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "future",
-        "globals",
-        "lifecycle",
-        "purrr",
-        "rlang",
-        "vctrs"
-      ],
-      "Hash": "da7a4c32196cb2262a41dd5a25d486ff"
-    },
-    "future": {
-      "Package": "future",
-      "Version": "1.33.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "digest",
-        "globals",
-        "listenv",
-        "parallel",
-        "parallelly",
-        "utils"
-      ],
-      "Hash": "8e92c7bc53e91b9bb1faf9a6ef0e8514"
-    },
     "gap": {
       "Package": "gap",
       "Version": "1.5-1",
@@ -1040,17 +1040,6 @@
         "numDeriv"
       ],
       "Hash": "7d4008c93929d644902a942392fb0ed4"
-    },
-    "globals": {
-      "Package": "globals",
-      "Version": "0.16.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "codetools"
-      ],
-      "Hash": "baa9585ab4ce47a9f4618e671778cc6f"
     },
     "glue": {
       "Package": "glue",
@@ -1259,7 +1248,7 @@
     },
     "insight": {
       "Package": "insight",
-      "Version": "0.19.3",
+      "Version": "0.19.6",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1268,7 +1257,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "e605299a4e3d10404ac7989b05c4a917"
+      "Hash": "cc21c0957774c1602ec3324a5a47d798"
     },
     "isoband": {
       "Package": "isoband",
@@ -1429,16 +1418,6 @@
         "rlang"
       ],
       "Hash": "001cecbeac1cff9301bdc3775ee46a86"
-    },
-    "listenv": {
-      "Package": "listenv",
-      "Version": "0.9.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R"
-      ],
-      "Hash": "4fbd3679ec8ee169ba28d4b1ea7d0e8f"
     },
     "lme4": {
       "Package": "lme4",
@@ -1656,7 +1635,7 @@
     },
     "nnet": {
       "Package": "nnet",
-      "Version": "7.3-18",
+      "Version": "7.3-19",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1664,7 +1643,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "170da2130d5332bea7d6ede01875ba1d"
+      "Hash": "2c797b46eea7fb58ede195bc0b1f1138"
     },
     "numDeriv": {
       "Package": "numDeriv",
@@ -1686,23 +1665,6 @@
       ],
       "Hash": "0f7cd2962e3044bb940cca4f4b5cecbe"
     },
-    "openxlsx": {
-      "Package": "openxlsx",
-      "Version": "4.2.5.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "Rcpp",
-        "grDevices",
-        "methods",
-        "stats",
-        "stringi",
-        "utils",
-        "zip"
-      ],
-      "Hash": "c03b4c18d42da881fb8e15a085c2b9d6"
-    },
     "paletteer": {
       "Package": "paletteer",
       "Version": "1.5.0",
@@ -1716,18 +1678,6 @@
         "rstudioapi"
       ],
       "Hash": "2cc72e89c9f4dc12c38d848914aac313"
-    },
-    "parallelly": {
-      "Package": "parallelly",
-      "Version": "1.36.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "parallel",
-        "tools",
-        "utils"
-      ],
-      "Hash": "bca377e1c87ec89ebed77bba00635b2e"
     },
     "parameters": {
       "Package": "parameters",
@@ -2119,13 +2069,13 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "1.0.0",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "utils"
       ],
-      "Hash": "c321cd99d56443dbffd1c9e673c0c1a2"
+      "Hash": "4b22ac016fe54028b88d0c68badbd061"
     },
     "reshape": {
       "Package": "reshape",
@@ -2256,6 +2206,19 @@
         "stats"
       ],
       "Hash": "7d400d1615814add7e3b59cfef306e03"
+    },
+    "shape": {
+      "Package": "shape",
+      "Version": "1.4.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "stats"
+      ],
+      "Hash": "9067f962730f58b14d8ae54ca885509f"
     },
     "shiny": {
       "Package": "shiny",
@@ -2647,13 +2610,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "0d0056cc5383fbc240ccd0cb584bf436"
-    },
-    "zip": {
-      "Package": "zip",
-      "Version": "2.3.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "d98c94dacb7e0efcf83b0a133a705504"
     },
     "zoo": {
       "Package": "zoo",

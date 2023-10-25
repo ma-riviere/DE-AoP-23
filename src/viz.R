@@ -138,7 +138,7 @@ make_vertical_fold_timeline <- function(data, facet_rows = "Pathway", trans = "i
 ####🔺Circlize ####
 #-----------------#
 
-make_circlize <- function(dat, resolution = 15000, fig_path = here("fig", "Diff", "Circlize.png")) {
+make_circlize <- function(dat, resolution = 15000, fig_path = here("fig", "PCR", "Diff", "Circlize.png")) {
   
   crossed_layer_order <- (
     crossing(Stage = stage_list, Layer = layer_list)
@@ -446,7 +446,7 @@ make_boxplot_panel <- function(data, n_cols = NULL, n_rows = 1, display_N = TRUE
       p.signif = label_pval(.data[[p.name]]),
     )
     |> group_by(Stage, Layer, Gene, Condition)
-    |> mutate(N = glue("N = {n()}"))
+    |> mutate(N = glue("n = {n()}"))
     |> ungroup()
     |> distinct(Stage, Layer, Gene, Condition, across(any_of(color_by)), .keep_all = T)
     |> select(Stage, Layer, Gene, Condition, any_of(color_by), p.signif, group1, group2, amp.y, p.val.pos.x, p.val.pos.y, p.signif.pos.y, N, N.pos.y)
@@ -484,7 +484,7 @@ make_boxplot_panel <- function(data, n_cols = NULL, n_rows = 1, display_N = TRUE
 ## Generating a boxplot for an individual gene, showing the main effect of a predictor (using the model fitted to this gene's data as input)
 make_signif_boxplot <- function(
     mod, xaxis = "Condition", facet = NULL, cluster = "Mouse", add_cluster_averages = TRUE, subtitle = NULL, caption = NULL, 
-    invert_DCq = TRUE, scale = "link", adjust = "none", method = "pairwise", resp_name = NULL
+    invert_DCq = TRUE, scale = "link", adjust = "none", method = "pairwise", resp_name = NULL, print_eqs = FALSE
 ) {
   
   get_n_units <- function(df) {
@@ -519,7 +519,7 @@ make_signif_boxplot <- function(
   ## Making sure the variables of interest are contrasts for emmeans
   dat <- dat |> mutate(across(c(any_of(c(xaxis, facet)) & where(\(c) !is.factor(c))), as.factor))
   
-  extra_dat <- dat |> group_by(across(any_of(c(xaxis, facet)))) |> summarize(N = glue("N = {get_n_units(pick(everything()))}")) |> ungroup()
+  extra_dat <- dat |> group_by(across(any_of(c(xaxis, facet)))) |> summarize(N = glue("n = {get_n_units(pick(everything()))}")) |> ungroup()
   
   max <- max(dat[[resp]])
   min <- min(dat[[resp]])
@@ -568,7 +568,7 @@ make_signif_boxplot <- function(
     + stat_summary(fun = mean, geom = "errorbar", aes(ymax = after_stat(y), ymin = after_stat(y)), width = 0.75, size = 1.1, linetype = "dotted")
     + { if (!is.null(cluster)) geom_jitter(
      data = \(x) x |> group_by(across(any_of(c(xaxis, facet)))) |> group_modify(\(d, g) slice_sample(d, n = min(nrow(d), 50))) |> ungroup(), 
-     size = 1.5, width = 0.1, alpha = 0.3
+     size = 2, width = 0.1, alpha = 0.6
     )
      else geom_jitter(
        data = \(x) x |> group_by(across(any_of(c(xaxis, facet)))) |> group_modify(\(d, g) slice_sample(d, n = min(nrow(d), 50))) |> ungroup(), 
@@ -606,6 +606,24 @@ make_signif_boxplot <- function(
     + {if (!is.null(facet)) facet_wrap( ~ .data[[facet]])}
   )
   
+  # -----------[ Formatted results ]----------- #
+  
+  if (print_eqs) {
+    # print(contrasts)
+    contrasts_eqs <- contrasts |> rowwise() |> mutate(
+      contrast_name = pick(everything()) |> colnames() |> str_subset("^estimate|risk|odds|^ratio|^difference"),
+      crit_val_name = pick(everything()) |> colnames() |> str_subset("^(z|t|F)"),
+      Equation = glue(
+        "$<<str_extract({{crit_val_name}}, '^(z|t)')>>(<<df>>) = <<round(.data[[crit_val_name]], 3)>>; " %s+%
+          "p = <<scales::pvalue(p.value)>>; " %s+%
+          "<<str_to_sentence({{contrast_name}})>> = <<round(.data[[contrast_name]], 3)>>; " %s+%
+          "CI_{95} = [<<round(lower.CL, 3)>>, <<round(upper.CL, 3)>>];$",
+        .open = "<<", .close = ">>"
+      )) |> select(Contrast, any_of(facet), Equation)
+    
+    print(contrasts_eqs)
+  }
+  
   return(plot)
 }
 
@@ -635,7 +653,7 @@ make_signif_boxplot_inter <- function(
   ## Making sure the variables of interest are contrasts for emmeans
   dat <- dat |> mutate(across(c(any_of(c(pred1, pred2)) & where(\(c) !is.factor(c))), as.factor))
   
-  extra_dat <- dat |> group_by(across(any_of(c(pred1, pred2)))) |> summarize(N = glue("N = {get_n_units(pick(everything()))}")) |> ungroup()
+  extra_dat <- dat |> group_by(across(any_of(c(pred1, pred2)))) |> summarize(N = glue("n = {get_n_units(pick(everything()))}")) |> ungroup()
   
   max <- max(dat[[resp]])
   min <- min(dat[[resp]])
@@ -699,7 +717,7 @@ make_signif_boxplot_inter <- function(
     + { 
      if (!is.null(cluster)) geom_jitter(
        data = \(x) x |> group_by(across(any_of(c(pred1, pred2)))) |> group_modify(\(d, g) slice_sample(d, n = min(nrow(d), 50))) |> ungroup(), 
-       size = 1.5, width = 0.1, alpha = 0.3
+       size = 2, width = 0.1, alpha = 0.6
      )
      else geom_jitter(
        data = \(x) x |> group_by(across(any_of(c(pred1, pred2)))) |> group_modify(\(d, g) slice_sample(d, n = min(nrow(d), 50))) |> ungroup(), 

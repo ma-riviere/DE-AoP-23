@@ -23,7 +23,7 @@ strip_color <- "#adb5bd"
 color_text <- "black"
 color_text_bi <- "#a8aeb4"
 
-colors_cond <- c("#02ccae", "#9965db") # N, IH (factor)
+colors_cond <- c("#16827e", "#452076") # N, IH (factor)
 colors_fold <- c("#f02b00", "#01944b") # Downreg, Upreg
 colors_effect <- c("#b625bb", "#0264cc") # Bad, Good
 

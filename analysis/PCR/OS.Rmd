@@ -87,7 +87,7 @@ OS_Tot_data_cond |>
     make_boxplot_panel(d, n.cols, n.rows, display_labels = TRUE) |>
     save_png(
       glue("[OS-Tot] BoxPlots [Condition] - {g$Layer} & {g$Stage}"),
-      OS_fig_path = OS_fig_path, width = 1 + n.cols * 2, height = 1 + n.rows * 4
+      subfolder = OS_fig_path, width = 1 + n.cols * 2, height = 1 + n.rows * 4
     )
   }, .keep = TRUE
 )
@@ -111,7 +111,7 @@ OS_Tot_data_cond |>
       make_vertical_fold_timeline(d, trans = "log", color_by = "Effect", colors = colors_effect, title = g$Figure[[1]], size_boost = 2) |> 
         save_png(
           glue("[OS-Tot] Timeline of Fold Change by [Pathway] - {str_replace_all(g$Figure[[1]], '/', ', ')}"), 
-          OS_fig_path = "OS", width = width, height = height
+          subfolder = OS_fig_path, width = width, height = height
         )
     }
   )
@@ -204,7 +204,7 @@ OS_PC_data_cond |>
     make_boxplot_panel(d, n.cols, n.rows, display_labels = TRUE) |>
     save_png(
       glue("[OS-PC] BoxPlots [Condition] - {g$Layer} & {g$Stage}"),
-      OS_fig_path = "OS", width = 1 + n.cols * 2, height = 1 + n.rows * 4
+      subfolder = OS_fig_path, width = 1 + n.cols * 2, height = 1 + n.rows * 4
     )
   }, .keep = TRUE
 )
@@ -224,7 +224,7 @@ OS_PC_data_cond |>
       make_vertical_fold_timeline(d, trans = "log", color_by = "Effect", title = g$Layer[[1]], size_boost = 1.5) |>
         save_png(
           glue("[OS-PC] Timeline of Fold Change by [Pathway] - {g$Layer[[1]]}"),
-          OS_fig_path = "OS", width = width, height = height
+          subfolder = OS_fig_path, width = width, height = height
         )
     }
   )

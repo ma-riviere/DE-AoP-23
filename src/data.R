@@ -166,39 +166,29 @@ load_OS_PC <- function(path = config$data$PCR$OS_PC_path, layer, max_cq = 33) {
   )
 }
 
-## Loading and shaping the PCR data for the Vascularization panel
-load_Vasc <- function(path = config$data$PCR$Vasc_path, layer = "Tot", max_cq = 33) {
+#### ┗ IHC ------
+
+## Loading and shaping Calbindin data
+load_Calb <- function(path = config$data$IHC$calb_path) {
   return(
-    map_dfr(
-      excel_sheets(path) |> set_names(),
-      \(sheet) read_excel(path = path, sheet = sheet), 
-      .id = "Stage"
-    )
+    read_excel(path)
     |> filter(!Outlier)
-    |> tidyr::extract(Mouse, into = c("Litter", NA, "Condition"), regex = "^(\\w{2})(\\d{1,2})(H|N)$", convert = TRUE, remove = FALSE)
-    |> normalize_litter_names()
-    |> drop_na(Mean_Cq, DCq)
-    |> filter(Mean_Cq <= max_cq)
-    |> mutate(Layer = layer) # Adding "Tot" as default layer
-    |> mutate(
-      Condition = factor(Condition, levels = c("N", "H")),
-      Stage = factor(Stage, levels = stage_list),
-      Layer = factor(Layer, levels = layer_list),
-      Experiment = factor(Experiment)
+    |> tidyr::extract(
+      Sample,
+      into = c("Bloodline", "MouseID", "Condition"),
+      regex = "^(\\w{2})(\\d{1})([hH]+|[nN]+)$",
+      convert = TRUE, remove = TRUE
     )
-    |> filter(Experiment != "B")
-    #### Adding additional information
-    |> add_sex_and_weight()
-    |> add_fold_change()
-    |> add_pathways(sheet = "Vasc", cols = "Pathway")
-    #### Selecting / arranging data
-    |> select(Mouse, Litter, Experiment, Stage, Sex, Layer, Gene, Pathway, Condition, Mean_Cq, DCq, Fold)
-    |> arrange(Stage, Gene, Mouse)
-    |> mutate(Id = row_number(), .before = 1)
+    |> tidyr::unite("Sample", c(Bloodline, MouseID, Condition, Slice), sep = "", remove = FALSE)
+    |> tidyr::unite("Mouse", c(Bloodline, MouseID, Condition), sep = "", remove = FALSE)
+    |> mutate(
+      Vol_PC_per_cell = Vol_PC / N_CC,
+      Condition = factor(Condition, levels = c("N", "H"), labels = c("N", "IH"))
+    )
+    |> arrange(Condition, Slice)
+    |> select(Sample, Mouse, Condition, N_CC, Vol_PC_per_cell)
   )
 }
-
-#### ┗ IHC ------
 
 ## Loading and shaping the Caspase IHC data
 load_Casp <- function(path = config$data$IHC$casp_path, stage = NULL) {
@@ -229,11 +219,6 @@ load_Casp <- function(path = config$data$IHC$casp_path, stage = NULL) {
         Dens_IGL = N_IGL / A_IGL,
         Dens_WM = N_WM / A_WM,
         Dens_Tot = N_Tot / A_Tot,
-        Prop_C_EGL = C_EGL / A_EGL,
-        Prop_C_ML_PCL = C_ML_PCL / A_ML_PCL,
-        Prop_C_IGL = C_IGL / A_IGL,
-        Prop_C_WM = C_WM / A_WM,
-        Prop_C_Tot = C_Tot / A_Tot,
         Stage = factor(stage, levels = stage_list),
         Condition = factor(Condition, levels = c("N", "H"), labels = c("N", "IH")),
         Z = factor(str_to_sentence(Z))
@@ -243,38 +228,6 @@ load_Casp <- function(path = config$data$IHC$casp_path, stage = NULL) {
     )
   }
 }
-
-## Loading and shaping the Thickness IHC data
-load_Thickness <- function(path = config$data$IHC$thickness_path, stage = "All") {
-  # Loading data for all stages
-  if (is.null(stage) || str_to_sentence(stage) == "All") {
-    return(
-      map_df(
-        excel_sheets(path) |> set_names(), 
-        \(x) load_Thickness(path = path, stage = x)
-      )
-    )
-  }
-  # Loading data for a specific stage
-  else {
-    return(
-      read_xlsx(path, sheet = stage)
-      |> filter(!Outlier)
-      |> group_by(Stage, Mouse, Slice)
-      |> mutate(MeasureID = seq(1:n()))
-      |> ungroup()
-      |> mutate(
-        Slice = str_c(Mouse, Slice),
-        Sample = str_c(Slice, MeasureID),
-        across(c(Mouse, Slice), \(.x) as.factor(.x)),
-        Condition = factor(Condition, levels = c("N", "H"), labels = c("N", "IH"))
-      )
-      |> arrange(Condition, Mouse)
-      |> select(Sample, Stage, Slice, MeasureID, Mouse, Condition, everything(), -Outlier)
-    )
-  }
-}
-
 
 #-------------------------------------#
 ####🔺Extra data loading functions ####

@@ -28,32 +28,22 @@ Casp_P8_predictors <- c("Condition", "Z", "Mouse")
 A_Tot_name <- "Area of the whole slice *(μm²)*"
 N_Tot_name <- "Number of cleaved caspase 3<sup>+</sup> cells  \n in the whole slice"
 Dens_Tot_name <- "Density of cleaved caspase 3<sup>+</sup> cells  \n *(cells/μm²)*"
-# C_Tot_name <- "Area of cleaved caspase 3<sup>+</sup> marking  \n in the whole slice *(μm²)*"
-# Prop_C_Tot_name <- "Proportion of cleaved caspase 3<sup>+</sup> marking  \n in the whole slice"
 
 A_EGL_name <- "Area of EGL *(μm²)*"
 N_EGL_name <- "Number of cleaved caspase 3<sup>+</sup> cells  \n in the EGL area"
 Dens_EGL_name <- "Density of cleaved caspase 3<sup>+</sup> cells  \n in the EGL area *(cells/μm²)*"
-# C_EGL_name <- "Area of cleaved caspase 3<sup>+</sup> marking  \n in the EGL *(μm²)*"
-# Prop_C_EGL_name <- "Proportion of cleaved caspase 3<sup>+</sup> marking  \n in the EGL area"
 
 A_ML_PCL_name <- "Area of ML and PL *(μm²)*"
 N_ML_PCL_name <- "Number of cleaved caspase 3<sup>+</sup> cells  \n in the ML and PL areas"
 Dens_ML_PCL_name <- "Density of cleaved caspase 3<sup>+</sup> cells  \n in the ML and PL areas *(cells/μm²)*"
-# C_ML_PCL_name <- "Area of cleaved caspase 3<sup>+</sup> marking  \n in the ML and PL areas *(μm²)*"
-# Prop_C_ML_PCL_name <- "Proportion of cleaved caspase 3<sup>+</sup> cells marking  \n in the ML and PL areas"
 
 A_IGL_name <- "Area of IGL *(μm²)*"
 N_IGL_name <- "Number of cleaved caspase 3<sup>+</sup> cells  \n in the IGL area"
 Dens_IGL_name <- "Density of cleaved caspase 3<sup>+</sup> cells  \n in the IGL area *(Cells/μm²)*"
-# C_IGL_name <- "Area of cleaved caspase 3<sup>+</sup> marking  \n in the IGL area *(μm²)*"
-# Prop_C_IGL_name <- "Proportion of cleaved caspase 3<sup>+</sup> marking  \n in the IGL area"
 
 A_WM_name <- "Area of WM *(μm²)*"
 N_WM_name <- "Number of cleaved caspase 3<sup>+</sup> cells  \n in the WM area"
 Dens_WM_name <- "Density of cleaved caspase 3<sup>+</sup> cells  \n in the WM area *(Cells/μm²)*"
-# C_WM_name <- "Area of cleaved caspase 3<sup>+</sup> marking  \n in the WM area *(μm²)*"
-# Prop_C_WM_name <- "Proportion of cleaved caspase 3<sup>+</sup> marking  \n in the WM area"
 
 contrasts(Casp_P8_data$Condition) <- contr.sum
 contrasts(Casp_P8_data$Z) <- contr.sum
@@ -277,7 +267,7 @@ emmeans::emmeans(Casp_P8_mod_A_Tot, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_A_Tot, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_A_Tot, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_A_Tot)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -606,7 +596,7 @@ emmeans::emmeans(Casp_P8_mod_N_Tot, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_N_Tot, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_N_Tot, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_N_Tot)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -894,7 +884,7 @@ emmeans::emmeans(Casp_P8_mod_A_EGL, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_A_EGL, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_A_EGL, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_A_EGL)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -1223,7 +1213,7 @@ emmeans::emmeans(Casp_P8_mod_N_EGL, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_N_EGL, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_N_EGL, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_N_EGL)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -1510,7 +1500,7 @@ emmeans::emmeans(Casp_P8_mod_A_ML_PCL, specs = "Condition", trans = "response") 
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_A_ML_PCL, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_A_ML_PCL, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_A_ML_PCL)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -1841,7 +1831,7 @@ emmeans::emmeans(Casp_P8_mod_N_ML_PCL, specs = "Condition", trans = "response") 
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_N_ML_PCL, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_N_ML_PCL, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_N_ML_PCL)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -2128,7 +2118,7 @@ emmeans::emmeans(Casp_P8_mod_A_IGL, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_A_IGL, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_A_IGL, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_A_IGL)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -2458,7 +2448,7 @@ emmeans::emmeans(Casp_P8_mod_N_IGL, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_N_IGL, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_N_IGL, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_N_IGL)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -2745,7 +2735,7 @@ emmeans::emmeans(Casp_P8_mod_A_WM, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_A_WM, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_A_WM, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_A_WM)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 
@@ -3075,7 +3065,7 @@ emmeans::emmeans(Casp_P8_mod_N_WM, specs = "Condition", trans = "response") |>
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Casp_P8_mod_N_WM, xaxis = "Condition") |> 
+make_signif_boxplot(Casp_P8_mod_N_WM, xaxis = "Condition", subtitle = stage) |> 
   save_png(filename = glue("[{get_model_tag(Casp_P8_mod_N_WM)}] Boxplots - by [Condition]"), subfolder = Casp_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
 ```
 

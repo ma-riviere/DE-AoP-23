@@ -13,7 +13,6 @@ default:
       Diff_P70_path: !expr here::here("data", "PCR", "Diff_P70.xlsx")
       OS_PC_path: !expr here::here("data", "PCR", "OS_PC.xlsx")
       OS_Tot_path: !expr here::here("data", "PCR", "OS_Tot.xlsx")
-      Vasc_path: !expr here::here("data", "PCR", "Vasc.xlsx")
     IHC:
+      calb_path: !expr here::here("data", "IHC", "Calb.xlsx")
       casp_path: !expr here::here("data", "IHC", "Casp.xlsx")
-      thickness_path: !expr here::here("data", "IHC", "Thickness.xlsx")
