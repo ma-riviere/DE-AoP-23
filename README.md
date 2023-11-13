@@ -6,7 +6,7 @@
  [![License](https://img.shields.io/badge/license-CCBY-blue.svg)](/LICENSE)
  [![DOI](https://zenodo.org/badge/665567093.svg)](https://zenodo.org/badge/latestdoi/665567093)
  
- <!-- <a href = "https://ma-riviere.github.io/DE-AoP-23/">Link to the documentation</a> -->
+ <a href = "https://ma-riviere.github.io/DE-AoP-23/">Link to the documentation</a>
 
 </div>
 
