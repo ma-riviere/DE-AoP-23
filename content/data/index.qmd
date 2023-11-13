@@ -1,0 +1,68 @@
+---
+title: "Download"
+---
+
+This section allows you to both explore and download the various datasets we collected for our paper. 
+It is divided into two sub-sections, for the PCR and IHC data, which are listed in the navigation bar (on the left side of the screen).
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+```
+
+```{r}
+get_contents_list <- function(link) {
+  params <- list(pattern = str_extract(link, '.*\\/(.*)\\.zip', 1))
+  if (params$pattern == "supplementary") params <- list(pattern = "\\/", negate = TRUE)
+  
+  read.csv(here::here('data', '_data_file_desc.csv')) |> 
+    filter(str_detect(File, !!!params)) |> 
+    transmute(content_list = str_glue("* **{File}**: {Description}")) |> 
+    pull(content_list) |> 
+    str_c(collapse = "\n")
+}
+
+# html_button_template <- '<a class="btn btn-primary" target="_blank" href="%s">%s.zip</a>'
+
+(tribble(
+    ~Link, ~Description,
+    "/res/data/PCR.zip", "ZIP archive containing our cleaned PCR data (long format).",
+    "/res/data/IHC.zip", "ZIP archive containing our cleaned IHC data (long format).",
+    "/res/data/supplementary.zip", "ZIP archive containing our supplementary data."
+  )
+  # |> mutate(
+  #   File = sprintf(html_button_template, Link, Data),
+  #   Icon = "database"
+  # )
+  |> mutate(Contents = map_chr(Link, get_contents_list))
+  |> gt()
+  |> fmt_markdown(columns = Contents)
+  |> fmt_url(
+    columns = Link,
+    label = \(x) str_split_i(x, "/", -1),
+    as_button = TRUE,
+    button_fill = "steelblue",
+    button_width = px(200)
+  )
+  # |> fmt_icon(columns = Icon)
+  # |> cols_merge(
+  #   columns = c(Link, Icon),
+  #   pattern = "{2} {1}"
+  # )
+  |> cols_align(align = "center", columns = Link)
+  |> gt_style_light()
+  |> tab_style(
+    style = list(cell_text(weight = "bold")),
+    locations = cells_body(columns = Link)
+  )
+  |> cols_width(
+    Link ~ pct(15),
+    Description ~ pct(25),
+    Contents ~ pct(60)
+  )
+  |> opt_vertical_padding(scale = 0.75)
+)
+```
+
+Otherwise, feel free to clone or download the [project's GitHub repository](https://github.com/ma-riviere/DE-AoP-23) to get the entirety of the code and data.

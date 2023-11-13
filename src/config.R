@@ -2,9 +2,9 @@
 ####💠Project Config💠####
 ####╚═════    ══════╝####
 
-log.main("[CONFIG] Configuring project ...")
+cli_h2("┗ [CONFIG] Loading external {.file _configs.yml} file")
 
-config <- config::get(file = "_config.yml")
+configs <- load_yml(here("_configs.yml"))
 
 options(
   scipen = 999L, 
@@ -22,14 +22,16 @@ set.seed(getOption("seed"))
 ####🔺Knitr & RMarkdown ####
 #--------------------------#
 
+cli_h2("┗ [CONFIG] Setting knitr options")
+
 knitr::opts_chunk$set(
-  warning = FALSE,
-  message = FALSE,
-  fig.align = "center",
-  # fig.retina = 2,
-  dpi = 250,
-  dev = 'svg',
-  dev.args = list(bg = "transparent")
+  warning = FALSE
+  , message = FALSE
+  # , fig.align = "center"
+  # , fig.retina = 2
+  # , dpi = 300
+  # , dev = 'svg'
+  # , dev.args = list(bg = "transparent")
 )
 
 dpi_save_png <- knitr::opts_chunk$get("dpi")
@@ -37,6 +39,8 @@ dpi_save_png <- knitr::opts_chunk$get("dpi")
 #------------------------#
 ####🔺Package options ####
 #------------------------#
+
+cli_h2("┗ [CONFIG] Setting packages options")
 
 emmeans::emm_options(
   lmer.df = "kenward-roger",

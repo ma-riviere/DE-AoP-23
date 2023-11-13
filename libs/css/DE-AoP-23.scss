@@ -1,0 +1,107 @@
+/*-- scss:defaults --*/
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #ebebeb !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #888 !default;
+$gray-700: #444 !default;
+$gray-800: #303030 !default;
+$gray-900: #222 !default;
+$black:    #000 !default;
+
+// paper's color
+$N:            #335655 !default;
+$IH:           #62527d !default;
+$good:         #0264cc !default;
+
+// Custom
+$gold:         #d8ba55 !default; // #f2a11e
+$blue:         #0d6efd !default;
+$dark-blue:    #2a3063 !default; // #2d2d77
+$light-blue:   #5b80d0 !default;
+$blue-gray:    #447099 !default;
+$gray-blue:    #4B5B68 !default;
+$hail-satan:   #666bad !default;
+$mauve:        #8e64ca !default;
+
+$primary:       $N !default;
+$secondary:     $IH !default;
+$success:       $good !default;
+$link-color:    $good !default;
+
+// Code
+
+$code-block-border-left:          $gray-500 !default;
+
+/*-- scss:rules --*/
+
+h1:not(.title) { color: $primary;}
+h2:not(.title) { color: $secondary;}
+// h5.quarto-listing-category-title { color: $secondary; }
+
+#progress-bar { background: lighten($secondary, 20%); }
+
+.quarto-title:not(.column-body) h1.title { color: $primary; }
+
+.quarto-title-block .quarto-title-banner {
+    background-color: $secondary !important;
+    color: white;
+}
+
+.quarto-title-banner .quarto-title h1.title { 
+    color: #F0F3F3; /* Otherwise title appear gray after Quarto 1.3.300~ish */
+    /* background-color: transparent !important; */
+}
+
+// .quarto-title:not(.column-body) .subtitle { color: $secondary; }
+  
+.column-page h2 { color: $secondary; }
+
+.card-body > .card-title { color: $link-color; }
+
+.navbar .nav-item > a.nav-link.active { border-top: 2px solid; } // #b4c5e9
+
+/****** Listing *****/
+
+.quarto-listing-category .category.active { color: $link-color; }
+
+/****** Sidebar *****/
+
+.sidebar-menu-container > ul > li:first-of-type > div.sidebar-item-container > a.sidebar-item-text,
+.sidebar-item.sidebar-item-section > div.sidebar-item-container > a.sidebar-item-text 
+{ 
+  color: $primary; 
+  font-weight: bold;
+}
+
+.sidebar-menu-container > ul > li:first-of-type > div.sidebar-item-container > a.sidebar-item-text:hover
+// .sidebar-item.sidebar-item-section > div.sidebar-item-container > a.sidebar-item-text:hover 
+{ 
+  color: $link-color; 
+  font-weight: bold; 
+}
+
+.sidebar-menu-container > ul a.sidebar-item-text.sidebar-link.active::before 
+{
+  content:      '';
+  font-size:    100%;
+  border:       solid currentcolor;
+  border-width: 0 .2em .2em 0;
+  display:      inline-block;
+  padding:      .20em;
+  transform:rotate(-45deg);
+  margin-right: 3px;
+}
+
+/** TODO: useful ? **/
+/* .mt-1 > .sidebar-item > .sidebar-item-container .menu-text
+ * Select all but the first .red child of .home,
+ * and remove the border from the previous rule.
+ 
+.home > .red ~ .red {
+  border: none;
+}
+*/

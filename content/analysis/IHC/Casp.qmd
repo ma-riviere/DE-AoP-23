@@ -1,0 +1,33 @@
+---
+title: "Caspase"
+subtitle: "Analyzing the effect of Condition (Hypoxia vs Normoxia) on cleaved Caspase-3"
+---
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+
+casp_responses <- c("Dens_Tot", "A_EGL", "A_ML_PCL", "A_IGL", "A_WM")
+
+casp_data <- load_casp_data()
+```
+
+# Clean Data
+
+Here, we only keep the variables that will be used (either as predictor or response) in the analyses.
+
+```{r}
+#| echo: false
+
+(casp_data$clean
+  |> select(Sample, Mouse, Stage, Condition, Z, any_of(casp_responses))
+  |> datatable(
+    rownames = FALSE,
+    class = 'cell-border stripe compact',
+    filter = 'top',
+    options = list(pageLength = 10, autoWidth = TRUE)
+  )
+  |> formatRound(casp_responses, 4)
+)
+```

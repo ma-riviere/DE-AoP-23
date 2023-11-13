@@ -1,0 +1,13 @@
+data:
+  gene_data: !expr here::here("data", "gene_data.xlsx")
+  animal_data: !expr here::here("data", "animal_data.xlsx")
+  PCR:
+    data_dict: !expr here::here("data", "PCR", "__PCR_data_dictionary.xlsx")
+    ND_raw: !expr here::here("data", "PCR", "ND_raw.xlsx")
+    ND_processed: !expr here::here("data", "PCR", "ND_processed.RDS")
+    OS_raw: !expr here::here("data", "PCR", "OS_raw.xlsx")
+    OS_processed: !expr here::here("data", "PCR", "OS_processed.RDS")
+  IHC:
+    data_dict: !expr here::here("data", "IHC", "__IHC_data_dictionary.xlsx")
+    casp: !expr here::here("data", "IHC", "casp.xlsx")
+    calb: !expr here::here("data", "IHC", "calb.xlsx")

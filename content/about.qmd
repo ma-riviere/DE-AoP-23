@@ -1,0 +1,42 @@
+---
+title: "About this website"
+
+bibliography: ../res/software.bib
+nocite: "@*"
+---
+
+This website was made with [Quarto](https://quarto.org/) and hosted through GitHub pages.
+
+```{r}
+#| echo: false
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+```
+
+The following packages were used in its making:
+
+:::{.callout-tip appearance="simple" collapse="true"}
+
+## Expand for Session Info
+
+```{r}
+#| echo: false
+
+# Inspired by: https://themockup.blog/posts/2022-04-18-session-info/
+
+ses_info <- sessioninfo::session_info(pkgs = "attached")
+
+ses_info$platform$quarto <- system("quarto --version", intern = TRUE)
+
+knitr::write_bib(ses_info$packages$package, file = here("res", "software.bib"), prefix = "")
+
+ses_info
+```
+
+:::
+
+## References {.unnumbered .unlisted}
+
+::: {#refs}
+:::

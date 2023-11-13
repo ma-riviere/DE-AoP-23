@@ -1,0 +1,65 @@
+---
+title: "Foreword"
+subtitle: "Study goals and section's structure"
+
+description: "In here, you can see the code we used to fit, evaluate and interrogate our models, as well as its outputs (e.g. tables, plots, ...)"
+
+page-navigation: true
+---
+
+# Goal of this study
+
+The main goal of this study was to explore the effect of Intermittent Hypoxia (encoded by the `IH` level of the `Condition` variable) on the expression of certain genes of interest, at various developmental stages, and in multiple layers of the cerebellum. We also correlate these changes in gene expression with cell death mechanisms.
+
+
+# General methodology
+
+This project included RT-qPCR and immunohistochemistry data, which were analysed in [R](https://www.r-project.org/) [@R]. 
+
+Data were modeled through the Generalized Linear Mixed Model (GLMM) framework, using the [glmmTMB](https://glmmtmb.github.io/glmmTMB/) package [@glmmTMB]. Random intercepts were added to account for the correlation between pseudo-replicates, or intra-class correlation stemming from plate/experiment effects.
+
+Model diagnostics were done using the [DHARMa](https://florianhartig.github.io/DHARMa/) [@DHARMa] & [performance](https://easystats.github.io/performance/) [@performance] packages, and estimated marginal means/contrasts were computed with the [emmeans](https://github.com/rvlenth/emmeans) package [@emmeans].
+
+
+# Structure of this section
+
+Similarly to the *Data* section, the *Analysis* section is sub-divided into two sub-sections, for PCR & IHC analyses.
+
+## PCR
+
+Here, we analyzed the changes in expression of two panels of genes: a **Neurodevelopment** (ND) panel and an **Oxidative Stress** (OS) panel.
+
+::: {.callout-note .column-margin appearance="simple"}
+Refer to the relevant sub-section of the [Data](/content/data/) section to see which genes and pathways are studied in each panel.
+:::
+
+Within each panel, we define a simple linear regression model to test the effect of `Condition` on a gene's expression, which is operationalized through the `DCq` variable, representing the difference between the quantification cycles of the gene of interest and a combination of relevant housekeeping genes. 
+Random effects were added when we suspected potential clustering effects, such as the possible correlation or hierarchical dependencies stemming from the experimental design. 
+
+That model was then applied to each `Gene` of a given `Stage` and `Layer`.
+
+::: {.callout-tip appearance="simple"}
+
+Each gene panel will be divided in: 
+
+1) `Model fitting & diagnostics`: which model was fit to the data of this panel's genes, and how well does the model fit the observed data.
+
+2) `Model analysis`: the models' coefficients and contrasts of interests. This part several plots showing which genes are up or down-regulated genes, as well as the fold-change timelines showcased in the article.
+
+:::
+
+## IHC
+
+Here, we analyzed the apoptotic marker **cleaved Caspase-3** to further explore cell death mechanisms induced by Intermittent Hypoxia. Meanwhile, the marker **Calbindin** allowed us to monitor the effect of IH on Purkinje Cells.
+
+Both *Capsase* and *Calbindin* sub-sections contain multiple responses of interest, which were modeled independently. 
+
+::: {.callout-tip appearance="simple"}
+
+Each response of interest will be divided in: 
+
+1) `Model fitting & diagnostics`: which model was fit to the data of this variable, and how well does the model fit the observed data.
+
+2) `Model analysis`: the models' coefficients, marginal means, and contrasts of interests. This part includes the boxplots showcased in the article.
+
+:::

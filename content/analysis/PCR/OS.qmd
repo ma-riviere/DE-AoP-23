@@ -1,0 +1,289 @@
+---
+title: "Oxidative Stress"
+description: "Analyzing the effect of Condition (Hypoxia vs Normoxia) on a Oxidative Stress gene panel"
+---
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+
+supplementary_data <- load_supplementary_data()
+
+OS_data <- load_pcr_data("OS")
+```
+
+# Clean Data
+
+Here's the data from our Oxidative Stress gene panel, which has been cleaned by:
+
+- Removing missing `DCq` values
+- Removing genes missing either N or IH `Condition`
+- Removing genes having less than 3 data points in either the N or IH `Condition`
+
+```{r}
+#| echo: false
+
+(OS_data$clean 
+  |> select(Experiment, Stage, Layer, Gene, Mouse, Condition, DCq) 
+  |> datatable(
+    rownames = FALSE,
+    class = 'cell-border stripe compact',
+    filter = 'top',
+    options = list(pageLength = 10, autoWidth = TRUE)
+  )
+  |> formatRound("DCq", 4)
+)
+```
+
+# Model fitting & diagnostics
+
+## Model fitting
+
+Let's define the model we will fit to each `Gene`'s `DCq` data. 
+
+Here, we will fit a simple Linear Model, which is largely similar to running a t-test between both conditions:
+
+$$
+\begin{aligned}
+  DCq_{i}  &\sim N \left(\alpha_{j[i]} + \beta_{1}(Condition), \sigma^2 \right) \\
+    \alpha_{j}  &\sim N \left(\mu_{\alpha_{j}}, \sigma^2_{\alpha_{j}} \right)
+    \text{, for Experiment j = 1,} \dots \text{,J}
+\end{aligned}
+$$
+
+```{r}
+OS_model <- function(data) {
+  form <- "DCq ~ Condition"
+  
+  # If the data contains an Experiment variable with more than two levels, add a random effect by Experiment
+  if ("Experiment" %in% colnames(data) && n_distinct(data$Experiment) >= 2) 
+    form <- str_c(form, " + (1 | Experiment)")
+
+  glmmTMB(as.formula(form), family = gaussian("identity"), data = data, contrasts = list(Condition = "contr.sum"))
+}
+```
+
+Now, let's fit said model to each `Gene`'s data, for a given `Stage` and `Layer`:
+
+```{r}
+#| code-fold: true
+#| code-summary: "compute_fold_change"
+
+compute_fold_change <- function(mod) {
+  return(
+    get_data(mod)
+    |> select(Condition, DCq)
+    |> pivot_wider(names_from = Condition, values_from = DCq, values_fn = mean)
+    |> summarize(Fold = 2**(-1 * (IH - N)))
+    |> pull(Fold)
+  )
+}
+```
+
+```{r}
+#| eval: false
+
+(OS_data$models <- OS_data$clean
+  |> group_split(Stage, Layer, Gene)
+  |> map_dfr(
+    \(d) summarize(d, Mod = pick(Experiment, Condition, DCq) |> OS_model() |> list(), .by = c(Stage, Layer, Gene)), 
+    .progress = "Fitting models:"
+  )
+  |> filter(!has_na_coefs(Mod)) # Removing models that did not fit properly
+  |> mutate(Fold = map_dbl(Mod, compute_fold_change)) # Adding the Fold change
+  |> select(Stage, Layer, Gene, Fold, Mod)
+)
+```
+
+## Model diagnostics
+
+Here are the diagnostic plots for a random sample of the fitted models:
+
+```{r}
+#| echo: false
+
+OS_data$models |>
+  slice_sample(n = 15) |> 
+  make_diag_reactable()
+```
+
+
+# Model analysis
+
+For each model we fit, we can then extract the CI and p.value for the relevant contrasts, and use those to establish if a `Gene` was up or down-regulated:
+
+```{r}
+#| code-fold: true
+#| code-summary: "get_emmeans_data"
+
+get_emmeans_data <- function(mod) {
+  return(
+    emmeans(mod, specs = "Condition", type = "response")
+    |> contrast(method = "pairwise", adjust = "none", infer = TRUE)
+    |> as.data.frame()
+    |> pivot_wider(names_from = contrast, values_from = estimate)
+    |> select(last_col(), LCB = lower.CL, UCB = upper.CL, p.value)
+    |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
+  )
+}
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "get_regulation_type"
+
+get_regulation_type <- function(fold, p_value) {
+  case_when(
+    p_value <= .05 & fold < 1 ~ regulation_type$DOWNREG,
+    p_value <= .05 & fold > 1 ~ regulation_type$UPREG,
+    is.na(p_value) | is.na(fold) ~ NA_character_,
+    .default = regulation_type$NOT_REG
+  )
+}
+```
+
+```{r}
+#| eval: false
+
+(OS_data$predictions <- OS_data$models
+  |> group_split(Stage, Layer, Gene)
+  |> map_dfr(\(d) mutate(d, get_emmeans_data(Mod[[1]])), .progress = "Extracting model predictions:")
+  |> filter(!is.na(p.value))
+  |> mutate(Expression = get_regulation_type(Fold, p.value))
+  |> select(Stage, Layer, Gene, Fold, Expression, matches("-|/"), LCB, UCB, p.value)
+)
+```
+
+```{r}
+#| echo: false
+
+datatable(
+  OS_data$predictions,
+  rownames = FALSE,
+  class = 'cell-border stripe compact',
+  filter = 'top',
+  options = list(pageLength = 10, autoWidth = TRUE)
+) |> formatRound(c("Fold", "N - IH", "LCB", "UCB", "p.value"), 4)
+```
+
+
+## Gene regulation overview
+
+We can get a general overview of which `Gene` are up or down-regulated through a Sunburst plot, stacked by `Stage` and `Layer`.
+
+```{r}
+#| echo: false
+#| eval: false
+
+generate_function_code("make_suburst_plot")
+```
+
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=780 end-line=840}
+```{.R code-fold="true" code-summary="make_suburst_plot"}
+```
+:::
+
+```{r}
+OS_data$predictions |>
+  filter(Expression != regulation_type$NOT_REG) |>
+  left_join(supplementary_data$gene_data$OS, join_by(Gene)) |>
+  make_suburst_plot(
+    layers = c("Stage", "Layer", "Expression", "Gene"),
+    tooltips = c("Gene", "Pathway", "Fold", "p.value"),
+    colors = sunburst_pcr_colors,
+    plot_options = list(insidetextorientation = 'radial')
+  )
+```
+
+## Gene regulation timeline
+
+To get a better idea of how each `Gene`'s regulation changes through time, we can plot a timeline of their expression, split by `Layer` and `Pathway`, with a color coding of the `Effect` of this regulation.
+
+```{r}
+#| echo: false
+#| eval: false
+
+generate_function_code("make_fold_timeline_plot")
+```
+
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=82 end-line=136}
+```{.R code-fold="true" code-summary="make_fold_timeline_plot"}
+```
+:::
+
+```{r}
+#| output: false
+#| code-fold: true
+#| code-summary: "render_OS_timeline"
+
+render_OS_timeline <- function(dat, group, size_boost = 1.2) {
+  
+  if (group[[1]][1] == "Whole") {
+    
+    dat |>
+      group_by(Figure) |> 
+      group_map(\(d, g) render_OS_timeline(d, str_glue("Whole Cerebellum - {first(g[[1]])}"), 1.5))
+  }
+  else {
+    
+    group_name <- group[[1]][1]
+    if (group_name == "PC") group_name <- "Purkinje Cells"
+    
+    if (group_name == "Cellular Response") {
+      cell_resp_levels <- c("Cell Death and Protection", "Apoptotic Pathways", "Inflammation Pathways", "Autophagy and Mitophagy")
+      dat <- mutate(dat, Pathway = factor(Pathway, levels = cell_resp_levels))
+    }
+    
+    plot <- make_fold_timeline_plot(dat, facet_rows = "Pathway", trans = "log", color_by = "Effect", size_boost = size_boost)
+  
+    width <- 2 + n_distinct(dat$Stage)
+    height <- dat |> 
+      group_by(Pathway) |> 
+      group_map(\(d, g) n_distinct(d$Gene) * 0.1 + 1) |> 
+      flatten_dbl() |> 
+      sum()
+    
+    template_md <- c(
+      '### `r group_name`',
+      '```{r}',
+      '#| echo: false',
+      '#| fig-width: !expr width',
+      '#| fig-height: !expr height',
+      'plot',
+      '```'
+    )
+    
+    knitr::knit_child(text = template_md, envir = rlang::env(), quiet = TRUE)
+  }
+}
+```
+
+```{r}
+OS_timelines <- (
+  OS_data$predictions 
+  |> left_join(supplementary_data$gene_data$OS, join_by(Gene)) 
+  |> filter(p.value <= .05) 
+  |> mutate(Effect = case_when(
+      str_detect(Expression, "Downregulated") & Effect == "Beneficial" ~ "Deleterious",
+      str_detect(Expression, "Downregulated") & Effect == "Deleterious" ~ "Beneficial",
+      .default = Effect
+    )
+  )
+  |> select(Stage, Layer, Gene, Fold, p.value, Expression, Effect, Pathway, Figure)
+  |> group_by(Layer)
+  |> group_map(render_OS_timeline)
+  |> unlist()
+)
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+#| echo: false
+
+cat(OS_timelines, sep = "\n")
+```
+
+:::

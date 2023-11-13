@@ -1,0 +1,319 @@
+---
+title: "Calbindin"
+subtitle: "Analyzing the effect of Condition (Hypoxia vs Normoxia) on Purkinje Cells"
+---
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+
+calb_responses <- c("N_CC", "Vol_PC_per_cell")
+
+calb_data <- load_calb_data()
+```
+
+# Clean Data
+
+Here, we only keep the variables that will be used (either as predictor or response) in the analyses.
+
+```{r}
+#| echo: false
+
+(calb_data$clean
+  |> select(Sample, Mouse, Condition, any_of(calb_responses))
+  |> datatable(
+    rownames = FALSE,
+    class = 'cell-border stripe compact',
+    filter = 'top',
+    options = list(pageLength = 10, autoWidth = TRUE, fixedColumns = list(leftColumns = 1))
+  ) 
+  |> formatRound(calb_responses, 4)
+)
+```
+
+# `r get_response_name("N_CC", "IHC", "Description")`
+
+## Model fitting & diagnostics
+
+Here, we chose to model `N_CC` (which are counts) with a Generalized Poisson family, which can handle both over and under-dispersion.
+
+```{r}
+calb_N_CC_mod <- glmmTMB(
+  N_CC ~ Condition + (1 | Mouse),
+  family = genpois("log"),
+  data = calb_data$clean,
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(calb_N_CC_mod, check = c("normality", "homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(calb_N_CC_mod)
+```
+
+```{r}
+check_overdispersion(calb_N_CC_mod)
+```
+
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+calb_N_CC_mod_dharma <- DHARMa::simulateResiduals(calb_N_CC_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+calb_N_CC_mod_dharma_t <- t(calb_N_CC_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(calb_N_CC_mod, simulations = calb_N_CC_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_stat_plots(calb_N_CC_mod, simulations = calb_N_CC_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(calb_data$clean, calb_N_CC_mod, calb_N_CC_mod_dharma, calb_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("No potential outliers detected by the model.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    calb_N_CC_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(calb_N_CC_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(calb_N_CC_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(calb_N_CC_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(calb_N_CC_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(calb_N_CC_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(calb_N_CC_mod, "Condition")
+```
+
+
+# `r get_response_name("Vol_PC_per_cell", "IHC", "Description")`
+
+## Model fitting & diagnostics
+
+Here, we chose to model `Vol_PC_per_cell`, which is a strictly positive continuous measure, with a Gamma family.
+
+```{r}
+calb_Vol_PC_mod <- glmmTMB(
+  Vol_PC_per_cell ~ Condition + (1 | Mouse),
+  family = Gamma("log"),
+  data = calb_data$clean,
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(calb_Vol_PC_mod, check = c("normality", "homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(calb_Vol_PC_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+calb_Vol_PC_mod_dharma <- DHARMa::simulateResiduals(calb_Vol_PC_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+calb_Vol_PC_mod_dharma_t <- t(calb_Vol_PC_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(calb_Vol_PC_mod, simulations = calb_Vol_PC_mod_dharma_t, term = "Condition")
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_stat_plots(calb_Vol_PC_mod, simulations = calb_Vol_PC_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(calb_data$clean, calb_Vol_PC_mod, calb_Vol_PC_mod_dharma, calb_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("No potential outliers detected by the model.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    calb_Vol_PC_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(calb_Vol_PC_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(calb_Vol_PC_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(calb_Vol_PC_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(calb_Vol_PC_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(calb_Vol_PC_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(calb_Vol_PC_mod, "Condition")
+```

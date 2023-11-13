@@ -1,0 +1,57 @@
+---
+title: "Apnea of Prematurity induces short and long-term development-related transcriptional changes in the murine cerebellum"
+subtitle: "Data & Analysis"
+
+date: "2023-11-01"
+
+image: res/feature.png
+
+author:
+  - name: "Marc-Aurèle Rivière"
+    orcid: 0000-0002-5108-3382
+    url: https://ma-riviere.com/
+    email: marc.aurele.riviere@gmail.com
+  - name: "Agalic Rodriguez-Duboc"
+    orcid: 0000-0002-2084-3780
+    url: https://agalic-rd.com/
+    email: agalic-rd@gmail.com
+
+categories:
+  - "Biostatistics"
+  - "Bioinformatics"
+  - "Transcriptomics"
+  - "Immunohistochemistry"
+  - "R"
+
+abstract: |
+  This website showcases the data and analyses of our paper:  
+
+  [*"Apnea of Prematurity induces short and long-term development-related transcriptional changes in the murine cerebellum"*]{#paper-title}
+
+  The goal is to allow interested parties to explore our data and see the output of our analyses without running the code themselves.
+
+  ::: {.callout-tip appearance="simple"}
+  If you wish to access the code of the analyses themselves, head to [the main branch of our repository](https://github.com/ma-riviere/DE-AoP-23).
+
+  You can find more information on the overarching project that lead to this paper on the first author's [website](https://agalic-rd.com/content/projects/DE-AoP/).
+  :::
+
+abstract-title: "Description"
+
+toc: false
+title-block-banner: true
+---
+
+***
+
+# Structure of this website {.unnumbered}
+
+This website is divided into 4 major sections, accessible through the top navigation menu:
+
+1) [**Data**](/content/data/): Explore and download the paper's data.
+
+2) [**Analysis**](/content/analysis/): Our paper's code and its output, organized as documentation. 
+
+3) [**Paper**](/content/paper/): The paper's PDF, abstract, and citation data.
+
+4) [**Extras**](/content/extras/figures/): Talks, posters and figures related to our paper and its overarching project.

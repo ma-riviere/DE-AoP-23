@@ -2,9 +2,7 @@
 ####💠 Theme 💠####
 ####╚════  ═══╝####
 
-log.main("[CONFIG] Setting project's graphics theme ...")
-
-dpi_save_png <- 600
+cli_h2("┗ [CONFIG] Setting project's plots & tables' themes")
 
 #---------------#
 ####🔺Colors ####
@@ -28,6 +26,22 @@ colors_fold <- c("#f02b00", "#01944b") # Downreg, Upreg
 colors_effect <- c("#b625bb", "#0264cc") # Bad, Good
 
 my_palettes_d <- list(colors_cond, scales::viridis_pal()(3), scales::viridis_pal()(5), scales::viridis_pal()(10), scales::viridis_pal()(15))
+
+sunburst_pcr_colors <- list(
+  # Stages
+  P4 = "#95bfed", P8 = "#6498d0", P12 = "#4681bf", P21 = "#316cab", P70 = "#1e5795",
+  # Layers
+  EGL = "#b398d4", EGLo = "#ab8dcf", EGLi = "#9978c2", ML = "#8b66b7", MLPC = "#7d57ac", PC = "#6d479d", IGL = "#653b98", WM = "#532a86", Whole = "#321359",
+  # Expression
+  Downregulated = "#f02b00", Upregulated = "#01944b",
+  # ND pathway families
+  `Proliferation and Repair` = "#eb4f2d", `Migration and Response` = "#83c108", `Cellular Differentiation` = "#f5a402", `Cell Communication` = "#2cc969",
+  # ND pathways
+  `Fate Mapping` = "#f02b00", Survival = "#faa491", `Myelin Sheath` = "#f59002", `Neurite Growth` = "#ffda8f", Guidance = "#81c700", Motility = "#d1eb52", Membrane = "#01944b", Soluble = "#78e3a1",
+  # OS pathways
+  `Apoptotic Pathways` = "#FFE792", `Autophagy and Mitophagy` = "#E78AC3", `Cell Death and Protection` = "#66C2A4", 
+  `Inflammation Pathways` = "#FC6A4A", `Antioxidant Response` = "#A5D853", `Redox Enzymes` = "#3690C0",  `ROS Production` = "#FEB24C"
+)
 
 #----------------------#
 ####🔺ggplot themes ####
@@ -116,7 +130,6 @@ ggplot2::theme_set(theme_light_mar)
 #------------------#
 
 library(gt)
-library(gtExtras, include.only = c("gt_highlight_rows"))
 
 format_gt <- function(gt_tbl) {
   
@@ -165,39 +178,28 @@ gt_style_light <- function(gt_tbl) {
     |> gt::tab_options(container.width = pct(100), table.width = pct(100))
   )
   
-  if (nrow(gt_tbl[["_data"]]) > 2) 
-    gt_tbl <- gt_tbl |> gtExtras::gt_highlight_rows(rows = seq(2, nrow(gt_tbl[["_data"]]), by = 2), fill = "#E9E9E9", font_weight = "normal", alpha = 0.3)
-  
   return(gt_tbl)
 }
 
-gt_style_dark <- function(gt_tbl) {
-  gt_tbl <- (gt_tbl 
-    |> format_gt()
-    |> gt::tab_style(
-     style = list(
-       cell_fill(color = bg_color_dark, alpha = 1),
-       cell_text(color = secondary_color_dark, weight = "bold"),
-       cell_borders(sides = c("top", "bottom"), color = secondary_color_dark, style = "solid", weight = px(2))
-     ),
-     locations = list(cells_title(), cells_column_labels())
-    ) 
-    |> gt::tab_style(
-     style = list(
-       cell_fill(color = bg_color_dark, alpha = 1),
-       cell_text(color = primary_color_dark)
-     ),
-     locations = list(cells_stub(), cells_body(), cells_row_groups(), cells_footnotes(), cells_source_notes())
+#------------------------#
+####🔺reactable theme ####
+#------------------------#
+
+options(
+  reactable.theme = reactableTheme(
+    headerStyle = list(
+      "&:hover[aria-sort]" = list(background = "hsl(0, 0%, 96%)"),
+      "&[aria-sort='ascending'], &[aria-sort='descending']" = list(background = "hsl(0, 0%, 96%)"),
+      borderColor = "#555"
     )
-    |> gt::tab_style(
-     style = list(cell_text(weight = "bold")),
-     locations = list(cells_row_groups())
-    )
-    |> gt::tab_options(container.width = pct(100), table.width = pct(100))
+    #   color = "hsl(233, 9%, 87%)",
+    #   backgroundColor = "hsl(233, 9%, 19%)",
+    #   borderColor = "hsl(233, 9%, 22%)",
+    #   stripedColor = "hsl(233, 12%, 22%)",
+    #   highlightColor = "hsl(233, 12%, 24%)",
+    #   inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    #   selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    #   pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    #   pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
   )
-  
-  if (nrow(gt_tbl[["_data"]]) > 2) 
-    gt_tbl <- gt_tbl |> gtExtras::gt_highlight_rows(rows = seq(2, nrow(gt_tbl[["_data"]]), by = 2), fill = "#2c2d2d", font_weight = "normal", alpha = 1)
-  
-  return(gt_tbl)
-}
+)

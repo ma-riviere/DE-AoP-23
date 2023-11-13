@@ -1,0 +1,31 @@
+---
+title: "Figures & Illustrations"
+subtitle: "Figures & illustrations not displayed in the analysis section (e.g. composite figures, graphical abstract)"
+---
+
+# Graphical Abstract
+
+<object data="GA.pdf" type="application/pdf" width="100%" height="650">
+  <iframe
+    src="https://docs.google.com/viewer?url=https://github.com/ma-riviere/DE-AoP-23/raw/gh-pages/content/extras/figures/GA.pdf&embedded=true"
+    width="100%" height="600" frameborder="0">
+  </iframe>
+</object>
+
+# Figures
+
+## OS panel (from Cytoscape)
+
+![](Cyto_OS.png)
+
+## Caspase (P4)
+
+![](Casp_P4.png)
+
+## Caspase (P8)
+
+![](Casp_P8.png)
+
+## Purkinje Cells (P8)
+
+![](Casp_P8.png)

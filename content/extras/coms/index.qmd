@@ -1,0 +1,24 @@
+---
+title: "Talks & Posters"
+subtitle: "Talks and posters related to the paper"
+---
+
+# Talk (JED'21) {.unnumbered .unlisted}
+
+<object data="JED21.pdf" type="application/pdf" width="100%" height="600">
+  <iframe
+    src="https://docs.google.com/viewer?url=https://github.com/ma-riviere/DE-AoP-23/raw/gh-pages/content/extras/coms/JED21.pdf&embedded=true"
+    width="100%" height="600" frameborder="0">
+  </iframe>
+</object>
+
+***
+
+# Poster (LARC'19) {.unnumbered .unlisted}
+
+<object data="LARC19.pdf" type="application/pdf" width="100%" height="1610">
+  <iframe
+    src="https://docs.google.com/preview?url=https://github.com/ma-riviere/DE-AoP-23/raw/gh-pages/content/extras/coms/LARC19.pdf&embedded=true"
+    width="100%" height="1440" frameborder="0">
+  </iframe>
+</object>

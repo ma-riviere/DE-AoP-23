@@ -1,0 +1,294 @@
+---
+title: "Neurodevelopment"
+description: "Analyzing the effect of Condition (Hypoxia vs Normoxia) on a neurodevelopment gene panel"
+---
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+
+supplementary_data <- load_supplementary_data()
+
+ND_data <- load_pcr_data("ND")
+```
+
+# Clean data
+
+Here's the data from our neurodevelopment gene panel, which has been cleaned by:
+
+- Removing missing `DCq` values
+- Removing genes missing either N or IH `Condition`
+- Removing genes having less than 3 data points in either the N or IH `Condition`
+
+```{r}
+#| echo: false
+
+(ND_data$clean 
+  |> select(Stage, Layer, Gene, Mouse, Condition, DCq) 
+  |> datatable(
+    rownames = FALSE,
+    class = 'cell-border stripe compact',
+    filter = 'top',
+    options = list(pageLength = 10, autoWidth = TRUE)
+  )
+  |> formatRound("DCq", 4)
+)
+```
+
+
+# Model fitting & diagnostics
+
+## Fitting the model
+
+Let's define the model we will fit to each `Gene`'s `DCq` data. 
+
+Here, we will fit a simple Linear Model, which is largely similar to running a t-test between both conditions:
+
+$$
+\begin{aligned}
+  DCq  &\sim N \left(\alpha + \beta_{1}(Condition), \sigma^2 \right)
+\end{aligned}
+$$
+
+```{r}
+ND_model <- function(data) {
+  glmmTMB(DCq ~ Condition, family = gaussian("identity"), data = data, contrasts = list(Condition = "contr.sum"))
+}
+```
+
+Now, let's fit said model to each `Gene`'s data, for a given `Stage` and `Layer`:
+
+```{r}
+#| code-fold: true
+#| code-summary: "compute_fold_change"
+
+compute_fold_change <- function(mod) {
+  return(
+    get_data(mod) 
+    |> select(Condition, DCq) 
+    |> pivot_wider(names_from = Condition, values_from = DCq, values_fn = mean) 
+    |> summarize(Fold = 2**(-1 * (IH - N))) 
+    |> pull(Fold) 
+  )
+}
+```
+
+```{r}
+#| eval: false
+
+(ND_data$models <- ND_data$clean
+  |> group_split(Stage, Layer, Gene)
+  |> map_dfr(
+    \(d) summarize(d, Mod = pick(Condition, DCq) |> ND_model() |> list(), .by = c(Stage, Layer, Gene)), 
+    .progress = "Fitting models:"
+  )
+  |> filter(!has_na_coefs(Mod)) # Removing models that did not fit properly
+  |> mutate(Fold = map_dbl(Mod, compute_fold_change)) # Adding the Fold change
+  |> select(Stage, Layer, Gene, Fold, Mod)
+)
+```
+
+## Model diagnostics
+
+Here are the diagnostic plots for a random sample of the fitted models:
+
+```{r}
+#| echo: false
+
+ND_data$models |>
+  slice_sample(n = 15) |> 
+  make_diag_reactable()
+```
+
+
+# Model analysis
+
+For each model we fit, we can then extract the CI and p.value for the relevant contrasts, and use those to establish if a `Gene` was up or down-regulated:
+
+```{r}
+#| code-fold: true
+#| code-summary: "get_emmeans_data"
+
+get_emmeans_data <- function(mod) {
+  return(
+    emmeans(mod, specs = "Condition", type = "response")
+    |> contrast(method = "pairwise", adjust = "none", infer = TRUE)
+    |> as.data.frame()
+    |> pivot_wider(names_from = contrast, values_from = estimate)
+    |> select(last_col(), LCB = lower.CL, UCB = upper.CL, p.value)
+    |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
+  )
+}
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "get_regulation_type"
+
+get_regulation_type <- function(fold, p_value) {
+  case_when(
+    p_value <= .05 & fold < 1 ~ regulation_type$DOWNREG,
+    p_value <= .05 & fold > 1 ~ regulation_type$UPREG,
+    is.na(p_value) | is.na(fold) ~ NA_character_,
+    .default = regulation_type$NOT_REG
+  )
+}
+```
+
+```{r}
+#| eval: false
+
+(ND_data$predictions <- ND_data$models
+  |> group_split(Stage, Layer, Gene)
+  |> map_dfr(\(d) mutate(d, get_emmeans_data(Mod[[1]])), .progress = "Extracting model predictions:")
+  |> filter(!is.na(p.value))
+  |> mutate(Expression = get_regulation_type(Fold, p.value))
+  |> select(Stage, Layer, Gene, Fold, Expression, matches("-|/"), LCB, UCB, p.value)
+)
+```
+
+```{r}
+#| echo: false
+
+datatable(
+  ND_data$predictions,
+  rownames = FALSE,
+  class = 'cell-border stripe compact',
+  filter = 'top',
+  options = list(pageLength = 10, autoWidth = TRUE)
+) |> formatRound(c("Fold", "N - IH", "LCB", "UCB", "p.value"), 4)
+```
+
+## Gene regulation overview
+
+We can get a general overview of which `Gene` are up or down-regulated through a Sunburst plot, stacked by `Stage` and `Layer`.
+
+```{r}
+#| echo: false
+#| eval: false
+
+generate_function_code("make_suburst_plot")
+```
+
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=780 end-line=840}
+```{.R code-fold="true" code-summary="make_suburst_plot"}
+```
+:::
+
+```{r}
+ND_data$predictions |>
+  filter(Expression != regulation_type$NOT_REG) |>
+  left_join(supplementary_data$gene_data$ND, join_by(Gene)) |>
+  make_suburst_plot(
+    layers = c("Stage", "Layer", "Expression", "Gene"),
+    tooltips = c("Gene", "Pathway", "Pathway_family", "Fold", "p.value"),
+    colors = sunburst_pcr_colors,
+    plot_options = list(insidetextorientation = 'radial')
+  )
+```
+
+## Regulation & Pathways
+
+We can extend the previous plot to better visualize to which `Pathway` the regulated genes are linked to.
+
+```{r}
+#| echo: false
+#| eval: false
+
+generate_function_code("make_circlize_plot")
+```
+
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=142 end-line=416}
+```{.R code-fold="true" code-summary="make_circlize_plot"}
+```
+:::
+
+```{r}
+#| fig-width: 200
+#| fig-height: 200
+
+ND_data$predictions |> 
+  left_join(supplementary_data$gene_data$ND, join_by(Gene)) |>
+  make_circlize_plot()
+```
+
+## Gene regulation timeline
+
+To get a better idea of how each `Gene`'s regulation changes through time, we can plot a timeline of their expression, split by `Layer` and `Pathway`.
+
+```{r}
+#| echo: false
+#| eval: false
+
+generate_function_code("make_fold_timeline_plot")
+```
+
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=82 end-line=136}
+```{.R code-fold="true" code-summary="make_fold_timeline_plot"}
+```
+:::
+
+```{r}
+#| output: false
+#| code-fold: true
+#| code-summary: "render_ND_timeline"
+
+render_ND_timeline <- function(dat, group) {
+  
+  cur_group_name <- get_var_level_name("Layer", first(group[[1]]), "PCR")
+  
+  plot <- make_fold_timeline_plot(dat, facet_rows = "Pathway_family", trans = "log", colors = colors_fold, size_boost = 1.5)
+  
+  width <- 2 + n_distinct(dat$Stage)
+  height <- dat |> 
+    group_by(Pathway_family) |> 
+    group_map(\(d, g) n_distinct(d$Gene) * 0.1 + 1.3) |> 
+    flatten_dbl() |> 
+    sum()
+  
+  template_md <- c(
+    '### `r cur_group_name`',
+    '```{r}',
+    '#| echo: false',
+    '#| fig-width: !expr width',
+    '#| fig-height: !expr height',
+    'plot',
+    '```'
+  )
+  
+  knitr::knit_child(text = template_md, envir = rlang::env(), quiet = TRUE)
+}
+```
+
+```{r}
+ND_timelines <- (
+  ND_data$predictions 
+  |> left_join(supplementary_data$gene_data$ND, join_by(Gene))
+  |> left_join(supplementary_data$layer_families, join_by(Layer))
+  |> filter(p.value <= .05)
+  |> filter(!(Layer_family == "PC" & Stage == "P4")) # PCs are too small and undifferentiated at that stage to properly microdissect
+  |> select(Stage, Layer, Layer_family, Gene, Fold, p.value, Expression, Pathway, Pathway_family)
+  |> mutate(Stage = case_when(
+      Layer %in% c("EGLi", "EGLo") ~ str_glue("{Stage} ({Layer})"),
+      .default = as.character(Stage)
+    ) 
+    |> factor(levels = c("P4", "P8", "P8 (EGLo)", "P8 (EGLi)", "P12", "P21", "P70"))
+  )
+  |> group_by(Layer_family)
+  |> group_map(render_ND_timeline)
+  |> unlist()
+)
+```
+
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+#| echo: false
+
+cat(ND_timelines, sep = "\n")
+```
+
+:::

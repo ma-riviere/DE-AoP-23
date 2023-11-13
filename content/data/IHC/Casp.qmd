@@ -1,0 +1,122 @@
+---
+title: "Caspase"
+subtitle: "Interactive data exploration"
+---
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+
+casp_responses <- c(
+  "A_Tot", "N_Tot", "Dens_Tot",
+  "A_EGL", "N_EGL",
+  "A_ML_PCL", "N_ML_PCL",
+  "A_IGL", "N_IGL",
+  "A_WM", "N_WM"
+)
+
+casp_data <- load_casp_data()
+```
+
+::: {.callout-tip appearance="simple"}
+Most of the tables and figures on this page are **interactive** !
+:::
+
+# Raw Data
+
+Our raw Caspase data, including some computed variables such as `Dens_Tot`, which is defined as the `r get_response_name("N_Tot", "IHC", "Description")` (`N_Tot`) divided by the `r get_response_name("A_Tot", "IHC", "Description")` (`A_Tot`).
+
+```{r}
+(
+  casp_data$clean
+  |> select(-ID)
+  |> datatable(
+    rownames = FALSE,
+    class = 'cell-border stripe compact',
+    filter = 'top',
+    options = list(pageLength = 10, autoWidth = TRUE, fixedColumns = list(leftColumns = 1))
+  ) 
+  |> formatRound(casp_responses, 4)
+)
+```
+
+## Data Dictionary
+
+What each variable name represents, and how they are labeled within plots.
+
+```{r}
+make_data_dict_reactable(casp_data$clean, configs$data$IHC$data_dict)
+```
+
+# Data Composition
+
+The count/proportion of data points within each level of our predictors.
+
+```{r}
+(casp_data$clean
+  |> tbl_summary(
+    include = c(Stage, Z),
+    by = Condition
+  )
+  |> modify_header(label = "**Variable**") 
+  |> bold_labels()
+)
+```
+
+
+# Data Summary
+
+```{r}
+casp_shared <- casp_data$clean |> pivot_longer(cols = casp_responses, names_to = "Response") |> SharedData$new(data = _)
+
+bscols(
+  widths = c(1, 4, 4),
+  div(),
+  filter_select("resp_filter_casp", "Response", casp_shared, ~ Response, multiple = FALSE),
+  filter_select("stage_filter_casp", "Stage", casp_shared, ~ Stage, multiple = FALSE)
+)
+```
+
+```{js}
+//| output: false
+
+function filter_default() {
+  document.getElementById("resp_filter_casp").getElementsByClassName("selectized")[0].selectize.setValue("A_EGL", false)
+  document.getElementById("stage_filter_casp").getElementsByClassName("selectized")[0].selectize.setValue("P4", false)
+}
+
+window.onload = filter_default;
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+(plot_ly(
+    casp_shared,
+    x = ~ Condition,
+    y = ~ value,
+    color = ~ Condition,
+    split = ~ Stage,
+    type = "box",
+    boxpoints = "all", 
+    jitter = 0.3,
+    colors = c(N = "#02ccae", IH = "#9965db")
+  )
+  |> layout(
+    autosize = TRUE, 
+    showlegend = FALSE, 
+    xaxis = list(title = NA, type = "category")
+  )
+)
+```
+
+# Correlations
+
+```{r}
+#| fig-width: 10
+#| fig-height: 7
+
+corr_matrix_plot(casp_data$clean, vars = c("Condition", "Stage", "Z", casp_responses))
+```

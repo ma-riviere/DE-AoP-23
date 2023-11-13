@@ -1,0 +1,248 @@
+---
+title: "Oxidative Stress"
+subtitle: "Interactive data exploration"
+---
+
+```{r}
+#| output: false
+
+source(here::here("src", "setup.R"), echo = FALSE)
+
+supplementary_data <- load_supplementary_data()
+
+OS_data <- load_pcr_data("OS")
+```
+
+::: {.callout-tip appearance="simple"}
+Most of the tables and figures on this page are **interactive** !
+:::
+
+# Raw Data
+
+The complete raw data (before modeling)
+
+```{r}
+OS_data$raw |> 
+  left_join(supplementary_data$gene_data$OS, join_by(Gene)) |> 
+  left_join(select(OS_data$models, -Mod), join_by(Stage, Layer, Gene)) |> 
+  select(Mouse, Experiment, Stage, Layer, Gene, Condition, Pathway, Mean_Cq, DCq, Fold) |> 
+  datatable(
+    rownames = FALSE,
+    class = 'cell-border stripe compact',
+    filter = 'top',
+    options = list(pageLength = 10, autoWidth = TRUE)
+  ) |> 
+  formatRound(c("Mean_Cq", "DCq", "Fold"), 4)
+```
+
+## Data Dictionary
+
+What each variable name represents, and how they are labeled within plots.
+
+```{r}
+make_data_dict_reactable(OS_data$clean, configs$data$PCR$data_dict)
+```
+
+
+# Data Composition
+
+The count/proportion of data points within each level of our predictors.
+
+```{r}
+(OS_data$clean
+  |> left_join(supplementary_data$gene_data$OS, join_by(Gene))
+  |> droplevels()
+  |> tbl_summary(
+    include = c(Stage, Layer, Pathway),
+    by = Condition
+  )
+  |> modify_header(label = "**Variable**") 
+  |> bold_labels()
+)
+```
+
+## Genes per Pathway
+
+Which genes were included in each of our pathways.
+
+```{r}
+OS_data$clean |> 
+  left_join(supplementary_data$gene_data$OS |> select(Pathway, Gene), join_by(Gene)) |> 
+  make_suburst_plot(
+    layers = c("Pathway", "Gene"),
+    colors = sunburst_pcr_colors
+  )
+```
+
+
+# Supplementary Gene Data
+
+Supplementary information on the included genes.
+
+```{r}
+(OS_data$clean
+  |> distinct(Gene)
+  |> left_join(supplementary_data$gene_data$OS, join_by(Gene))
+  |> select(-Figure)
+  |> mutate(NCBI_reference = str_glue("<a target=_blank href='https://www.ncbi.nlm.nih.gov/gene/?term={NCBI_reference}'>{NCBI_reference}</a>"))
+  |> arrange(Pathway, Gene)
+  |> rename(
+    `Gene Name` = Gene_name,
+    `Putative Function` = Putative_function,
+    `NCBI Reference` = NCBI_reference
+  )
+  |> mutate(Primers = str_glue("Frw: {Forward_primer}</br>Rev: {Reverse_primer}"), .keep = "unused")
+  |> datatable(
+    rownames = FALSE,
+    class = "cell-border stripe compact",
+    extensions = c("RowGroup", "Responsive"),
+    filter = "top",
+    options = list(pageLength = 5, autoWidth = TRUE, rowGroup = list(dataSrc = 1)),
+    escape = FALSE
+  )
+)
+```
+
+
+# Data Summary
+
+Summary of the DCq and Fold values for every `Gene`, at each `Stage` and `Layer`.
+
+```{r}
+OS_data_summary <- (
+  OS_data$clean
+  |> left_join(select(OS_data$models, -Mod), join_by(Stage, Layer, Gene))
+  |> summarise(
+    .by = c(Stage, Layer, Gene, Condition),
+    Mean = mean(DCq),
+    DCq = list(DCq), 
+    Fold = first(Fold),
+    BoxPlots = NA
+  )
+  |> pivot_wider(names_from = "Condition", values_from = c("Mean", "DCq", "Fold"))
+  |> select(Stage, Layer, Gene, `Mean(N)` = Mean_N, `Mean(IH)` = Mean_IH, BoxPlots, DCq_N, DCq_IH, Fold = Fold_IH)
+)
+  
+reactable(
+  OS_data_summary |> select(-matches("DCq"))
+  , defaultColDef = colDef(sortNALast = TRUE, vAlign = "center", headerVAlign = "center", align = "center")
+  , columns = list(
+    Stage = colDef(maxWidth = 75)
+    , Layer = colDef(maxWidth = 75)
+    , Gene = colDef(maxWidth = 100)
+    , Condition = colDef(filterable = FALSE, maxWidth = 125)
+    , `Mean(N)` = colDef(format = colFormat(digits = 2), filterable = FALSE, maxWidth = 100)
+    , `Mean(IH)` = colDef(format = colFormat(digits = 2), filterable = FALSE, maxWidth = 100)
+    , BoxPlots = colDef(
+      cell = \(x, idx) {
+        tags$div(
+          sparkline(
+            OS_data_summary$DCq_N[[idx]], type = "box", width = 525, tooltipFormatFieldlist = c('lw', 'lq', 'med', 'uq', 'rw'), 
+            boxFillColor = "#02ccae", boxLineColor = "black", whiskerColor = "black", medianColor = "grey50", lineColor = "black",
+            chartRangeMin = min(OS_data$clean$DCq), chartRangeMax = max(OS_data$clean$DCq)
+          ),
+          br(),
+          sparkline(
+            OS_data_summary$DCq_IH[[idx]], type = "box", width = 525, tooltipFormatFieldlist = c('lw', 'lq', 'med', 'uq', 'rw'),
+            boxFillColor = "#9965db", boxLineColor = "black", whiskerColor = "black", medianColor = "grey50", lineColor = "black",
+            chartRangeMin = min(OS_data$clean$DCq), chartRangeMax = max(OS_data$clean$DCq)
+          ),
+        )
+      },
+      sortable = FALSE, filterable = FALSE
+    )
+    , Fold = colDef(format = colFormat(digits = 2), filterable = FALSE, maxWidth = 75)
+  )
+  , showSortable = TRUE
+  , filterable = TRUE
+  , searchable = TRUE
+  , showPageSizeOptions = TRUE
+  , defaultPageSize = 10
+  , minRows = 10
+  , pageSizeOptions = c(10, 25, 50, 100)
+  , outlined = TRUE
+  , striped = TRUE
+  , highlight = TRUE
+  , compact = TRUE
+  , fullWidth = TRUE
+)
+```
+
+
+## Genes per Layer & Stage
+
+Which genes were included in our pathways.
+
+```{r}
+OS_data$models |> 
+  select(-Mod) |> 
+  make_suburst_plot(
+    layers = c("Layer", "Stage", "Gene"), 
+    tooltips = c("Gene", "Fold"),
+    colors = sunburst_pcr_colors,
+    plot_options = list(insidetextorientation = 'radial')
+  )
+```
+
+
+# DCq Distribution
+
+The distribution of `DCq` values for a `Gene`, at a certain `Stage` and `Layer`
+
+```{r}
+OS_shared <- SharedData$new(OS_data$clean) # TODO: mutate(OS_data, ID = str_glue("Layer: {Layer}, Stage: {Stage}, Gene: {Gene}"), .by = c(Stage, Layer, Gene))
+
+bscols(
+  widths = c(1, 3, 3, 3),
+  div(),
+  filter_select("stage_filter_OS", "Stages", OS_shared, ~ Stage, multiple = FALSE),
+  filter_select("layer_filter_OS", "Layers", OS_shared, ~ Layer, multiple = FALSE),
+  filter_select("gene_filter_OS", "Genes", OS_shared, ~ Gene, multiple = FALSE)
+)
+```
+
+```{js}
+//| output: false
+
+function filter_default() {
+  document.getElementById("stage_filter_OS").getElementsByClassName("selectized")[0].selectize.setValue("P8", false)
+  document.getElementById("layer_filter_OS").getElementsByClassName("selectized")[0].selectize.setValue("PC", false) 
+  document.getElementById("gene_filter_OS").getElementsByClassName("selectized")[0].selectize.setValue("Apex1", false)
+}
+
+window.onload = filter_default;
+```
+
+```{r}
+#| fig-width: 10
+
+(plot_ly(
+    OS_shared,
+    x = ~ interaction(Condition, Gene, Layer, Stage),
+    y = ~ DCq,
+    color = ~ Condition,
+    name = ~ Layer,
+    split = ~ Stage,
+    type = "box",
+    boxpoints = "all", 
+    jitter = 0.3,
+    colors = c(N = "#02ccae", IH = "#9965db")
+  )
+  |> layout(
+    autosize = TRUE, 
+    showlegend = FALSE, 
+    xaxis = list(title = NA, type = "category")
+  )
+)
+```
+
+
+# Temporal & Spatial Dynamics
+
+```{r}
+#| fig-width: 10
+#| fig-height: 15
+
+left_join(OS_data$clean, select(OS_data$models, -Mod), join_by(Stage, Layer, Gene)) |> 
+  make_heatmap("Layer", "Stage")
+```

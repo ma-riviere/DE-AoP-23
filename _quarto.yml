@@ -1,0 +1,192 @@
+project:
+  type: website
+  output-dir: "docs"
+  preview: 
+    port: 4949
+    browser: true
+    watch-inputs: true
+    navigate: true
+  resources:
+    - .nojekyll
+    - "content/**/*.pdf"
+    - "/res/*"
+    - "/libs/*"
+  render:
+    - "**/*.qmd"
+  post-render: src/render-extras.R
+
+website:
+  title: "AoP Transcriptomics"
+  description: "Data & R analysis code for *Rodriguez-Duboc A. et al. (2023)*"
+  favicon: res/brain-hypo.png
+  
+  site-url: 'https://ma-riviere.github.io/DE-AoP-23/'
+  repo-url: "https://github.com/ma-riviere/DE-AoP-23/"
+  repo-branch: main
+  
+  ### [☣️ TODO] Analytics ###
+  # google-analytics:
+  #   tracking-id: ""
+  # cookie-consent:
+  #   type: implied
+  
+  ### Sharing ###
+  open-graph:
+    locale: en_US
+  twitter-card:
+    creator: "@mariviere1"
+    card-style: summary
+  
+  ### Search ###
+  search:
+    location: navbar
+    type: overlay
+    collapse-after: 2
+    show-item-context: true
+  
+  ### Navigation ###
+  back-to-top-navigation: true
+  page-navigation: true
+  bread-crumbs: true
+
+  navbar:
+    logo: res/brain-hypo.png
+    logo-alt: "A stylized representation of a brain with a warning sign indicating a lack of oxygen"
+    pinned: true
+    collapse: true
+    collapse-below: md
+    background: primary
+    left:
+      - text: "Data"
+        file: content/data/index.qmd
+      - text: "Analysis"
+        file: content/analysis/index.qmd
+      - text: "Paper"
+        file: content/paper/index.qmd
+      - text: "Extras"
+        file: content/extras/figures/index.qmd
+    tools:
+      - icon: github
+        text: Source Code
+        url:  https://github.com/ma-riviere/DE-AoP-23
+        aria-label: "Website's source code"
+
+  sidebar:
+    - title: "Data"
+      style: floating
+      alignment: left
+      border: true
+      pinned: true
+      collapse-level: 2
+      contents:
+        - content/data/index.qmd
+        - text: "---"
+        - section: "PCR"
+          contents:
+            - content/data/PCR/OS.qmd
+            - content/data/PCR/ND.qmd
+        - text: "---"
+        - section: "IHC"
+          contents:
+            - content/data/IHC/Calb.qmd
+            - content/data/IHC/Casp.qmd
+    
+    - title: "Analysis"
+      contents:
+        - content/analysis/index.qmd
+        - text: "---"
+        - section: "PCR"
+          contents:
+            - content/analysis/PCR/OS.qmd
+            - content/analysis/PCR/ND.qmd
+        - text: "---"
+        - section: "IHC"
+          contents:
+            - content/analysis/IHC/Calb.qmd
+            - content/analysis/IHC/Casp.qmd
+    
+    - title: "Extras"
+      contents:
+        - section: "Extras"
+          contents:
+            - content/extras/figures/index.qmd
+            - content/extras/coms/index.qmd
+
+  ### Footer ###
+  page-footer:
+    border: true
+    background: dark
+    left: 
+      - text: "Content {{< fa brands creative-commons >}} 2022-2023 by Marc-Aurèle Rivière & Agalic Rodriguez-Duboc"
+        href: "https://github.com/ma-riviere/DE-AoP-23/blob/main/LICENSE"
+        aria-label: "Website's license"
+    center:
+      - text: "About"
+        file: content/about.qmd
+        aria-label: "About this website"
+    right: "Made with {{< fa brands r-project >}}, {{< fa brands js >}}, and [Quarto](https://quarto.org/)"
+
+### Format options ###
+
+format:
+  html:
+    theme: [default, "libs/css/DE-AoP-23.scss"]
+    css: "libs/css/DE-AoP-23.css"
+    grid:
+      sidebar-width: 250px
+      body-width: 1100px
+      margin-width: 250px
+    df-print: paged
+    toc: true
+    toc-title: "On this page"
+    toc-depth: 3
+    number-sections: true
+    number-depth: 3
+    code-link: true
+    fig-dpi: 400
+    fig-format: svg
+    fig-align: center
+    code-block-bg: true
+    highlight-style:
+      light: libs/highlight-styles/light.theme
+    link-external-newwindow: true
+
+### Bibliography ###
+
+bibliography: res/refs.bib
+csl: res/apa.csl
+link-citations: true
+
+### Parsing options ###
+
+from: markdown+emoji
+
+### Image options ###
+
+lightbox: true
+
+### Execution / R options ###
+
+engine: knitr
+
+knitr:
+  opts_chunk:
+    warning: false
+    message: false
+    # fig.align: center # WARN: ☣️ DO NOT USE THAT OPTION
+    dpi: 400
+    dev: svg
+    dev.args:
+      bg: transparent
+    # R.options:
+    #   scipen: 999
+  opts_knit:
+    verbose: false
+
+execute:
+  warning: false
+  message: false
+  cache: false
+  freeze: auto
+
+editor: source

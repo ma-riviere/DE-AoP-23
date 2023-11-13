@@ -2,34 +2,67 @@
 ####💠 Project Setup 💠####
 ####╚══════     ══════╝####
 
-is_installed <- \(pkg) suppressPackageStartupMessages({require(pkg, quietly = TRUE, warn.conflicts = FALSE, character.only = TRUE)})
-
-if (!is_installed("here")) {install.packages("here"); require(here, quietly = TRUE)}
-# here::i_am("src/setup.R")
-
-source(here::here("src", "logger.R"), echo = FALSE)
-
-log.title("\n[SETUP] Setting up the project ...\n")
-
-if (!is_installed("renv")) {install.packages("renv"); require(renv, quietly = TRUE)}
-if(is.null(renv::project())) renv::init(project = here::here(), bare = TRUE, restart = FALSE)
-
-if (!startsWith(.libPaths()[1], here::here())) {
-  v <- paste0("R-", version$major, ".", strsplit(version$minor, ".", fixed = TRUE)[[1]][1])
-  dir <- ifelse(Sys.info()[["sysname"]] == "Windows", "x86_64-w64-mingw32", "x86_64-pc-linux-gnu")
-  path <- here::here("renv", "library", v, dir)
-  if(!dir.exists(path)) dir.create(path, recursive = TRUE)
-  .libPaths(path)
+load_package_if_installed <- function(pkg) {
+  suppressPackageStartupMessages({ require(pkg, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE) })
 }
 
-project_base_scripts <- c("packages.R", "utils.R", "authors.R", "packman.R")
+install_if_missing_then_load <- function(pkgs) {
+  for (pkg in pkgs) {
+    if (!load_package_if_installed(pkg)) 
+      install.packages(pkg, verbose = FALSE, prompt = FALSE)
+    
+    load_package_if_installed(pkg)
+  }
+}
 
-tmp <- sapply(project_base_scripts, \(f) source(here::here("src", f), echo = FALSE))
+load_yml <- function(fp) {
+  if (file.exists(fp)) 
+    return(yaml::read_yaml(fp, eval.expr = TRUE))
+  else {
+    cli_alert_warning("[SETUP] YAML file {.path {fp}} not found !")
+    return(list())
+  }
+}
 
-init_project_packages()
+#-------------------------------#
+####🔺Setting up the project ####
+#-------------------------------#
 
-log.title("[SETUP] Loading additional src scripts ...")
+install_if_missing_then_load(c("here", "renv"))
 
-project_scripts <- fs::dir_ls(path = here::here("src"), type = "file", glob = "*.R") |> fs::path_file()
+if (is.null(renv::project())) 
+  renv::init(project = here(), bare = TRUE, restart = FALSE)
 
-tmp <- sapply(project_scripts[which(project_scripts %ni% c("init.R", "setup.R", project_base_scripts))], \(f) source(here::here("src", f), echo = FALSE))
+install_if_missing_then_load(c("cli", "yaml"))
+
+#--------------------------------#
+####🔺Installing the packages ####
+#--------------------------------#
+
+cli_h1("[PACKAGES] Setting up the project packages")
+
+source(here("src", "pakman.R"), echo = FALSE)
+
+restore_project_packages()
+
+#--------------------------------#
+####🔺Configuring the project ####
+#--------------------------------#
+
+cli_h1("[CONFIG] Setting project and packages' options")
+
+source(here("src", "config.R"), echo = FALSE)
+source(here("src", "theme.R"), echo = FALSE)
+
+#---------------------#
+####🔺Source files ####
+#---------------------#
+
+cli_h1("[SCRIPTS] Loading project scripts")
+
+scripts_dir <- here("src", "scripts")
+
+list.files(scripts_dir, pattern = "*.R") |> 
+  grep(pattern = 'setup|init|config|theme|pakman', invert = TRUE, value = TRUE) |> 
+  sapply(\(file) source(here(scripts_dir, file), echo = FALSE)) |> 
+  invisible()
