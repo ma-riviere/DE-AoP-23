@@ -69,6 +69,501 @@
     ]
   },
   {
+    "objectID": "content/data/IHC/Casp.html",
+    "href": "content/data/IHC/Casp.html",
+    "title": "Caspase",
+    "section": "",
+    "text": "Most of the tables and figures on this page are interactive !",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/data/IHC/Casp.html#data-dictionary",
+    "href": "content/data/IHC/Casp.html#data-dictionary",
+    "title": "Caspase",
+    "section": "\n1.1 Data Dictionary",
+    "text": "1.1 Data Dictionary\nWhat each variable name represents, and how they are labeled within plots.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/index.html",
+    "href": "content/analysis/index.html",
+    "title": "Foreword",
+    "section": "",
+    "text": "The main goal of this study was to explore the effect of Intermittent Hypoxia (encoded by the IH level of the Condition variable) on the expression of certain genes of interest, at various developmental stages, and in multiple layers of the cerebellum. We also correlate these changes in gene expression with cell death mechanisms.",
+    "crumbs": [
+      "Foreword"
+    ]
+  },
+  {
+    "objectID": "content/analysis/index.html#pcr",
+    "href": "content/analysis/index.html#pcr",
+    "title": "Foreword",
+    "section": "3.1 PCR",
+    "text": "3.1 PCR\nHere, we analyzed the changes in expression of two panels of genes: a Neurodevelopment (ND) panel and an Oxidative Stress (OS) panel.\n\n\n\n\n\n\n\nRefer to the relevant sub-section of the Data section to see which genes and pathways are studied in each panel.\n\n\nWithin each panel, we define a simple linear regression model to test the effect of Condition on a gene’s expression, which is operationalized through the DCq variable, representing the difference between the quantification cycles of the gene of interest and a combination of relevant housekeeping genes. Random effects were added when we suspected potential clustering effects, such as the possible correlation or hierarchical dependencies stemming from the experimental design.\nThat model was then applied to each Gene of a given Stage and Layer.\n\n\n\n\n\n\nEach gene panel will be divided in:\n\nModel fitting & diagnostics: which model was fit to the data of this panel’s genes, and how well does the model fit the observed data.\nModel analysis: the models’ coefficients and contrasts of interests. This part several plots showing which genes are up or down-regulated genes, as well as the fold-change timelines showcased in the article.",
+    "crumbs": [
+      "Foreword"
+    ]
+  },
+  {
+    "objectID": "content/analysis/index.html#ihc",
+    "href": "content/analysis/index.html#ihc",
+    "title": "Foreword",
+    "section": "3.2 IHC",
+    "text": "3.2 IHC\nHere, we analyzed the apoptotic marker cleaved Caspase-3 to further explore cell death mechanisms induced by Intermittent Hypoxia. Meanwhile, the marker Calbindin allowed us to monitor the effect of IH on Purkinje Cells.\nBoth Capsase and Calbindin sub-sections contain multiple responses of interest, which were modeled independently.\n\n\n\n\n\n\nEach response of interest will be divided in:\n\nModel fitting & diagnostics: which model was fit to the data of this variable, and how well does the model fit the observed data.\nModel analysis: the models’ coefficients, marginal means, and contrasts of interests. This part includes the boxplots showcased in the article.",
+    "crumbs": [
+      "Foreword"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/ND.html",
+    "href": "content/analysis/PCR/ND.html",
+    "title": "Neurodevelopment",
+    "section": "",
+    "text": "Setupsource(here::here(\"src\", \"setup.R\"), echo = FALSE)\n\n## Since downlit doesn't seem to link packages without an explicit & visible library() call anymore ...\n\nlibrary(here)\nlibrary(pipebind)\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nlibrary(glmmTMB)\nlibrary(parameters)\nlibrary(insight)\nlibrary(performance)\nlibrary(emmeans)\n\nlibrary(DT)\nlibrary(plotly)\n\n## Data\n\nsupplementary_data &lt;- load_supplementary_data()\n\nND_data &lt;- load_pcr_data(\"ND\")",
+    "crumbs": [
+      "PCR",
+      "Neurodevelopment"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/ND.html#fitting-the-model",
+    "href": "content/analysis/PCR/ND.html#fitting-the-model",
+    "title": "Neurodevelopment",
+    "section": "\n2.1 Fitting the model",
+    "text": "2.1 Fitting the model\nLet’s define the model we will fit to each Gene’s DCq data.\nHere, we will fit a simple Linear Model, which is largely similar to running a t-test between both conditions:\n\\[\n\\begin{aligned}\n  DCq  &\\sim N \\left(\\alpha + \\beta_{1}(Condition), \\sigma^2 \\right)\n\\end{aligned}\n\\]\n\nND_model &lt;- function(data) {\n  glmmTMB(DCq ~ Condition, family = gaussian(\"identity\"), data = data, contrasts = list(Condition = \"contr.sum\"))\n}\n\nNow, let’s fit said model to each Gene’s data, for a given Stage and Layer:\n\ncompute_fold_changecompute_fold_change &lt;- function(mod) {\n  return(\n    get_data(mod) \n    |&gt; select(Condition, DCq) \n    |&gt; pivot_wider(names_from = Condition, values_from = DCq, values_fn = mean) \n    |&gt; summarize(Fold = 2**(-1 * (IH - N))) \n    |&gt; pull(Fold) \n  )\n}\n\n\n\n(ND_data$models &lt;- ND_data$clean\n  |&gt; group_split(Stage, Layer, Gene)\n  |&gt; map_dfr(\n    \\(d) summarize(d, Mod = pick(Condition, DCq) |&gt; ND_model() |&gt; list(), .by = c(Stage, Layer, Gene)), \n    .progress = \"Fitting models:\"\n  )\n  |&gt; filter(!has_na_coefs(Mod)) # Removing models that did not fit properly\n  |&gt; mutate(Fold = map_dbl(Mod, compute_fold_change)) # Adding the Fold change\n  |&gt; select(Stage, Layer, Gene, Fold, Mod)\n)",
+    "crumbs": [
+      "PCR",
+      "Neurodevelopment"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/ND.html#model-diagnostics",
+    "href": "content/analysis/PCR/ND.html#model-diagnostics",
+    "title": "Neurodevelopment",
+    "section": "\n2.2 Model diagnostics",
+    "text": "2.2 Model diagnostics\nHere are the diagnostic plots for a random sample of the fitted models:",
+    "crumbs": [
+      "PCR",
+      "Neurodevelopment"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/ND.html#gene-regulation-overview",
+    "href": "content/analysis/PCR/ND.html#gene-regulation-overview",
+    "title": "Neurodevelopment",
+    "section": "\n3.1 Gene regulation overview",
+    "text": "3.1 Gene regulation overview\nWe can get a general overview of which Gene are up or down-regulated through a Sunburst plot, stacked by Stage and Layer.\n\nmake_suburst_plotmake_suburst_plot &lt;- function(dat, layers, tooltips = NULL, colors = NULL, plot_options = list()) {\n  \n  if (!is.null(colors)) colors &lt;- set_names(colors, \\(x) x |&gt; str_replace_all(\" \", \"\\n\") |&gt; str_replace_all(\"and\\n\", \"and \"))\n  \n  .make_sunburst_data &lt;- function(dat, layers_part) {\n    \n    if (all(layers == layers_part))\n      sun_dat &lt;- summarize(dat, across(any_of(c(layers_part, tooltips)), first), .by = all_of(layers_part))\n    else \n      sun_dat &lt;- summarize(dat, across(any_of(layers_part), first), .by = all_of(layers_part))\n    \n    return(\n      bind_cols(\n        transmute(sun_dat, ids = pick(any_of(layers_part)) |&gt; pmap_chr(\\(...) str_c(..., sep = \"&gt;&gt;\"))),\n        transmute(\n          sun_dat, \n          parents = pick(any_of(layers_part)) |&gt; \n            select(-last_col()) |&gt; \n            pmap_chr(\\(...) str_c(..., sep = \"&gt;&gt;\")) |&gt; \n            bind(x, if (is_empty(x)) \"\" else x)\n        ),\n        transmute(sun_dat, labels = pick(any_of(layers_part)) |&gt; select(last_col()) |&gt; pull(1))\n      )\n      |&gt; bind(\n        x, \n        if (all(layers == layers_part) & !is.null(tooltips)) \n          bind_cols(\n            x, \n            transmute(\n              sun_dat, \n              hovertext = pmap_chr(\n                pick(all_of(tooltips)), \n                \\(...) str_c(\n                  names(c(...)), \n                  map_if(list(...), is.numeric, \\(x) round(x, 3)) |&gt; map_if(is.factor, as.character), \n                  sep = \": \", \n                  collapse = \"\\n\"\n                )\n              )\n            )\n          )\n        else x\n      )\n      |&gt; mutate(labels = labels |&gt; str_replace_all(\" \", \"\\n\") |&gt; str_replace_all(\"and\\n\", \"and \"))\n    )\n  }\n  \n  params &lt;- map_dfr(1:length(layers), \\(x) .make_sunburst_data(dat, layers[1:x])) |&gt; \n    mutate(bg_color = map_chr(labels, \\(x) colors[[x]] %||% NA))\n  \n  rlang::exec(\n    plotly::plot_ly,\n    !!!select(params, -bg_color),\n    type = \"sunburst\",\n    branchvalues = \"total\",\n    hoverinfo = \"text\",\n    sort = FALSE,\n    marker = list(colors = ~params$bg_color),\n    !!!plot_options\n  )\n}\n\n\n\nND_data$predictions |&gt;\n  filter(Expression != regulation_type$NOT_REG) |&gt;\n  left_join(supplementary_data$gene_data$ND, join_by(Gene)) |&gt;\n  make_suburst_plot(\n    layers = c(\"Stage\", \"Layer\", \"Expression\", \"Gene\"),\n    tooltips = c(\"Gene\", \"Pathway\", \"Pathway_family\", \"Fold\", \"p.value\"),\n    colors = sunburst_pcr_colors,\n    plot_options = list(insidetextorientation = 'radial')\n  )",
+    "crumbs": [
+      "PCR",
+      "Neurodevelopment"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/ND.html#regulation-pathways",
+    "href": "content/analysis/PCR/ND.html#regulation-pathways",
+    "title": "Neurodevelopment",
+    "section": "\n3.2 Regulation & Pathways",
+    "text": "3.2 Regulation & Pathways\nWe can extend the previous plot to better visualize to which Pathway the regulated genes are linked to.\n\nmake_circlize_plotmake_circlize_plot &lt;- function(dat, resolution = 15000, save_to = NULL) {\n  \n  stage_list &lt;- read_excel(configs$data$PCR$data_dict, sheet = \"Stage\")$Name\n  layer_list &lt;- read_excel(configs$data$PCR$data_dict, sheet = \"Layer\")$Name |&gt; discard(\\(x) x == \"Whole\")\n  pathway_families &lt;- read_excel(configs$data$PCR$data_dict, sheet = \"Pathway_family\")$Name\n  \n  crossed_layer_order &lt;- (\n    crossing(Stage = stage_list, Layer = layer_list)\n    |&gt; mutate(across(c(Stage, Layer), \\(x) to_factor(x, configs$data$PCR$data_dict)))\n    |&gt; arrange(Stage, Layer)\n    |&gt; unite(c(Stage, Layer), col = \"Layer\", sep = \"_\", remove = FALSE)\n    |&gt; pull(Layer)\n  )\n  \n  circlize_data &lt;- (\n    dat\n    |&gt; filter(p.value &lt;= .05)\n    |&gt; select(Stage, Layer, Gene, Pathway, Pathway_family, Fold, p.value, Expression)\n    |&gt; unite(c(Stage, Layer), col = \"Layer\", sep = \"_\", remove = FALSE)\n    |&gt; mutate(Layer = factor(Layer, levels = crossed_layer_order))\n    |&gt; arrange(Layer)\n    |&gt; droplevels()\n  )\n  \n  df_chord &lt;- (\n    circlize_data \n    |&gt; distinct(Layer, Pathway, Gene)\n    |&gt; summarize(N_reg = n(), .by = c(Layer, Pathway))\n    |&gt; mutate(Layer = as.character(Layer))\n  )\n  \n  mat_chord &lt;- (\n    xtabs(\n      N_reg ~ Layer + Pathway, \n      data = df_chord |&gt; \n        mutate(\n          Layer = factor(Layer, levels = crossed_layer_order),\n          Pathway = to_factor(Pathway, configs$data$PCR$data_dict)\n        ) |&gt; \n        arrange(Layer),\n      drop.unused.levels = TRUE\n    )\n  )\n  \n  df_layer &lt;- (\n    tibble(Sector = rownames(mat_chord))\n    |&gt; mutate(N_Connection = rowSums(mat_chord)) \n    |&gt; filter(N_Connection &gt; 0)\n  )\n  \n  df_pathway &lt;- (\n    tibble(Sector = colnames(mat_chord))\n    |&gt; mutate(N_Connection = colSums(mat_chord)) \n    |&gt; filter(N_Connection &gt; 0)\n  )\n  \n  qual_col_pals &lt;- RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]\n  col_vector &lt;- unlist(mapply(RColorBrewer::brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))\n  \n  df_extra &lt;- (\n    bind_rows(df_layer, df_pathway)\n    |&gt; mutate(\n      Color = col_vector[1:n()],\n      Layer = ifelse(str_detect(Sector, \"P[0-9]+_\"), str_remove(Sector, \"P[0-9]+_\"), NA),\n      Stage = str_extract(Sector, \"P[0-9]+\"),\n    )\n    |&gt; select(Sector, Layer, Stage, Color, N_Connection)\n  )\n  \n  get_genes_barplot &lt;- function(index, theta) {\n    return(\n      circlize_data\n      |&gt; filter(Layer == index)\n      |&gt; distinct(Gene, Fold, p.value, Expression)\n      |&gt; mutate(\n        Orientation = theta,\n        Label = ifelse(\n          Orientation &lt; 90 | Orientation &gt; 270,\n          as.character(str_glue(\"{Gene} ({round(Fold, 2)}) {gtools::stars.pval(p.value)}\")),\n          as.character(str_glue(\"{gtools::stars.pval(p.value)} ({round(Fold, 2)}) {Gene}\"))\n        ),\n        Fold = ifelse(\n          Fold &gt;= 1,\n          scales::rescale(Fold, to = c(0, 1), from = c(1, max(circlize_data$Fold))),\n          scales::rescale(Fold, to = c(-1, 0), from = c(min(circlize_data$Fold), 1))\n        ),\n        Color = ifelse(str_detect(Expression, regulation_type$UPREG), colors_fold[2], colors_fold[1])\n      )\n      |&gt; arrange(Gene)\n      |&gt; select(Fold, Label, Color)\n    )\n  }\n  \n  # Drawing the plot\n  \n  if (!is.null(save_to)) png(save_to, width = resolution, height = resolution)\n  \n  circos.clear()\n  \n  circos.par(cell.padding = c(0, 0, 0, 0), points.overflow.warning = FALSE, start.degree = 180)\n  \n  colors &lt;- c(\n    \"#03937e\",\"#02ccae\",\"#86e3d5\",\"#b9f0e7\",\n    \"#0264cc\",\"#3680cf\",\"#66a0de\",\"#95bce6\",\"#bed1e6\",\n    \"#5204b3\",\"#7835cc\",\"#9965db\",\"#ac85de\",\"#d1bbed\",\n    \"#76187a\", \"#b625bb\",\"#e37ae6\",\"#eeb1f0\", \n    \"#8c013b\", \"#b8024e\",\"#f589b6\",\n    \"#f02b00\",\"#faa491\",\"#f59002\",\"#ffda8f\",\"#81c700\", \"#d1eb52\", \"#01944b\", \"#78e3a1\"\n  )\n  \n  ## Chord diagram\n  \n  h0 &lt;- resolution / 220\n  h1 &lt;- resolution / 180\n  h2 &lt;- resolution / 90\n  \n  chord_plot &lt;- circlize::chordDiagram(\n    as.matrix(mat_chord),\n    grid.col = colors,\n    directional = 1,\n    diffHeight = mm_h(h0*1.1),\n    target.prop.height = mm_h(h0),\n    direction.type = c(\"diffHeight\", \"arrows\"),\n    link.arr.type = \"big.arrow\",\n    # big.gap = 10,\n    small.gap = 0.15,\n    transparency = 0.20,\n    annotationTrack = \"grid\",\n    preAllocateTracks = list(\n      list(\n        track.height = mm_h(h1)\n      ), # Track 1 (or 3 ?)\n      list(\n        track.height = mm_h(h2),\n        track.margin = c(mm_h(h2), 0)\n      ), # Track 2\n      list(\n        track.height = mm_h(h1)\n      ) # Track 3 (or 1 ?)\n    ),\n    annotationTrackHeight = mm_h(h1), # Track 4\n    scale = TRUE\n    \n  )\n  \n  ## Track 4 : Layer/Stage legend\n  \n  track_chord &lt;- 4\n  cex_chord &lt;- resolution / 1350\n  \n  circos.track(\n    track.index = track_chord,\n    panel.fun = function(x, y) {\n      \n      theta &lt;- (circlize(mean(CELL_META$xlim), 1.3)[1, 1] %% 360)[[1]]\n      facing &lt;- ifelse(theta &gt; 220 && theta &lt; 320,  c(\"outside\", \"bending.outside\"), c(\"inside\", \"bending.inside\"))\n      \n      circos.text(\n        CELL_META$xcenter,\n        CELL_META$ycenter,\n        str_remove(CELL_META$sector.index, \"P[0-9]+_\"),\n        col = \"black\",\n        font = 1,\n        cex = cex_chord,\n        adj = c(0.5, 0.5),\n        facing = facing\n      )\n    },\n    bg.border = NA\n  )\n  \n  ## Track 3 : Stage & Pathway family legend\n  \n  track_families &lt;- 3\n  cex_families &lt;- resolution / 1200\n  \n  colors.stages &lt;- c(\"#03937e\", \"#0264cc\", \"#5204b3\", \"#76187a\", \"#8c013b\")\n  \n  for (stage in stage_list) {\n    highlight.sector(\n      sector.index = df_extra |&gt; filter(Stage == stage) |&gt; pull(Sector), # purrr::keep(df_extra$Sector, \\(x) str_detect(x, \"P4\"))\n      track.index = track_families,\n      col = colors.stages[which(stage_list == stage)[[1]]],\n      text = stage,\n      cex = cex_families,\n      font = 2,\n      text.col = \"white\",\n      facing = \"bending.inside\",\n      niceFacing = FALSE\n    )\n  }\n  \n  colors.pf &lt;- c(\"#eb4f2d\",\"#83c108\", \"#f5a402\", \"#2cc969\")\n  \n  for (pf in pathway_families) {\n    \n    circlize_data |&gt; filter(Pathway_family == pf) |&gt; distinct(Pathway) |&gt; pull()\n    \n    highlight.sector(\n      sector.index = circlize_data |&gt; filter(Pathway_family == pf) |&gt; distinct(Pathway) |&gt; pull(),\n      track.index = track_families,\n      col = colors.pf[which(pathway_families == pf)[[1]]],\n      text = pf,\n      cex = cex_families,\n      font = 2,\n      text.col = \"white\",\n      facing = \"bending.outside\",\n      niceFacing = TRUE\n    )\n  }\n  \n  ## Track 2 : barplot\n  \n  track_barplot &lt;- 2\n  cex_barplot &lt;- resolution / 2000\n  \n  circos.track(\n    track.index = track_barplot,\n    panel.fun = \\(x, y) {\n      \n      if (str_detect(CELL_META$sector.index, \"P[0-9]+_\")) {\n        \n        circos.segments(\n          x0 = 0,\n          x1 = 1,\n          y0 = 0,\n          y1 = 0,\n          lty = \"solid\"\n        )\n        \n        draw.sector(\n          get.cell.meta.data(\"cell.start.degree\", sector.index = CELL_META$sector.index),\n          get.cell.meta.data(\"cell.end.degree\", sector.index = CELL_META$sector.index),\n          rou1 = get.cell.meta.data(\"cell.top.radius\", track.index = track_barplot),\n          rou2 = get.cell.meta.data(\"cell.top.radius\", track.index = track_barplot + 1) + mm_h(2),\n        )\n        \n        theta &lt;- (circlize(mean(CELL_META$xlim), 1.3)[1, 1] %% 360)[[1]]\n        genes_barplot &lt;- get_genes_barplot(CELL_META$sector.index, theta)\n        # xpos &lt;- seq(from = 0.1, to = 0.9, length.out = nrow(genes_barplot))\n        # xamp &lt;- abs(CELL_META$cell.xlim[2] - CELL_META$cell.xlim[1])\n        xpos &lt;- seq(from = CELL_META$cell.xlim[1] + 0.05 , to = CELL_META$cell.xlim[2] - 0.05 , length.out = nrow(genes_barplot))\n        facing &lt;- ifelse(theta &lt; 90 || theta &gt; 270, \"clockwise\", \"reverse.clockwise\")\n        adjust &lt;- ifelse(theta &lt; 90 || theta &gt; 270, c(0, 0.5), c(1, 0.5)) \n        \n        \n        if (nrow(genes_barplot) &gt; 0) {\n          circos.barplot(\n            pos = xpos,\n            value = genes_barplot$Fold,\n            bar_width = 0.025,\n            col = genes_barplot$Color,\n            border = genes_barplot$Color\n          )\n          \n          circos.text(\n            x = xpos,\n            y = get.cell.meta.data(\"cell.top.radius\", track.index = track_barplot) + 0.2,\n            labels = genes_barplot$Label,\n            col = genes_barplot$Color,\n            font = 2,\n            cex = cex_barplot,\n            adj = c(adjust),\n            facing = c(facing)\n          )\n        }\n      }\n    },\n    bg.border = NA\n  )\n  \n  ## Track 1 : Empty (gene labels)\n  \n  if (!is.null(save_to)) dev.off()\n}\n\n\n\nND_data$predictions |&gt; \n  left_join(supplementary_data$gene_data$ND, join_by(Gene)) |&gt;\n  make_circlize_plot()",
+    "crumbs": [
+      "PCR",
+      "Neurodevelopment"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/ND.html#gene-regulation-timeline",
+    "href": "content/analysis/PCR/ND.html#gene-regulation-timeline",
+    "title": "Neurodevelopment",
+    "section": "\n3.3 Gene regulation timeline",
+    "text": "3.3 Gene regulation timeline\nTo get a better idea of how each Gene’s regulation changes through time, we can plot a timeline of their expression, split by Layer and Pathway.\n\nmake_fold_timeline_plotmake_fold_timeline_plot &lt;- function(\n    dat, facet_rows = \"Pathway\", trans = \"identity\", \n    color_by = NULL, colors = colors_effect, size_boost = 1\n) {\n  \n  origin &lt;- do.call(trans, list(1))\n  \n  dat &lt;- (\n    dat\n    |&gt; mutate(Fold_trans = do.call(trans, list(Fold)))\n    |&gt; mutate(Fold_Amp = ifelse(\n      max(Fold_trans, na.rm = TRUE) - min(Fold_trans, na.rm = TRUE) != 0, \n      max(Fold_trans, na.rm = TRUE) - min(Fold_trans, na.rm = TRUE), \n      mean(Fold_trans, na.rm = TRUE)) * 0.1,\n      .by = all_of(c(facet_rows, \"Stage\"))\n    )\n  )\n  \n  timeline &lt;- (\n    ggplot(dat)\n    + { if(is.null(color_by)) aes(x = Gene, color = Fold &gt;= 1) else aes(x = Gene, color = .data[[color_by]]) }\n    + geom_linerange(aes(ymax = Fold_trans), ymin = origin, size = 2 + (size_boost * 0.5))\n    + geom_hline(yintercept = origin, size = 0.3, linetype = \"dotted\")\n    + geom_text(aes(\n        label = str_c(round(Fold, 2), stars.pval(p.value) |&gt; str_replace(fixed(\".\"), \"\"), sep = \" \"), \n        y = ifelse(Fold_trans &gt; origin, Fold_trans + Fold_Amp, Fold_trans - Fold_Amp),\n        hjust = ifelse(Fold &gt; 1, 0, 1)\n      ),\n      vjust = 0.5, angle = 0, size = 2 + (size_boost * 0.25), check_overlap = TRUE\n    )\n    + scale_color_manual(\" \", values = colors)\n    + scale_y_continuous(breaks = c(0,1,2,3), expand = expansion(mult = 1.01 * (1 + (size_boost/100))))\n    + scale_x_discrete(expand = expansion(add = 1 * size_boost), limits = \\(x) rev(x))\n    + labs(\n      x = \"\",\n      y = ifelse(trans != \"identity\", str_glue(\"Fold Change *({trans} scale)*\"), \"Fold Change\")\n    )\n    + coord_flip()\n    + facet_grid(\n      vars(.data[[facet_rows]]), vars(Stage), \n      scales = \"free_y\", space = \"free_y\", labeller = label_wrap_gen(width = 12, multi_line = TRUE)\n    )\n    + { if (!is.null(color_by)) guides(color = guide_legend(title = color_by)) }\n    + theme(\n      legend.position = ifelse(is.null(color_by), \"none\", \"bottom\")\n      , axis.text.x = element_blank()\n      , axis.title.x = element_markdown(size = 9)\n      , axis.text.y = element_text(size = 7)\n      , strip.text = element_text(size = 5 * size_boost)\n      , plot.title = element_markdown(size = 9, face = \"plain\", vjust = 1, hjust = 0.5)\n    )\n  )\n  \n  return(timeline)\n}\n\n\n\nrender_ND_timelinerender_ND_timeline &lt;- function(dat, group) {\n  \n  cur_group_name &lt;- get_var_level_name(\"Layer\", first(group[[1]]), \"PCR\")\n  \n  plot &lt;- make_fold_timeline_plot(dat, facet_rows = \"Pathway_family\", trans = \"log\", colors = colors_fold, size_boost = 1.5)\n  \n  width &lt;- 2 + n_distinct(dat$Stage)\n  height &lt;- dat |&gt; \n    group_by(Pathway_family) |&gt; \n    group_map(\\(d, g) n_distinct(d$Gene) * 0.1 + 1.3) |&gt; \n    flatten_dbl() |&gt; \n    sum()\n  \n  template_md &lt;- c(\n    '### `r cur_group_name`',\n    '```{r}',\n    '#| echo: false',\n    '#| fig-width: !expr width',\n    '#| fig-height: !expr height',\n    'plot',\n    '```'\n  )\n  \n  knitr::knit_child(text = template_md, envir = rlang::env(), quiet = TRUE)\n}\n\n\n\nND_timelines &lt;- (\n  ND_data$predictions \n  |&gt; left_join(supplementary_data$gene_data$ND, join_by(Gene))\n  |&gt; left_join(supplementary_data$layer_families, join_by(Layer))\n  |&gt; filter(p.value &lt;= .05)\n  |&gt; filter(!(Layer_family == \"PC\" & Stage == \"P4\")) # PCs are too small and undifferentiated at that stage to properly microdissect\n  |&gt; select(Stage, Layer, Layer_family, Gene, Fold, p.value, Expression, Pathway, Pathway_family)\n  |&gt; mutate(Stage = case_when(\n      Layer %in% c(\"EGLi\", \"EGLo\") ~ str_glue(\"{Stage} ({Layer})\"),\n      .default = as.character(Stage)\n    ) \n    |&gt; factor(levels = c(\"P4\", \"P8\", \"P8 (EGLo)\", \"P8 (EGLi)\", \"P12\", \"P21\", \"P70\"))\n  )\n  |&gt; group_by(Layer_family)\n  |&gt; group_map(render_ND_timeline)\n  |&gt; unlist()\n)\n\n\n\nExternal Granular Layer\nInternal Granular Layer\nMolecular Layer\nPurkinje Cells\nWhite Matter",
+    "crumbs": [
+      "PCR",
+      "Neurodevelopment"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Calb.html",
+    "href": "content/analysis/IHC/Calb.html",
+    "title": "Calbindin",
+    "section": "",
+    "text": "Setupsource(here::here(\"src\", \"setup.R\"), echo = FALSE)\n\n## Since downlit doesn't seem to link packages without an explicit & visible library() call anymore ...\n\nlibrary(here)\nlibrary(pipebind)\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nlibrary(glmmTMB)\nlibrary(parameters)\nlibrary(insight)\nlibrary(performance)\nlibrary(DHARMa)\nlibrary(emmeans)\n\nlibrary(DT)\nlibrary(gt)\nlibrary(gtsummary)\n\n## Data\n\ncalb_responses &lt;- c(\"N_CC\", \"Vol_PC_per_cell\")\n\ncalb_data &lt;- load_calb_data()",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Calb.html#model-fitting-diagnostics",
+    "href": "content/analysis/IHC/Calb.html#model-fitting-diagnostics",
+    "title": "Calbindin",
+    "section": "\n2.1 Model fitting & diagnostics",
+    "text": "2.1 Model fitting & diagnostics\nHere, we chose to model N_CC, which are counts, with a Generalized Poisson family (which can handle both over and under-dispersion). We use a random intercept per Mouse to account for pseudo-replication.\n\nN_CC_mod &lt;- glmmTMB(\n  N_CC ~ Condition + (1 | Mouse),\n  family = genpois(\"log\"),\n  data = calb_data$clean,\n  REML = TRUE\n)\n\n\n2.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(N_CC_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(N_CC_mod)\n\n\n\n\n\ncheck_overdispersion(N_CC_mod)\n\n# Overdispersion test\n\n       dispersion ratio =   0.935\n  Pearson's Chi-Squared = 248.704\n                p-value =    0.77\n\n\n\n2.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nN_CC_mod_dharma &lt;- simulateResiduals(N_CC_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nN_CC_mod_dharma_t &lt;- t(N_CC_mod_dharma$simulatedResponse)\n\n\nppc_plots(N_CC_mod, simulations = N_CC_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(N_CC_mod, simulations = N_CC_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n2.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n\n\n\n  \n\n\n\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers before fitting our model.",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Calb.html#model-analysis",
+    "href": "content/analysis/IHC/Calb.html#model-analysis",
+    "title": "Calbindin",
+    "section": "\n2.2 Model analysis",
+    "text": "2.2 Model analysis\n\n2.2.1 Model parameters\n\n(parameters(\n    N_CC_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(N_CC_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n12.852\n0.299\n(12.278, 13.452)\n109.673\n&lt; .001\n\n\nCondition1\n1.024\n0.024\n(0.978, 1.072)\n1.021\n0.307\n\n\n\nModel: N_CC ~ Condition (268 Observations)\nResidual standard deviation: 0.574 (df = 266)\nConditional R2: 0.089; Marginal R2: 0.012\n\n\n\n\n\n\n2.2.2 Marginal means\n\nemmeans(N_CC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n13.16\n0.4342\n266\n12.33\n14.04\n\n\nIH\n12.55\n0.4115\n266\n11.77\n13.39\n\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n2.2.3 Contrasts\n\nemmeans(N_CC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n1.049\n0.04871\n266\n0.9569\n1.149\n1\n1.021\n0.3084\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(N_CC_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Calb.html#model-fitting-diagnostics-1",
+    "href": "content/analysis/IHC/Calb.html#model-fitting-diagnostics-1",
+    "title": "Calbindin",
+    "section": "\n3.1 Model fitting & diagnostics",
+    "text": "3.1 Model fitting & diagnostics\nHere, we chose to model Vol_PC_per_cell, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nVol_PC_mod &lt;- glmmTMB(\n  Vol_PC_per_cell ~ Condition + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = calb_data$clean,\n  REML = TRUE\n)\n\n\n3.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(Vol_PC_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(Vol_PC_mod)\n\n\n\n\n\n3.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nVol_PC_mod_dharma &lt;- DHARMa::simulateResiduals(Vol_PC_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nVol_PC_mod_dharma_t &lt;- t(Vol_PC_mod_dharma$simulatedResponse)\n\n\nppc_plots(Vol_PC_mod, simulations = Vol_PC_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\nppc_stat_plots(Vol_PC_mod, simulations = Vol_PC_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n3.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n\n\n\n  \n\n\n\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers before fitting our model.",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Calb.html#model-analysis-1",
+    "href": "content/analysis/IHC/Calb.html#model-analysis-1",
+    "title": "Calbindin",
+    "section": "\n3.2 Model analysis",
+    "text": "3.2 Model analysis\n\n3.2.1 Model parameters\n\n(parameters(\n    Vol_PC_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(Vol_PC_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.125\n0.007\n(0.111, 0.141)\n-35.019\n&lt; .001\n\n\nCondition1\n0.997\n0.059\n(0.888, 1.120)\n-0.050\n0.960\n\n\n\nModel: Vol_PC_per_cell ~ Condition (268 Observations)\nResidual standard deviation: 0.284 (df = 266)\nConditional R2: 0.285; Marginal R2: 7.920e-05\n\n\n\n\n\n\n3.2.2 Marginal means\n\nemmeans(Vol_PC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.1247\n0.01049\n266\n0.1057\n0.1472\n\n\nIH\n0.1255\n0.01051\n266\n0.1064\n0.1480\n\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n3.2.3 Contrasts\n\nemmeans(Vol_PC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.994\n0.118\n266\n0.7868\n1.256\n1\n-0.05029\n0.9599\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(Vol_PC_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
+    "objectID": "content/about.html",
+    "href": "content/about.html",
+    "title": "About this website",
+    "section": "",
+    "text": "This website was made with Quarto and hosted through GitHub pages.\nThe following packages were used in its making:"
+  },
+  {
+    "objectID": "content/about.html#references",
+    "href": "content/about.html#references",
+    "title": "About this website",
+    "section": "References",
+    "text": "References\n\n\nAllaire, J., Xie, Y., Dervieux, C., McPherson, J., Luraschi, J., Ushey, K., Atkins, A., Wickham, H., Cheng, J., Chang, W., & Iannone, R. (2023). Rmarkdown: Dynamic documents for r. https://github.com/rstudio/rmarkdown\n\n\nAlmeida, A., Loy, A., & Hofmann, H. (2018). ggplot2 compatible quantile-quantile plots in r. In The R Journal (No. 2; Vol. 10, pp. 248–261). https://doi.org/10.32614/RJ-2018-051\n\n\nAlmeida, A., Loy, A., & Hofmann, H. (2023). Qqplotr: Quantile-quantile plot extensions for ggplot2. https://github.com/aloy/qqplotr\n\n\nBache, S. M., & Wickham, H. (2022). Magrittr: A forward-pipe operator for r. https://magrittr.tidyverse.org\n\n\nBolker, B., Warnes, G. R., & Lumley, T. (2022). Gtools: Various r programming tools. https://github.com/r-gregmisc/gtools\n\n\nBrooks, M. E., Kristensen, K., van Benthem, K. J., Magnusson, A., Berg, C. W., Nielsen, A., Skaug, H. J., Maechler, M., & Bolker, B. M. (2017). glmmTMB balances speed and flexibility among packages for zero-inflated generalized linear mixed modeling. The R Journal, 9(2), 378–400. https://doi.org/10.32614/RJ-2017-066\n\n\nBrooks, M., Bolker, B., Kristensen, K., Maechler, M., Magnusson, A., Skaug, H., Nielsen, A., Berg, C., & van Bentham, K. (2022). glmmTMB: Generalized linear mixed models using template model builder. https://github.com/glmmTMB/glmmTMB\n\n\nCampitelli, E. (2023). Ggnewscale: Multiple fill and colour scales in ggplot2. https://eliocamp.github.io/ggnewscale/\n\n\nCheng, J., & Sievert, C. (2021). Crosstalk: Inter-widget interactivity for HTML widgets. https://rstudio.github.io/crosstalk/\n\n\nCheng, J., Sievert, C., Schloerke, B., Chang, W., Xie, Y., & Allen, J. (2023). Htmltools: Tools for HTML. https://github.com/rstudio/htmltools\n\n\nCsárdi, G. (2023). Cli: Helpers for developing command line interfaces. https://cli.r-lib.org\n\n\nFirke, S. (2023). Janitor: Simple tools for examining and cleaning dirty data. https://github.com/sfirke/janitor\n\n\nFox, J., & Weisberg, S. (2019). An R companion to applied regression (Third). Sage. https://socialsciences.mcmaster.ca/jfox/Books/Companion/\n\n\nFox, J., Weisberg, S., & Price, B. (2022). carData: Companion to applied regression data sets. https://r-forge.r-project.org/projects/car/\n\n\nFox, J., Weisberg, S., & Price, B. (2023). Car: Companion to applied regression. https://r-forge.r-project.org/projects/car/\n\n\nGabry, J., & Mahr, T. (2022). Bayesplot: Plotting for bayesian models. https://mc-stan.org/bayesplot/\n\n\nGabry, J., Simpson, D., Vehtari, A., Betancourt, M., & Gelman, A. (2019). Visualization in bayesian workflow. J. R. Stat. Soc. A, 182, 389–402. https://doi.org/10.1111/rssa.12378\n\n\nGarbett, S. P., Stephens, J., Simonov, K., Xie, Y., Dong, Z., Wickham, H., Horner, J., reikoch, Beasley, W., O’Connor, B., Warnes, G. R., Quinn, M., & Kamvar, Z. N. (2023). Yaml: Methods to convert r data to YAML and back. https://github.com/vubiostat/r-yaml/\n\n\nGohel, D., & Skintzos, P. (2023). Ggiraph: Make ggplot2 graphics interactive. https://davidgohel.github.io/ggiraph/\n\n\nGu, Z. (2022). Circlize: Circular visualization. https://github.com/jokergoo/circlize\n\n\nGu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). Circlize implements and enhances circular visualization in r. Bioinformatics, 30, 2811–2812.\n\n\nHartig, F. (2022). DHARMa: Residual diagnostics for hierarchical (multi-level / mixed) regression models. http://florianhartig.github.io/DHARMa/\n\n\nHenry, L., & Wickham, H. (2023). Rlang: Functions for base types and core r and tidyverse features. https://rlang.r-lib.org\n\n\nHester, J., Wickham, H., & Csárdi, G. (2023). Fs: Cross-platform file system operations based on libuv. https://fs.r-lib.org\n\n\nHyndman, R. J., & Khandakar, Y. (2008). Automatic time series forecasting: The forecast package for R. Journal of Statistical Software, 26(3), 1–22. https://doi.org/10.18637/jss.v027.i03\n\n\nHyndman, R., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., & Yasmeen, F. (2023). Forecast: Forecasting functions for time series and linear models. https://pkg.robjhyndman.com/forecast/\n\n\nIannone, R., Cheng, J., Schloerke, B., Hughes, E., Lauer, A., & Seo, J. (2023). Gt: Easily create presentation-ready display tables. https://gt.rstudio.com/\n\n\nKay, M. (2023). Ggdist: Visualizations of distributions and uncertainty. https://mjskay.github.io/ggdist/\n\n\nLenth, R. V. (2023). Emmeans: Estimated marginal means, aka least-squares means. https://github.com/rvlenth/emmeans\n\n\nLin, G. (2023). Reactable: Interactive data tables for r. https://glin.github.io/reactable/\n\n\nLüdecke, D., Ben-Shachar, M. S., Patil, I., & Makowski, D. (2020). Extracting, computing and exploring the parameters of statistical models using R. Journal of Open Source Software, 5(53), 2445. https://doi.org/10.21105/joss.02445\n\n\nLüdecke, D., Ben-Shachar, M. S., Patil, I., Waggoner, P., & Makowski, D. (2021). performance: An R package for assessment, comparison and testing of statistical models. Journal of Open Source Software, 6(60), 3139. https://doi.org/10.21105/joss.03139\n\n\nLüdecke, D., Makowski, D., Ben-Shachar, M. S., Patil, I., Højsgaard, S., & Wiernik, B. M. (2023). Parameters: Processing of model parameters. https://easystats.github.io/parameters/\n\n\nLüdecke, D., Makowski, D., Ben-Shachar, M. S., Patil, I., Waggoner, P., & Wiernik, B. M. (2023). Performance: Assessment of regression models performance. https://easystats.github.io/performance/\n\n\nLüdecke, D., Makowski, D., Patil, I., Ben-Shachar, M. S., Wiernik, B. M., & Waggoner, P. (2023). See: Model visualisation toolbox for easystats and ggplot2. https://easystats.github.io/see/\n\n\nLüdecke, D., Makowski, D., Patil, I., Waggoner, P., Ben-Shachar, M. S., Wiernik, B. M., Arel-Bundock, V., & Bacher, E. (2023). Insight: Easy access to model information for various model objects. https://easystats.github.io/insight/\n\n\nLüdecke, D., Patil, I., Ben-Shachar, M. S., Wiernik, B. M., Waggoner, P., & Makowski, D. (2021). see: An R package for visualizing statistical models. Journal of Open Source Software, 6(64), 3393. https://doi.org/10.21105/joss.03393\n\n\nLüdecke, D., Waggoner, P., & Makowski, D. (2019). insight: A unified interface to access information from model objects in R. Journal of Open Source Software, 4(38), 1412. https://doi.org/10.21105/joss.01412\n\n\nMakowski, D., Ben-Shachar, M. S., Patil, I., & Lüdecke, D. (2020). Methods and algorithms for correlation analysis in R. Journal of Open Source Software, 5(51), 2306. https://doi.org/10.21105/joss.02306\n\n\nMakowski, D., Wiernik, B. M., Patil, I., Lüdecke, D., & Ben-Shachar, M. S. (2022). correlation: Methods for correlation analysis. https://CRAN.R-project.org/package=correlation\n\n\nMakowski, D., Wiernik, B. M., Patil, I., Lüdecke, D., & Ben-Shachar, M. S. (2023). Correlation: Methods for correlation analysis. https://easystats.github.io/correlation/\n\n\nMüller, K. (2020). Here: A simpler way to find your files. https://here.r-lib.org/\n\n\nMüller, K., & Wickham, H. (2023). Tibble: Simple data frames. https://tibble.tidyverse.org/\n\n\nPedersen, T. L. (2023). Patchwork: The composer of plots. https://patchwork.data-imaginist.com\n\n\nRevelle, W. (2023). Psych: Procedures for psychological, psychometric, and personality research. https://personality-project.org/r/psych/ https://personality-project.org/r/psych-manual.pdf\n\n\nRobinson, D., Hayes, A., & Couch, S. (2023). Broom: Convert statistical objects into tidy tibbles. https://broom.tidymodels.org/\n\n\nSievert, C. (2020). Interactive web-based data visualization with r, plotly, and shiny. Chapman; Hall/CRC. https://plotly-r.com\n\n\nSievert, C., Parmer, C., Hocking, T., Chamberlain, S., Ram, K., Corvellec, M., & Despouy, P. (2023). Plotly: Create interactive web graphics via plotly.js. https://plotly-r.com\n\n\nSjoberg, D. D., Whiting, K., Curry, M., Lavery, J. A., & Larmarange, J. (2021). Reproducible summary tables with the gtsummary package. The R Journal, 13, 570–580. https://doi.org/10.32614/RJ-2021-053\n\n\nUshey, K., & Wickham, H. (2023). Renv: Project environments. https://rstudio.github.io/renv/\n\n\nWickham, H. (2016). ggplot2: Elegant graphics for data analysis. Springer-Verlag New York. https://ggplot2.tidyverse.org\n\n\nWickham, H. (2022). Stringr: Simple, consistent wrappers for common string operations. https://stringr.tidyverse.org\n\n\nWickham, H. (2023). Downlit: Syntax highlighting and automatic linking. https://downlit.r-lib.org/\n\n\nWickham, H., & Bryan, J. (2023). Readxl: Read excel files. https://readxl.tidyverse.org\n\n\nWickham, H., Chang, W., Flight, R., Müller, K., & Hester, J. (2021). Sessioninfo: R session information. https://github.com/r-lib/sessioninfo#readme\n\n\nWickham, H., Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., & Dunnington, D. (2023). ggplot2: Create elegant data visualisations using the grammar of graphics. https://ggplot2.tidyverse.org\n\n\nWickham, H., François, R., Henry, L., Müller, K., & Vaughan, D. (2023). Dplyr: A grammar of data manipulation. https://dplyr.tidyverse.org\n\n\nWickham, H., & Henry, L. (2023). Purrr: Functional programming tools. https://purrr.tidyverse.org/\n\n\nWickham, H., Hester, J., & Ooms, J. (2023). xml2: Parse XML. https://xml2.r-lib.org/\n\n\nWickham, H., Vaughan, D., & Girlich, M. (2023). Tidyr: Tidy messy data. https://tidyr.tidyverse.org\n\n\nWiernik, B. M. (2023). Pipebind: Flexible binding for complex function evaluation with the base r |&gt; pipe. https://github.com/bwiernik/pipebind/\n\n\nWilke, C. O., & Wiernik, B. M. (2022). Ggtext: Improved text rendering support for ggplot2. https://wilkelab.org/ggtext/\n\n\nXie, Y. (2014). Knitr: A comprehensive tool for reproducible research in R. In V. Stodden, F. Leisch, & R. D. Peng (Eds.), Implementing reproducible computational research. Chapman; Hall/CRC.\n\n\nXie, Y. (2015). Dynamic documents with R and knitr (2nd ed.). Chapman; Hall/CRC. https://yihui.org/knitr/\n\n\nXie, Y. (2023). Knitr: A general-purpose package for dynamic report generation in r. https://yihui.org/knitr/\n\n\nXie, Y., Allaire, J. J., & Grolemund, G. (2018). R markdown: The definitive guide. Chapman; Hall/CRC. https://bookdown.org/yihui/rmarkdown\n\n\nXie, Y., Cheng, J., & Tan, X. (2023). DT: A wrapper of the JavaScript library DataTables. https://github.com/rstudio/DT\n\n\nXie, Y., Dervieux, C., & Riederer, E. (2020). R markdown cookbook. Chapman; Hall/CRC. https://bookdown.org/yihui/rmarkdown-cookbook"
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html",
+    "href": "content/analysis/IHC/Casp.html",
+    "title": "Caspase",
+    "section": "",
+    "text": "Setupsource(here::here(\"src\", \"setup.R\"), echo = FALSE)\n\n## Since downlit doesn't seem to link packages without an explicit & visible library() call anymore ...\n\nlibrary(here)\nlibrary(pipebind)\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nlibrary(glmmTMB)\nlibrary(parameters)\nlibrary(insight)\nlibrary(performance)\nlibrary(DHARMa)\nlibrary(emmeans)\n\nlibrary(DT)\nlibrary(gt)\nlibrary(gtsummary)\n\n## Data\n\ncasp_responses &lt;- c(\"Dens_Tot\", \"A_EGL\", \"A_ML_PCL\", \"A_IGL\", \"A_WM\")\n\ncasp_data &lt;- load_casp_data()",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics",
+    "title": "Caspase",
+    "section": "\n2.1 Model fitting & diagnostics",
+    "text": "2.1 Model fitting & diagnostics\nHere, we chose to model Dens_Tot, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nDens_Tot_P4_mod &lt;- glmmTMB(\n  Dens_Tot ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P4\"),\n  REML = TRUE\n)\n\n\n2.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(Dens_Tot_P4_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(Dens_Tot_P4_mod)\n\n\n\n\n\n2.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nDens_Tot_P4_mod_dharma &lt;- simulateResiduals(Dens_Tot_P4_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nDens_Tot_P4_mod_dharma_t &lt;- t(Dens_Tot_P4_mod_dharma$simulatedResponse)\n\n\nppc_plots(Dens_Tot_P4_mod, simulations = Dens_Tot_P4_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(Dens_Tot_P4_mod, simulations = Dens_Tot_P4_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n2.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis",
+    "href": "content/analysis/IHC/Casp.html#model-analysis",
+    "title": "Caspase",
+    "section": "\n2.2 Model analysis",
+    "text": "2.2 Model analysis\n\n2.2.1 Model parameters\n\n(parameters(\n    Dens_Tot_P4_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(Dens_Tot_P4_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n190.684\n29.189\n(141.259, 257.402)\n34.301\n&lt; .001\n\n\nCondition1\n0.674\n0.103\n(0.499, 0.909)\n-2.580\n0.010\n\n\nZ1\n1.432\n0.224\n(1.053, 1.946)\n2.291\n0.022\n\n\nZ2\n0.631\n0.148\n(0.398, 1.000)\n-1.960\n0.050\n\n\nCondition1 × Z1\n1.169\n0.180\n(0.864, 1.581)\n1.012\n0.311\n\n\nCondition1 × Z2\n0.852\n0.201\n(0.538, 1.352)\n-0.679\n0.497\n\n\n\nModel: Dens_Tot ~ Condition * Z (34 Observations)\nResidual standard deviation: 0.508 (df = 32)\nConditional R2: 0.562; Marginal R2: 0.410\n\n\n\n\n\n\n2.2.2 Marginal means\n\nemmeans(Dens_Tot_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n128.5\n22.12\n32\n90.47\n182.5\n\n\nIH\n283.0\n71.62\n32\n169.01\n473.9\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n2.2.3 Contrasts\n\nemmeans(Dens_Tot_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.454\n0.1389\n32\n0.2434\n0.8468\n1\n-2.58\n0.01467\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(Dens_Tot_P4_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-1",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-1",
+    "title": "Caspase",
+    "section": "\n2.3 Model fitting & diagnostics",
+    "text": "2.3 Model fitting & diagnostics\nHere, we chose to model Dens_Tot, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nDens_Tot_P8_mod &lt;- glmmTMB(\n  Dens_Tot ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P8\"),\n  REML = TRUE\n)\n\n\n2.3.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(Dens_Tot_P8_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(Dens_Tot_P8_mod)\n\n\n\n\n\n2.3.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nDens_Tot_P8_mod_dharma &lt;- simulateResiduals(Dens_Tot_P8_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nDens_Tot_P8_mod_dharma_t &lt;- t(Dens_Tot_P8_mod_dharma$simulatedResponse)\n\n\nppc_plots(Dens_Tot_P8_mod, simulations = Dens_Tot_P8_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(Dens_Tot_P8_mod, simulations = Dens_Tot_P8_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n2.3.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-1",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-1",
+    "title": "Caspase",
+    "section": "\n2.4 Model analysis",
+    "text": "2.4 Model analysis\n\n2.4.1 Model parameters\n\n(parameters(\n    Dens_Tot_P8_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(Dens_Tot_P8_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n241.409\n42.202\n(171.376, 340.060)\n31.385\n&lt; .001\n\n\nCondition1\n0.769\n0.132\n(0.549, 1.076)\n-1.532\n0.126\n\n\nZ1\n1.195\n0.280\n(0.756, 1.891)\n0.762\n0.446\n\n\nZ2\n0.747\n0.183\n(0.462, 1.208)\n-1.190\n0.234\n\n\nCondition1 × Z1\n1.079\n0.223\n(0.720, 1.617)\n0.367\n0.713\n\n\nCondition1 × Z2\n1.070\n0.261\n(0.663, 1.726)\n0.277\n0.782\n\n\n\nModel: Dens_Tot ~ Condition * Z (32 Observations)\nResidual standard deviation: 0.821 (df = 30)\nConditional R2: 0.153; Marginal R2: 0.144\n\n\n\n\n\n\n2.4.2 Marginal means\n\nemmeans(Dens_Tot_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n185.6\n46.64\n30\n111.1\n310.1\n\n\nIH\n314.0\n74.90\n30\n192.9\n511.1\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n2.4.3 Contrasts\n\nemmeans(Dens_Tot_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.591\n0.2029\n30\n0.2931\n1.192\n1\n-1.532\n0.136\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(Dens_Tot_P8_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-2",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-2",
+    "title": "Caspase",
+    "section": "\n3.1 Model fitting & diagnostics",
+    "text": "3.1 Model fitting & diagnostics\nHere, we chose to model A_EGL, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_EGL_P4_mod &lt;- glmmTMB(\n  A_EGL ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P4\"),\n  REML = TRUE\n)\n\n\n3.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_EGL_P4_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_EGL_P4_mod)\n\n\n\n\n\n3.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_EGL_P4_mod_dharma &lt;- simulateResiduals(A_EGL_P4_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_EGL_P4_mod_dharma_t &lt;- t(A_EGL_P4_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_EGL_P4_mod, simulations = A_EGL_P4_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_EGL_P4_mod, simulations = A_EGL_P4_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n3.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-2",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-2",
+    "title": "Caspase",
+    "section": "\n3.2 Model analysis",
+    "text": "3.2 Model analysis\n\n3.2.1 Model parameters\n\n(parameters(\n    A_EGL_P4_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_EGL_P4_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.386\n0.057\n(0.289, 0.514)\n-6.493\n&lt; .001\n\n\nCondition1\n1.335\n0.196\n(1.001, 1.780)\n1.965\n0.049\n\n\nZ1\n0.958\n0.138\n(0.722, 1.271)\n-0.299\n0.765\n\n\nZ2\n0.801\n0.178\n(0.518, 1.238)\n-0.999\n0.318\n\n\nCondition1 × Z1\n0.923\n0.133\n(0.696, 1.225)\n-0.553\n0.580\n\n\nCondition1 × Z2\n1.462\n0.326\n(0.945, 2.263)\n1.705\n0.088\n\n\n\nModel: A_EGL ~ Condition * Z (34 Observations)\nResidual standard deviation: 0.476 (df = 32)\nConditional R2: 0.420; Marginal R2: 0.196\n\n\n\n\n\n\n3.2.2 Marginal means\n\nemmeans(A_EGL_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.5145\n0.08551\n32\n0.3668\n0.7218\n\n\nIH\n0.2889\n0.06995\n32\n0.1764\n0.4730\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n3.2.3 Contrasts\n\nemmeans(A_EGL_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n1.781\n0.5233\n32\n0.9791\n3.24\n1\n1.965\n0.05814\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_EGL_P4_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-3",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-3",
+    "title": "Caspase",
+    "section": "\n3.3 Model fitting & diagnostics",
+    "text": "3.3 Model fitting & diagnostics\nHere, we chose to model A_EGL, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_EGL_P8_mod &lt;- glmmTMB(\n  A_EGL ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P8\"),\n  REML = TRUE\n)\n\n\n3.3.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_EGL_P8_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_EGL_P8_mod)\n\n\n\n\n\n3.3.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_EGL_P8_mod_dharma &lt;- simulateResiduals(A_EGL_P8_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_EGL_P8_mod_dharma_t &lt;- t(A_EGL_P8_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_EGL_P8_mod, simulations = A_EGL_P8_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_EGL_P8_mod, simulations = A_EGL_P8_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n3.3.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-3",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-3",
+    "title": "Caspase",
+    "section": "\n3.4 Model analysis",
+    "text": "3.4 Model analysis\n\n3.4.1 Model parameters\n\n(parameters(\n    A_EGL_P8_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_EGL_P8_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.796\n0.102\n(0.619, 1.023)\n-1.782\n0.075\n\n\nCondition1\n0.932\n0.113\n(0.735, 1.182)\n-0.580\n0.562\n\n\nZ1\n1.195\n0.134\n(0.958, 1.490)\n1.582\n0.114\n\n\nZ2\n1.022\n0.127\n(0.801, 1.305)\n0.175\n0.861\n\n\nCondition1 × Z1\n1.026\n0.102\n(0.845, 1.247)\n0.263\n0.792\n\n\nCondition1 × Z2\n1.100\n0.124\n(0.882, 1.371)\n0.845\n0.398\n\n\n\nModel: A_EGL ~ Condition * Z (32 Observations)\nResidual standard deviation: 0.345 (df = 30)\nConditional R2: 0.452; Marginal R2: 0.105\n\n\n\n\n\n\n3.4.2 Marginal means\n\nemmeans(A_EGL_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.7416\n0.1356\n30\n0.5105\n1.077\n\n\nIH\n0.8538\n0.1452\n30\n0.6032\n1.208\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n3.4.3 Contrasts\n\nemmeans(A_EGL_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.8686\n0.2109\n30\n0.529\n1.426\n1\n-0.5802\n0.5661\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_EGL_P8_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-4",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-4",
+    "title": "Caspase",
+    "section": "\n4.1 Model fitting & diagnostics",
+    "text": "4.1 Model fitting & diagnostics\nHere, we chose to model A_ML_PCL, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_ML_PCL_P4_mod &lt;- glmmTMB(\n  A_ML_PCL ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P4\"),\n  REML = TRUE\n)\n\n\n4.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_ML_PCL_P4_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_ML_PCL_P4_mod)\n\n\n\n\n\n4.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_ML_PCL_P4_mod_dharma &lt;- simulateResiduals(A_ML_PCL_P4_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_ML_PCL_P4_mod_dharma_t &lt;- t(A_ML_PCL_P4_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_ML_PCL_P4_mod, simulations = A_ML_PCL_P4_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_ML_PCL_P4_mod, simulations = A_ML_PCL_P4_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n4.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-4",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-4",
+    "title": "Caspase",
+    "section": "\n4.2 Model analysis",
+    "text": "4.2 Model analysis\n\n4.2.1 Model parameters\n\n(parameters(\n    A_ML_PCL_P4_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_ML_PCL_P4_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.315\n0.036\n(0.251, 0.395)\n-9.970\n&lt; .001\n\n\nCondition1\n1.118\n0.130\n(0.890, 1.403)\n0.956\n0.339\n\n\nZ1\n0.988\n0.127\n(0.768, 1.271)\n-0.093\n0.926\n\n\nZ2\n0.771\n0.147\n(0.531, 1.120)\n-1.365\n0.172\n\n\nCondition1 × Z1\n0.948\n0.121\n(0.738, 1.219)\n-0.415\n0.678\n\n\nCondition1 × Z2\n1.512\n0.288\n(1.041, 2.196)\n2.169\n0.030\n\n\n\nModel: A_ML_PCL ~ Condition * Z (34 Observations)\nResidual standard deviation: 0.456 (df = 32)\nConditional R2: 0.269; Marginal R2: 0.195\n\n\n\n\n\n\n4.2.2 Marginal means\n\nemmeans(A_ML_PCL_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.3516\n0.04385\n32\n0.2727\n0.4533\n\n\nIH\n0.2815\n0.05514\n32\n0.1889\n0.4196\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n4.2.3 Contrasts\n\nemmeans(A_ML_PCL_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n1.249\n0.2903\n32\n0.7779\n2.005\n1\n0.9562\n0.3462\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_ML_PCL_P4_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-5",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-5",
+    "title": "Caspase",
+    "section": "\n4.3 Model fitting & diagnostics",
+    "text": "4.3 Model fitting & diagnostics\nHere, we chose to model A_ML_PCL, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_ML_PCL_P8_mod &lt;- glmmTMB(\n  A_ML_PCL ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P8\"),\n  REML = TRUE\n)\n\n\n4.3.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_ML_PCL_P8_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_ML_PCL_P8_mod)\n\n\n\n\n\n4.3.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_ML_PCL_P8_mod_dharma &lt;- simulateResiduals(A_ML_PCL_P8_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_ML_PCL_P8_mod_dharma_t &lt;- t(A_ML_PCL_P8_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_ML_PCL_P8_mod, simulations = A_ML_PCL_P8_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_ML_PCL_P8_mod, simulations = A_ML_PCL_P8_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n4.3.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-5",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-5",
+    "title": "Caspase",
+    "section": "\n4.4 Model analysis",
+    "text": "4.4 Model analysis\n\n4.4.1 Model parameters\n\n(parameters(\n    A_ML_PCL_P8_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_ML_PCL_P8_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.569\n0.098\n(0.406, 0.798)\n-3.270\n0.001\n\n\nCondition1\n0.912\n0.154\n(0.656, 1.269)\n-0.547\n0.584\n\n\nZ1\n1.156\n0.156\n(0.887, 1.507)\n1.074\n0.283\n\n\nZ2\n0.944\n0.146\n(0.697, 1.279)\n-0.371\n0.711\n\n\nCondition1 × Z1\n0.891\n0.114\n(0.694, 1.145)\n-0.903\n0.367\n\n\nCondition1 × Z2\n1.080\n0.157\n(0.813, 1.436)\n0.532\n0.594\n\n\n\nModel: A_ML_PCL ~ Condition * Z (32 Observations)\nResidual standard deviation: 0.439 (df = 30)\nConditional R2: 0.507; Marginal R2: 0.094\n\n\n\n\n\n\n4.4.2 Marginal means\n\nemmeans(A_ML_PCL_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.5187\n0.1304\n30\n0.3104\n0.8669\n\n\nIH\n0.6237\n0.1437\n30\n0.3896\n0.9984\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n4.4.3 Contrasts\n\nemmeans(A_ML_PCL_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.8317\n0.2802\n30\n0.418\n1.655\n1\n-0.5471\n0.5884\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_ML_PCL_P8_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-6",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-6",
+    "title": "Caspase",
+    "section": "\n5.1 Model fitting & diagnostics",
+    "text": "5.1 Model fitting & diagnostics\nHere, we chose to model A_IGL, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_IGL_P4_mod &lt;- glmmTMB(\n  A_IGL ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P4\"),\n  REML = TRUE\n)\n\n\n5.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_IGL_P4_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_IGL_P4_mod)\n\n\n\n\n\n5.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_IGL_P4_mod_dharma &lt;- simulateResiduals(A_IGL_P4_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_IGL_P4_mod_dharma_t &lt;- t(A_IGL_P4_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_IGL_P4_mod, simulations = A_IGL_P4_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_IGL_P4_mod, simulations = A_IGL_P4_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n5.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-6",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-6",
+    "title": "Caspase",
+    "section": "\n5.2 Model analysis",
+    "text": "5.2 Model analysis\n\n5.2.1 Model parameters\n\n(parameters(\n    A_IGL_P4_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_IGL_P4_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n1.094\n0.134\n(0.861, 1.391)\n0.737\n0.461\n\n\nCondition1\n1.249\n0.154\n(0.981, 1.591)\n1.804\n0.071\n\n\nZ1\n1.029\n0.143\n(0.783, 1.352)\n0.205\n0.837\n\n\nZ2\n0.829\n0.170\n(0.555, 1.239)\n-0.915\n0.360\n\n\nCondition1 × Z1\n0.913\n0.127\n(0.695, 1.201)\n-0.649\n0.517\n\n\nCondition1 × Z2\n1.286\n0.264\n(0.860, 1.923)\n1.225\n0.221\n\n\n\nModel: A_IGL ~ Condition * Z (34 Observations)\nResidual standard deviation: 0.502 (df = 32)\nConditional R2: 0.158; Marginal R2: 0.112\n\n\n\n\n\n\n5.2.2 Marginal means\n\nemmeans(A_IGL_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n1.3673\n0.1785\n32\n1.0481\n1.784\n\n\nIH\n0.8761\n0.1825\n32\n0.5731\n1.339\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n5.2.3 Contrasts\n\nemmeans(A_IGL_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n1.561\n0.3851\n32\n0.9441\n2.58\n1\n1.804\n0.08067\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_IGL_P4_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-7",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-7",
+    "title": "Caspase",
+    "section": "\n5.3 Model fitting & diagnostics",
+    "text": "5.3 Model fitting & diagnostics\nHere, we chose to model A_IGL, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_IGL_P8_mod &lt;- glmmTMB(\n  A_IGL ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P8\"),\n  REML = TRUE\n)\n\n\n5.3.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_IGL_P8_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_IGL_P8_mod)\n\n\n\n\n\n5.3.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_IGL_P8_mod_dharma &lt;- simulateResiduals(A_IGL_P8_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_IGL_P8_mod_dharma_t &lt;- t(A_IGL_P8_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_IGL_P8_mod, simulations = A_IGL_P8_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_IGL_P8_mod, simulations = A_IGL_P8_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n5.3.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-7",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-7",
+    "title": "Caspase",
+    "section": "\n5.4 Model analysis",
+    "text": "5.4 Model analysis\n\n5.4.1 Model parameters\n\n(parameters(\n    A_IGL_P8_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_IGL_P8_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n1.297\n0.177\n(0.993, 1.694)\n1.907\n0.057\n\n\nCondition1\n0.871\n0.117\n(0.669, 1.134)\n-1.028\n0.304\n\n\nZ1\n1.059\n0.103\n(0.876, 1.280)\n0.592\n0.554\n\n\nZ2\n1.283\n0.142\n(1.033, 1.593)\n2.256\n0.024\n\n\nCondition1 × Z1\n0.925\n0.086\n(0.771, 1.110)\n-0.834\n0.404\n\n\nCondition1 × Z2\n1.045\n0.110\n(0.851, 1.284)\n0.419\n0.675\n\n\n\nModel: A_IGL ~ Condition * Z (32 Observations)\nResidual standard deviation: 0.325 (df = 30)\nConditional R2: 0.619; Marginal R2: 0.213\n\n\n\n\n\n\n5.4.2 Marginal means\n\nemmeans(A_IGL_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n1.129\n0.2260\n30\n0.7504\n1.700\n\n\nIH\n1.489\n0.2721\n30\n1.0256\n2.163\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n5.4.3 Contrasts\n\nemmeans(A_IGL_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.7582\n0.2042\n30\n0.4374\n1.314\n1\n-1.028\n0.3124\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_IGL_P8_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-8",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-8",
+    "title": "Caspase",
+    "section": "\n6.1 Model fitting & diagnostics",
+    "text": "6.1 Model fitting & diagnostics\nHere, we chose to model A_WM, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_WM_P4_mod &lt;- glmmTMB(\n  A_WM ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P4\"),\n  REML = TRUE\n)\n\n\n6.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_WM_P4_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_WM_P4_mod)\n\n\n\n\n\n6.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_WM_P4_mod_dharma &lt;- simulateResiduals(A_WM_P4_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_WM_P4_mod_dharma_t &lt;- t(A_WM_P4_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_WM_P4_mod, simulations = A_WM_P4_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_WM_P4_mod, simulations = A_WM_P4_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n6.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-8",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-8",
+    "title": "Caspase",
+    "section": "\n6.2 Model analysis",
+    "text": "6.2 Model analysis\n\n6.2.1 Model parameters\n\n(parameters(\n    A_WM_P4_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_WM_P4_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\nRandom effect variances not available. Returned R2 does not account for random effects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.687\n0.114\n(0.497, 0.950)\n-2.269\n0.023\n\n\nCondition1\n0.873\n0.144\n(0.631, 1.206)\n-0.823\n0.410\n\n\nZ1\n1.407\n0.275\n(0.960, 2.062)\n1.748\n0.080\n\n\nZ2\n0.949\n0.271\n(0.543, 1.660)\n-0.183\n0.855\n\n\nCondition1 × Z1\n1.041\n0.203\n(0.710, 1.527)\n0.208\n0.835\n\n\nCondition1 × Z2\n1.332\n0.380\n(0.762, 2.330)\n1.006\n0.314\n\n\n\nModel: A_WM ~ Condition * Z (34 Observations)\nResidual standard deviation: 0.720 (df = 32)\nConditional R2: ; Marginal R2: 0.259\n\n\n\n\n\n\n6.2.2 Marginal means\n\nemmeans(A_WM_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.6000\n0.09941\n32\n0.4282\n0.8409\n\n\nIH\n0.7876\n0.22507\n32\n0.4401\n1.4096\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n6.2.3 Contrasts\n\nemmeans(A_WM_P4_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.7619\n0.2517\n32\n0.3887\n1.493\n1\n-0.8234\n0.4164\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_WM_P4_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-9",
+    "href": "content/analysis/IHC/Casp.html#model-fitting-diagnostics-9",
+    "title": "Caspase",
+    "section": "\n6.3 Model fitting & diagnostics",
+    "text": "6.3 Model fitting & diagnostics\nHere, we chose to model A_WM, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.\n\nA_WM_P8_mod &lt;- glmmTMB(\n  A_WM ~ Condition * Z + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = filter(casp_data$clean, Stage == \"P8\"),\n  REML = TRUE\n)\n\n\n6.3.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(A_WM_P8_mod, check = c(\"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(A_WM_P8_mod)\n\n\n\n\n\n6.3.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\nA_WM_P8_mod_dharma &lt;- simulateResiduals(A_WM_P8_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\nA_WM_P8_mod_dharma_t &lt;- t(A_WM_P8_mod_dharma$simulatedResponse)\n\n\nppc_plots(A_WM_P8_mod, simulations = A_WM_P8_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(A_WM_P8_mod, simulations = A_WM_P8_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n6.3.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n✔ No potential outliers were reported.",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/IHC/Casp.html#model-analysis-9",
+    "href": "content/analysis/IHC/Casp.html#model-analysis-9",
+    "title": "Caspase",
+    "section": "\n6.4 Model analysis",
+    "text": "6.4 Model analysis\n\n6.4.1 Model parameters\n\n(parameters(\n    A_WM_P8_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(A_WM_P8_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.364\n0.072\n(0.246, 0.538)\n-5.078\n&lt; .001\n\n\nCondition1\n0.809\n0.156\n(0.554, 1.181)\n-1.098\n0.272\n\n\nZ1\n2.270\n0.362\n(1.660, 3.104)\n5.136\n&lt; .001\n\n\nZ2\n1.411\n0.268\n(0.973, 2.048)\n1.815\n0.070\n\n\nCondition1 × Z1\n1.119\n0.172\n(0.828, 1.512)\n0.734\n0.463\n\n\nCondition1 × Z2\n1.167\n0.210\n(0.821, 1.659)\n0.861\n0.389\n\n\n\nModel: A_WM ~ Condition * Z (32 Observations)\nResidual standard deviation: 0.555 (df = 30)\nConditional R2: 0.701; Marginal R2: 0.513\n\n\n\n\n\n\n6.4.2 Marginal means\n\nemmeans(A_WM_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.2943\n0.08578\n30\n0.1622\n0.5337\n\n\nIH\n0.4499\n0.11819\n30\n0.2631\n0.7693\n\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n6.4.3 Contrasts\n\nemmeans(A_WM_P8_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.6541\n0.2529\n30\n0.297\n1.441\n1\n-1.098\n0.2809\n\n\n\n\n\n\n\n- Results are averaged over the levels of: Z\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(A_WM_P8_mod, \"Condition\")",
+    "crumbs": [
+      "IHC",
+      "Caspase"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/OS.html",
+    "href": "content/analysis/PCR/OS.html",
+    "title": "Oxidative Stress",
+    "section": "",
+    "text": "Setupsource(here::here(\"src\", \"setup.R\"), echo = FALSE)\n\n## Since downlit doesn't seem to link packages without an explicit & visible library() call anymore ...\n\nlibrary(here)\nlibrary(pipebind)\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(stringr)\nlibrary(purrr)\nlibrary(ggplot2)\n\nlibrary(glmmTMB)\nlibrary(parameters)\nlibrary(insight)\nlibrary(performance)\nlibrary(emmeans)\n\nlibrary(DT)\nlibrary(plotly)\n\n## Data\n\nsupplementary_data &lt;- load_supplementary_data()\n\nOS_data &lt;- load_pcr_data(\"OS\")",
+    "crumbs": [
+      "PCR",
+      "Oxidative Stress"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/OS.html#model-fitting",
+    "href": "content/analysis/PCR/OS.html#model-fitting",
+    "title": "Oxidative Stress",
+    "section": "\n2.1 Model fitting",
+    "text": "2.1 Model fitting\nLet’s define the model we will fit to each Gene’s DCq data.\nHere, we will fit a simple Linear Model, which is largely similar to running a t-test between both conditions:\n\\[\n\\begin{aligned}\n  DCq_{i}  &\\sim N \\left(\\alpha_{j[i]} + \\beta_{1}(Condition), \\sigma^2 \\right) \\\\\n    \\alpha_{j}  &\\sim N \\left(\\mu_{\\alpha_{j}}, \\sigma^2_{\\alpha_{j}} \\right)\n    \\text{, for Experiment j = 1,} \\dots \\text{,J}\n\\end{aligned}\n\\]\n\nOS_model &lt;- function(data) {\n  form &lt;- \"DCq ~ Condition\"\n  \n  # If the data contains an Experiment variable with more than two levels, add a random effect by Experiment\n  if (\"Experiment\" %in% colnames(data) && n_distinct(data$Experiment) &gt;= 2) \n    form &lt;- str_c(form, \" + (1 | Experiment)\")\n\n  glmmTMB(as.formula(form), family = gaussian(\"identity\"), data = data, contrasts = list(Condition = \"contr.sum\"))\n}\n\nNow, let’s fit said model to each Gene’s data, for a given Stage and Layer:\n\ncompute_fold_changecompute_fold_change &lt;- function(mod) {\n  return(\n    get_data(mod)\n    |&gt; select(Condition, DCq)\n    |&gt; pivot_wider(names_from = Condition, values_from = DCq, values_fn = mean)\n    |&gt; summarize(Fold = 2**(-1 * (IH - N)))\n    |&gt; pull(Fold)\n  )\n}\n\n\n\n(OS_data$models &lt;- OS_data$clean\n  |&gt; group_split(Stage, Layer, Gene)\n  |&gt; map_dfr(\n    \\(d) summarize(d, Mod = pick(Experiment, Condition, DCq) |&gt; OS_model() |&gt; list(), .by = c(Stage, Layer, Gene)), \n    .progress = \"Fitting models:\"\n  )\n  |&gt; filter(!has_na_coefs(Mod)) # Removing models that did not fit properly\n  |&gt; mutate(Fold = map_dbl(Mod, compute_fold_change)) # Adding the Fold change\n  |&gt; select(Stage, Layer, Gene, Fold, Mod)\n)",
+    "crumbs": [
+      "PCR",
+      "Oxidative Stress"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/OS.html#model-diagnostics",
+    "href": "content/analysis/PCR/OS.html#model-diagnostics",
+    "title": "Oxidative Stress",
+    "section": "\n2.2 Model diagnostics",
+    "text": "2.2 Model diagnostics\nHere are the diagnostic plots for a random sample of the fitted models:",
+    "crumbs": [
+      "PCR",
+      "Oxidative Stress"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/OS.html#gene-regulation-overview",
+    "href": "content/analysis/PCR/OS.html#gene-regulation-overview",
+    "title": "Oxidative Stress",
+    "section": "\n3.1 Gene regulation overview",
+    "text": "3.1 Gene regulation overview\nWe can get a general overview of which Gene are up or down-regulated through a Sunburst plot, stacked by Stage and Layer.\n\nmake_suburst_plotmake_suburst_plot &lt;- function(dat, layers, tooltips = NULL, colors = NULL, plot_options = list()) {\n  \n  if (!is.null(colors)) colors &lt;- set_names(colors, \\(x) x |&gt; str_replace_all(\" \", \"\\n\") |&gt; str_replace_all(\"and\\n\", \"and \"))\n  \n  .make_sunburst_data &lt;- function(dat, layers_part) {\n    \n    if (all(layers == layers_part))\n      sun_dat &lt;- summarize(dat, across(any_of(c(layers_part, tooltips)), first), .by = all_of(layers_part))\n    else \n      sun_dat &lt;- summarize(dat, across(any_of(layers_part), first), .by = all_of(layers_part))\n    \n    return(\n      bind_cols(\n        transmute(sun_dat, ids = pick(any_of(layers_part)) |&gt; pmap_chr(\\(...) str_c(..., sep = \"&gt;&gt;\"))),\n        transmute(\n          sun_dat, \n          parents = pick(any_of(layers_part)) |&gt; \n            select(-last_col()) |&gt; \n            pmap_chr(\\(...) str_c(..., sep = \"&gt;&gt;\")) |&gt; \n            bind(x, if (is_empty(x)) \"\" else x)\n        ),\n        transmute(sun_dat, labels = pick(any_of(layers_part)) |&gt; select(last_col()) |&gt; pull(1))\n      )\n      |&gt; bind(\n        x, \n        if (all(layers == layers_part) & !is.null(tooltips)) \n          bind_cols(\n            x, \n            transmute(\n              sun_dat, \n              hovertext = pmap_chr(\n                pick(all_of(tooltips)), \n                \\(...) str_c(\n                  names(c(...)), \n                  map_if(list(...), is.numeric, \\(x) round(x, 3)) |&gt; map_if(is.factor, as.character), \n                  sep = \": \", \n                  collapse = \"\\n\"\n                )\n              )\n            )\n          )\n        else x\n      )\n      |&gt; mutate(labels = labels |&gt; str_replace_all(\" \", \"\\n\") |&gt; str_replace_all(\"and\\n\", \"and \"))\n    )\n  }\n  \n  params &lt;- map_dfr(1:length(layers), \\(x) .make_sunburst_data(dat, layers[1:x])) |&gt; \n    mutate(bg_color = map_chr(labels, \\(x) colors[[x]] %||% NA))\n  \n  rlang::exec(\n    plotly::plot_ly,\n    !!!select(params, -bg_color),\n    type = \"sunburst\",\n    branchvalues = \"total\",\n    hoverinfo = \"text\",\n    sort = FALSE,\n    marker = list(colors = ~params$bg_color),\n    !!!plot_options\n  )\n}\n\n\n\nOS_data$predictions |&gt;\n  filter(Expression != regulation_type$NOT_REG) |&gt;\n  left_join(supplementary_data$gene_data$OS, join_by(Gene)) |&gt;\n  make_suburst_plot(\n    layers = c(\"Stage\", \"Layer\", \"Expression\", \"Gene\"),\n    tooltips = c(\"Gene\", \"Pathway\", \"Fold\", \"p.value\"),\n    colors = sunburst_pcr_colors,\n    plot_options = list(insidetextorientation = 'radial')\n  )",
+    "crumbs": [
+      "PCR",
+      "Oxidative Stress"
+    ]
+  },
+  {
+    "objectID": "content/analysis/PCR/OS.html#gene-regulation-timeline",
+    "href": "content/analysis/PCR/OS.html#gene-regulation-timeline",
+    "title": "Oxidative Stress",
+    "section": "\n3.2 Gene regulation timeline",
+    "text": "3.2 Gene regulation timeline\nTo get a better idea of how each Gene’s regulation changes through time, we can plot a timeline of their expression, split by Layer and Pathway, with a color coding of the Effect of this regulation.\n\nmake_fold_timeline_plotmake_fold_timeline_plot &lt;- function(\n    dat, facet_rows = \"Pathway\", trans = \"identity\", \n    color_by = NULL, colors = colors_effect, size_boost = 1\n) {\n  \n  origin &lt;- do.call(trans, list(1))\n  \n  dat &lt;- (\n    dat\n    |&gt; mutate(Fold_trans = do.call(trans, list(Fold)))\n    |&gt; mutate(Fold_Amp = ifelse(\n      max(Fold_trans, na.rm = TRUE) - min(Fold_trans, na.rm = TRUE) != 0, \n      max(Fold_trans, na.rm = TRUE) - min(Fold_trans, na.rm = TRUE), \n      mean(Fold_trans, na.rm = TRUE)) * 0.1,\n      .by = all_of(c(facet_rows, \"Stage\"))\n    )\n  )\n  \n  timeline &lt;- (\n    ggplot(dat)\n    + { if(is.null(color_by)) aes(x = Gene, color = Fold &gt;= 1) else aes(x = Gene, color = .data[[color_by]]) }\n    + geom_linerange(aes(ymax = Fold_trans), ymin = origin, size = 2 + (size_boost * 0.5))\n    + geom_hline(yintercept = origin, size = 0.3, linetype = \"dotted\")\n    + geom_text(aes(\n        label = str_c(round(Fold, 2), stars.pval(p.value) |&gt; str_replace(fixed(\".\"), \"\"), sep = \" \"), \n        y = ifelse(Fold_trans &gt; origin, Fold_trans + Fold_Amp, Fold_trans - Fold_Amp),\n        hjust = ifelse(Fold &gt; 1, 0, 1)\n      ),\n      vjust = 0.5, angle = 0, size = 2 + (size_boost * 0.25), check_overlap = TRUE\n    )\n    + scale_color_manual(\" \", values = colors)\n    + scale_y_continuous(breaks = c(0,1,2,3), expand = expansion(mult = 1.01 * (1 + (size_boost/100))))\n    + scale_x_discrete(expand = expansion(add = 1 * size_boost), limits = \\(x) rev(x))\n    + labs(\n      x = \"\",\n      y = ifelse(trans != \"identity\", str_glue(\"Fold Change *({trans} scale)*\"), \"Fold Change\")\n    )\n    + coord_flip()\n    + facet_grid(\n      vars(.data[[facet_rows]]), vars(Stage), \n      scales = \"free_y\", space = \"free_y\", labeller = label_wrap_gen(width = 12, multi_line = TRUE)\n    )\n    + { if (!is.null(color_by)) guides(color = guide_legend(title = color_by)) }\n    + theme(\n      legend.position = ifelse(is.null(color_by), \"none\", \"bottom\")\n      , axis.text.x = element_blank()\n      , axis.title.x = element_markdown(size = 9)\n      , axis.text.y = element_text(size = 7)\n      , strip.text = element_text(size = 5 * size_boost)\n      , plot.title = element_markdown(size = 9, face = \"plain\", vjust = 1, hjust = 0.5)\n    )\n  )\n  \n  return(timeline)\n}\n\n\n\nrender_OS_timelinerender_OS_timeline &lt;- function(dat, group, size_boost = 1.2) {\n  \n  if (group[[1]][1] == \"Whole\") {\n    \n    dat |&gt;\n      group_by(Figure) |&gt; \n      group_map(\\(d, g) render_OS_timeline(d, str_glue(\"Whole Cerebellum - {first(g[[1]])}\"), 1.5))\n  }\n  else {\n    \n    group_name &lt;- group[[1]][1]\n    if (group_name == \"PC\") group_name &lt;- \"Purkinje Cells\"\n    \n    if (group_name == \"Cellular Response\") {\n      cell_resp_levels &lt;- c(\"Cell Death and Protection\", \"Apoptotic Pathways\", \"Inflammation Pathways\", \"Autophagy and Mitophagy\")\n      dat &lt;- mutate(dat, Pathway = factor(Pathway, levels = cell_resp_levels))\n    }\n    \n    plot &lt;- make_fold_timeline_plot(dat, facet_rows = \"Pathway\", trans = \"log\", color_by = \"Effect\", size_boost = size_boost)\n  \n    width &lt;- 2 + n_distinct(dat$Stage)\n    height &lt;- dat |&gt; \n      group_by(Pathway) |&gt; \n      group_map(\\(d, g) n_distinct(d$Gene) * 0.1 + 1) |&gt; \n      flatten_dbl() |&gt; \n      sum()\n    \n    template_md &lt;- c(\n      '### `r group_name`',\n      '```{r}',\n      '#| echo: false',\n      '#| fig-width: !expr width',\n      '#| fig-height: !expr height',\n      'plot',\n      '```'\n    )\n    \n    knitr::knit_child(text = template_md, envir = rlang::env(), quiet = TRUE)\n  }\n}\n\n\n\nOS_timelines &lt;- (\n  OS_data$predictions \n  |&gt; left_join(supplementary_data$gene_data$OS, join_by(Gene)) \n  |&gt; filter(p.value &lt;= .05) \n  |&gt; mutate(Effect = case_when(\n      str_detect(Expression, \"Downregulated\") & Effect == \"Beneficial\" ~ \"Deleterious\",\n      str_detect(Expression, \"Downregulated\") & Effect == \"Deleterious\" ~ \"Beneficial\",\n      .default = Effect\n    )\n  )\n  |&gt; select(Stage, Layer, Gene, Fold, p.value, Expression, Effect, Pathway, Figure)\n  |&gt; group_by(Layer)\n  |&gt; group_map(render_OS_timeline)\n  |&gt; unlist()\n)\n\n\n\nPurkinje Cells\nWhole Cerebellum - Cellular Response\nWhole Cerebellum - Oxidative Stress",
+    "crumbs": [
+      "PCR",
+      "Oxidative Stress"
+    ]
+  },
+  {
+    "objectID": "content/data/IHC/Calb.html",
+    "href": "content/data/IHC/Calb.html",
+    "title": "Calbindin",
+    "section": "",
+    "text": "Most of the tables and figures on this page are interactive !",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
+    "objectID": "content/data/IHC/Calb.html#data-dictionary",
+    "href": "content/data/IHC/Calb.html#data-dictionary",
+    "title": "Calbindin",
+    "section": "\n1.1 Data Dictionary",
+    "text": "1.1 Data Dictionary\nWhat each variable name represents, and how they are labeled within plots.",
+    "crumbs": [
+      "IHC",
+      "Calbindin"
+    ]
+  },
+  {
     "objectID": "content/data/PCR/ND.html",
     "href": "content/data/PCR/ND.html",
     "title": "Neurodevelopment",
@@ -164,72 +659,6 @@
     "crumbs": [
       "Extras",
       "Figures & Illustrations"
-    ]
-  },
-  {
-    "objectID": "content/analysis/IHC/Casp.html",
-    "href": "content/analysis/IHC/Casp.html",
-    "title": "Caspase",
-    "section": "",
-    "text": "source(here::here(\"src\", \"setup.R\"), echo = FALSE)\n\ncasp_responses &lt;- c(\"Dens_Tot\", \"A_EGL\", \"A_ML_PCL\", \"A_IGL\", \"A_WM\")\n\ncasp_data &lt;- load_casp_data()\n\n\n1 Clean Data\nHere, we only keep the variables that will be used (either as predictor or response) in the analyses.\n\n\n\n\n\n\n\n\n Back to top",
-    "crumbs": [
-      "IHC",
-      "Caspase"
-    ]
-  },
-  {
-    "objectID": "content/analysis/IHC/Calb.html",
-    "href": "content/analysis/IHC/Calb.html",
-    "title": "Calbindin",
-    "section": "",
-    "text": "source(here::here(\"src\", \"setup.R\"), echo = FALSE)\n\ncalb_responses &lt;- c(\"N_CC\", \"Vol_PC_per_cell\")\n\ncalb_data &lt;- load_calb_data()",
-    "crumbs": [
-      "IHC",
-      "Calbindin"
-    ]
-  },
-  {
-    "objectID": "content/analysis/IHC/Calb.html#model-fitting-diagnostics",
-    "href": "content/analysis/IHC/Calb.html#model-fitting-diagnostics",
-    "title": "Calbindin",
-    "section": "\n2.1 Model fitting & diagnostics",
-    "text": "2.1 Model fitting & diagnostics\nHere, we chose to model N_CC (which are counts) with a Generalized Poisson family, which can handle both over and under-dispersion.\n\ncalb_N_CC_mod &lt;- glmmTMB(\n  N_CC ~ Condition + (1 | Mouse),\n  family = genpois(\"log\"),\n  data = calb_data$clean,\n  REML = TRUE\n)\n\n\n2.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(calb_N_CC_mod, check = c(\"normality\", \"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(calb_N_CC_mod)\n\n\n\n\n\ncheck_overdispersion(calb_N_CC_mod)\n\n# Overdispersion test\n\n       dispersion ratio =   0.935\n  Pearson's Chi-Squared = 248.704\n                p-value =    0.77\n\n\n\n2.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\ncalb_N_CC_mod_dharma &lt;- DHARMa::simulateResiduals(calb_N_CC_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\ncalb_N_CC_mod_dharma_t &lt;- t(calb_N_CC_mod_dharma$simulatedResponse)\n\n\nppc_plots(calb_N_CC_mod, simulations = calb_N_CC_mod_dharma_t, term = \"Condition\", is_count = FALSE)\n\n\n\n\n\nppc_stat_plots(calb_N_CC_mod, simulations = calb_N_CC_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n2.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n\n\n\n  \n\n\n\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers before fitting our model.",
-    "crumbs": [
-      "IHC",
-      "Calbindin"
-    ]
-  },
-  {
-    "objectID": "content/analysis/IHC/Calb.html#model-analysis",
-    "href": "content/analysis/IHC/Calb.html#model-analysis",
-    "title": "Calbindin",
-    "section": "\n2.2 Model analysis",
-    "text": "2.2 Model analysis\n\n2.2.1 Model parameters\n\n(parameters(\n    calb_N_CC_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(calb_N_CC_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n12.852\n0.299\n(12.278, 13.452)\n109.673\n&lt; .001\n\n\nCondition1\n1.024\n0.024\n(0.978, 1.072)\n1.021\n0.307\n\n\n\nModel: N_CC ~ Condition (268 Observations)\nResidual standard deviation: 0.574 (df = 266)\nConditional R2: 0.089; Marginal R2: 0.012\n\n\n\n\n\n\n2.2.2 Marginal means\n\nemmeans(calb_N_CC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n13.16\n0.4342\n266\n12.33\n14.04\n\n\nIH\n12.55\n0.4115\n266\n11.77\n13.39\n\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n2.2.3 Contrasts\n\nemmeans(calb_N_CC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n1.049\n0.04871\n266\n0.9569\n1.149\n1\n1.021\n0.3084\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(calb_N_CC_mod, \"Condition\")",
-    "crumbs": [
-      "IHC",
-      "Calbindin"
-    ]
-  },
-  {
-    "objectID": "content/analysis/IHC/Calb.html#model-fitting-diagnostics-1",
-    "href": "content/analysis/IHC/Calb.html#model-fitting-diagnostics-1",
-    "title": "Calbindin",
-    "section": "\n3.1 Model fitting & diagnostics",
-    "text": "3.1 Model fitting & diagnostics\nHere, we chose to model Vol_PC_per_cell, which is a strictly positive continuous measure, with a Gamma family.\n\ncalb_Vol_PC_mod &lt;- glmmTMB(\n  Vol_PC_per_cell ~ Condition + (1 | Mouse),\n  family = Gamma(\"log\"),\n  data = calb_data$clean,\n  REML = TRUE\n)\n\n\n3.1.1 Residual diagnostics\nChecking the model’s quality of fit through the behavior of its residuals:\n\ncheck_model(calb_Vol_PC_mod, check = c(\"normality\", \"homogeneity\", \"qq\", \"reqq\", \"pp_check\"), detrend = FALSE)\n\n\n\n\n\nmake_acf_plot(calb_Vol_PC_mod)\n\n\n\n\n\n3.1.2 Predictive checks\nChecking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:\n\ncalb_Vol_PC_mod_dharma &lt;- DHARMa::simulateResiduals(calb_Vol_PC_mod, plot = FALSE, n = 300, seed = getOption(\"seed\"))\ncalb_Vol_PC_mod_dharma_t &lt;- t(calb_Vol_PC_mod_dharma$simulatedResponse)\n\n\nppc_plots(calb_Vol_PC_mod, simulations = calb_Vol_PC_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\nppc_stat_plots(calb_Vol_PC_mod, simulations = calb_Vol_PC_mod_dharma_t, term = \"Condition\")\n\n\n\n\n\n3.1.3 Potential outliers\nAccording to the fitted model, the following observations are potential outliers:\n\n\n\n  \n\n\n\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers before fitting our model.",
-    "crumbs": [
-      "IHC",
-      "Calbindin"
-    ]
-  },
-  {
-    "objectID": "content/analysis/IHC/Calb.html#model-analysis-1",
-    "href": "content/analysis/IHC/Calb.html#model-analysis-1",
-    "title": "Calbindin",
-    "section": "\n3.2 Model analysis",
-    "text": "3.2 Model analysis\n\n3.2.1 Model parameters\n\n(parameters(\n    calb_Vol_PC_mod, component = \"conditional\", effects = \"fixed\",\n    exponentiate = should_exp(calb_Vol_PC_mod), p_adjust = \"none\", summary = TRUE, digits = 3\n  )\n  |&gt; print_html() \n  |&gt; tab_header(title = NULL)\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nParameter\nCoefficient\nSE\n95% CI\nz\np\n\n\n\n(Intercept)\n0.125\n0.007\n(0.111, 0.141)\n-35.019\n&lt; .001\n\n\nCondition1\n0.997\n0.059\n(0.888, 1.120)\n-0.050\n0.960\n\n\n\nModel: Vol_PC_per_cell ~ Condition (268 Observations)\nResidual standard deviation: 0.284 (df = 266)\nConditional R2: 0.285; Marginal R2: 7.920e-05\n\n\n\n\n\n\n3.2.2 Marginal means\n\nemmeans(calb_Vol_PC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\nCondition\nresponse\nSE\ndf\nlower.CL\nupper.CL\n\n\n\nN\n0.1247\n0.01049\n266\n0.1057\n0.1472\n\n\nIH\n0.1255\n0.01051\n266\n0.1064\n0.1480\n\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n\n\n\n3.2.3 Contrasts\n\nemmeans(calb_Vol_PC_mod, specs = \"Condition\", type = \"response\") |&gt; \n  contrast(method = \"pairwise\", adjust = \"none\", infer = TRUE) |&gt; \n  as.data.frame() |&gt; \n  gt()\n\n\n\n\n\ncontrast\nratio\nSE\ndf\nlower.CL\nupper.CL\nnull\nt.ratio\np.value\n\n\nN / IH\n0.994\n0.118\n266\n0.7868\n1.256\n1\n-0.05029\n0.9599\n\n\n\n\n\n\n\n- Confidence level used: 0.95\n- Intervals are back-transformed from the log scale\n- Tests are performed on the log scale\n\n\n\nmake_signif_boxplot(calb_Vol_PC_mod, \"Condition\")",
-    "crumbs": [
-      "IHC",
-      "Calbindin"
     ]
   }
 ]

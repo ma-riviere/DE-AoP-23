@@ -5,8 +5,34 @@ subtitle: "Analyzing the effect of Condition (Hypoxia vs Normoxia) on cleaved Ca
 
 ```{r}
 #| output: false
+#| code-fold: true
+#| code-summary: "Setup"
 
 source(here::here("src", "setup.R"), echo = FALSE)
+
+## Since downlit doesn't seem to link packages without an explicit & visible library() call anymore ...
+
+library(here)
+library(pipebind)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(purrr)
+library(ggplot2)
+
+library(glmmTMB)
+library(parameters)
+library(insight)
+library(performance)
+library(DHARMa)
+library(emmeans)
+
+library(DT)
+library(gt)
+library(gtsummary)
+
+## Data
 
 casp_responses <- c("Dens_Tot", "A_EGL", "A_ML_PCL", "A_IGL", "A_WM")
 
@@ -31,3 +57,1433 @@ Here, we only keep the variables that will be used (either as predictor or respo
   |> formatRound(casp_responses, 4)
 )
 ```
+
+# `r get_response_name("Dens_Tot", "IHC", "Description")`
+
+::: {.panel-tabset group="stage"}
+
+# P4
+
+## Model fitting & diagnostics
+
+Here, we chose to model `Dens_Tot`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+Dens_Tot_P4_mod <- glmmTMB(
+  Dens_Tot ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P4"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(Dens_Tot_P4_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(Dens_Tot_P4_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+Dens_Tot_P4_mod_dharma <- simulateResiduals(Dens_Tot_P4_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+Dens_Tot_P4_mod_dharma_t <- t(Dens_Tot_P4_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(Dens_Tot_P4_mod, simulations = Dens_Tot_P4_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(Dens_Tot_P4_mod, simulations = Dens_Tot_P4_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, Dens_Tot_P4_mod, Dens_Tot_P4_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    Dens_Tot_P4_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(Dens_Tot_P4_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(Dens_Tot_P4_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(Dens_Tot_P4_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(Dens_Tot_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(Dens_Tot_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(Dens_Tot_P4_mod, "Condition")
+```
+
+# P8
+
+## Model fitting & diagnostics
+
+Here, we chose to model `Dens_Tot`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+Dens_Tot_P8_mod <- glmmTMB(
+  Dens_Tot ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P8"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(Dens_Tot_P8_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(Dens_Tot_P8_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+Dens_Tot_P8_mod_dharma <- simulateResiduals(Dens_Tot_P8_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+Dens_Tot_P8_mod_dharma_t <- t(Dens_Tot_P8_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(Dens_Tot_P8_mod, simulations = Dens_Tot_P8_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(Dens_Tot_P8_mod, simulations = Dens_Tot_P8_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, Dens_Tot_P8_mod, Dens_Tot_P8_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    Dens_Tot_P8_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(Dens_Tot_P8_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(Dens_Tot_P8_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(Dens_Tot_P8_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(Dens_Tot_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(Dens_Tot_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(Dens_Tot_P8_mod, "Condition")
+```
+
+:::
+
+
+# `r get_response_name("A_EGL", "IHC", "Description")`
+
+::: {.panel-tabset group="stage"}
+
+# P4
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_EGL`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_EGL_P4_mod <- glmmTMB(
+  A_EGL ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P4"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_EGL_P4_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_EGL_P4_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_EGL_P4_mod_dharma <- simulateResiduals(A_EGL_P4_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_EGL_P4_mod_dharma_t <- t(A_EGL_P4_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_EGL_P4_mod, simulations = A_EGL_P4_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_EGL_P4_mod, simulations = A_EGL_P4_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_EGL_P4_mod, A_EGL_P4_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_EGL_P4_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_EGL_P4_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_EGL_P4_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_EGL_P4_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_EGL_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_EGL_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_EGL_P4_mod, "Condition")
+```
+
+# P8
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_EGL`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_EGL_P8_mod <- glmmTMB(
+  A_EGL ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P8"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_EGL_P8_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_EGL_P8_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_EGL_P8_mod_dharma <- simulateResiduals(A_EGL_P8_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_EGL_P8_mod_dharma_t <- t(A_EGL_P8_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_EGL_P8_mod, simulations = A_EGL_P8_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_EGL_P8_mod, simulations = A_EGL_P8_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_EGL_P8_mod, A_EGL_P8_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_EGL_P8_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_EGL_P8_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_EGL_P8_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_EGL_P8_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_EGL_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_EGL_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_EGL_P8_mod, "Condition")
+```
+
+:::
+
+# `r get_response_name("A_ML_PCL", "IHC", "Description")`
+
+::: {.panel-tabset group="stage"}
+
+# P4
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_ML_PCL`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_ML_PCL_P4_mod <- glmmTMB(
+  A_ML_PCL ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P4"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_ML_PCL_P4_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_ML_PCL_P4_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_ML_PCL_P4_mod_dharma <- simulateResiduals(A_ML_PCL_P4_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_ML_PCL_P4_mod_dharma_t <- t(A_ML_PCL_P4_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_ML_PCL_P4_mod, simulations = A_ML_PCL_P4_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_ML_PCL_P4_mod, simulations = A_ML_PCL_P4_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_ML_PCL_P4_mod, A_ML_PCL_P4_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_ML_PCL_P4_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_ML_PCL_P4_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_ML_PCL_P4_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_ML_PCL_P4_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_ML_PCL_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_ML_PCL_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_ML_PCL_P4_mod, "Condition")
+```
+
+# P8
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_ML_PCL`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_ML_PCL_P8_mod <- glmmTMB(
+  A_ML_PCL ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P8"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_ML_PCL_P8_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_ML_PCL_P8_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_ML_PCL_P8_mod_dharma <- simulateResiduals(A_ML_PCL_P8_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_ML_PCL_P8_mod_dharma_t <- t(A_ML_PCL_P8_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_ML_PCL_P8_mod, simulations = A_ML_PCL_P8_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_ML_PCL_P8_mod, simulations = A_ML_PCL_P8_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_ML_PCL_P8_mod, A_ML_PCL_P8_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_ML_PCL_P8_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_ML_PCL_P8_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_ML_PCL_P8_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_ML_PCL_P8_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_ML_PCL_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_ML_PCL_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_ML_PCL_P8_mod, "Condition")
+```
+
+:::
+# `r get_response_name("A_IGL", "IHC", "Description")`
+
+::: {.panel-tabset group="stage"}
+
+# P4
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_IGL`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_IGL_P4_mod <- glmmTMB(
+  A_IGL ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P4"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_IGL_P4_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_IGL_P4_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_IGL_P4_mod_dharma <- simulateResiduals(A_IGL_P4_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_IGL_P4_mod_dharma_t <- t(A_IGL_P4_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_IGL_P4_mod, simulations = A_IGL_P4_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_IGL_P4_mod, simulations = A_IGL_P4_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_IGL_P4_mod, A_IGL_P4_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_IGL_P4_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_IGL_P4_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_IGL_P4_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_IGL_P4_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_IGL_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_IGL_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_IGL_P4_mod, "Condition")
+```
+
+# P8
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_IGL`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_IGL_P8_mod <- glmmTMB(
+  A_IGL ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P8"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_IGL_P8_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_IGL_P8_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_IGL_P8_mod_dharma <- simulateResiduals(A_IGL_P8_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_IGL_P8_mod_dharma_t <- t(A_IGL_P8_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_IGL_P8_mod, simulations = A_IGL_P8_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_IGL_P8_mod, simulations = A_IGL_P8_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_IGL_P8_mod, A_IGL_P8_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_IGL_P8_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_IGL_P8_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_IGL_P8_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_IGL_P8_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_IGL_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_IGL_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_IGL_P8_mod, "Condition")
+```
+
+:::
+
+# `r get_response_name("A_WM", "IHC", "Description")`
+
+::: {.panel-tabset group="stage"}
+
+# P4
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_WM`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_WM_P4_mod <- glmmTMB(
+  A_WM ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P4"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_WM_P4_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_WM_P4_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_WM_P4_mod_dharma <- simulateResiduals(A_WM_P4_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_WM_P4_mod_dharma_t <- t(A_WM_P4_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_WM_P4_mod, simulations = A_WM_P4_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_WM_P4_mod, simulations = A_WM_P4_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_WM_P4_mod, A_WM_P4_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_WM_P4_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_WM_P4_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_WM_P4_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_WM_P4_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_WM_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_WM_P4_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_WM_P4_mod, "Condition")
+```
+
+# P8
+
+## Model fitting & diagnostics
+
+Here, we chose to model `A_WM`, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.
+
+```{r}
+A_WM_P8_mod <- glmmTMB(
+  A_WM ~ Condition * Z + (1 | Mouse),
+  family = Gamma("log"),
+  data = filter(casp_data$clean, Stage == "P8"),
+  REML = TRUE
+)
+```
+
+### Residual diagnostics
+
+Checking the model's quality of fit through the behavior of its residuals:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+
+check_model(A_WM_P8_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+```
+
+```{r}
+make_acf_plot(A_WM_P8_mod)
+```
+
+### Predictive checks
+
+Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
+
+```{r}
+A_WM_P8_mod_dharma <- simulateResiduals(A_WM_P8_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+A_WM_P8_mod_dharma_t <- t(A_WM_P8_mod_dharma$simulatedResponse)
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+ppc_plots(A_WM_P8_mod, simulations = A_WM_P8_mod_dharma_t, term = "Condition", is_count = FALSE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ppc_stat_plots(A_WM_P8_mod, simulations = A_WM_P8_mod_dharma_t, term = "Condition")
+```
+
+### Potential outliers
+
+According to the fitted model, the following observations are potential outliers:
+
+```{r}
+#| echo: false
+
+outliers <- get_model_based_outliers(casp_data$clean, A_WM_P8_mod, A_WM_P8_mod_dharma, casp_responses)
+
+if (nrow(outliers) >= 1) outliers
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) >= 1)
+#| output: asis
+
+cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+```
+
+```{r}
+#| echo: false
+#| eval: !expr (nrow(outliers) == 0)
+#| output: asis
+
+cat("✔ No potential outliers were reported.")
+```
+
+## Model analysis
+
+### Model parameters
+
+```{r}
+(parameters(
+    A_WM_P8_mod, component = "conditional", effects = "fixed",
+    exponentiate = should_exp(A_WM_P8_mod), p_adjust = "none", summary = TRUE, digits = 3
+  )
+  |> print_html() 
+  |> tab_header(title = NULL)
+)
+```
+
+### Marginal means
+
+```{r}
+emmeans(A_WM_P8_mod, specs = "Condition", type = "response") |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_WM_P8_mod, specs = "Condition", type = "response") |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+### Contrasts
+
+```{r}
+emmeans(A_WM_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  as.data.frame() |> 
+  gt()
+```
+
+```{r}
+#| echo: false
+
+emmeans(A_WM_P8_mod, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
+  summary() |> 
+  attr("mesg") |> 
+  paste0("- ", ..2 = _) |> 
+  cat(sep = "\n")
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 6
+
+make_signif_boxplot(A_WM_P8_mod, "Condition")
+```
+
+:::

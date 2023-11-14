@@ -18,7 +18,7 @@ subtitle: "Talks and posters related to the paper"
 
 <object data="LARC19.pdf" type="application/pdf" width="100%" height="1610">
   <iframe
-    src="https://docs.google.com/preview?url=https://github.com/ma-riviere/DE-AoP-23/raw/gh-pages/content/extras/coms/LARC19.pdf&embedded=true"
-    width="100%" height="1440" frameborder="0">
+    src="https://docs.google.com/viewer?url=https://github.com/ma-riviere/DE-AoP-23/raw/gh-pages/content/extras/coms/LARC19.pdf&embedded=true"
+    width="100%" height="1610" frameborder="0">
   </iframe>
 </object>

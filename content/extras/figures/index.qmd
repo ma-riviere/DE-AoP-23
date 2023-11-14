@@ -28,4 +28,4 @@ subtitle: "Figures & illustrations not displayed in the analysis section (e.g. c
 
 ## Purkinje Cells (P8)
 
-![](Casp_P8.png)
+![](PC_P8.png)

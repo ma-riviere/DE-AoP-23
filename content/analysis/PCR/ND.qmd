@@ -5,8 +5,32 @@ description: "Analyzing the effect of Condition (Hypoxia vs Normoxia) on a neuro
 
 ```{r}
 #| output: false
+#| code-fold: true
+#| code-summary: "Setup"
 
 source(here::here("src", "setup.R"), echo = FALSE)
+
+## Since downlit doesn't seem to link packages without an explicit & visible library() call anymore ...
+
+library(here)
+library(pipebind)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(purrr)
+library(ggplot2)
+
+library(glmmTMB)
+library(parameters)
+library(insight)
+library(performance)
+library(emmeans)
+
+library(DT)
+library(plotly)
+
+## Data
 
 supplementary_data <- load_supplementary_data()
 

@@ -24,11 +24,11 @@ website:
   repo-url: "https://github.com/ma-riviere/DE-AoP-23/"
   repo-branch: main
   
-  ### [☣️ TODO] Analytics ###
-  # google-analytics:
-  #   tracking-id: ""
-  # cookie-consent:
-  #   type: implied
+  ### Analytics ###
+  google-analytics:
+    tracking-id: "G-TV449VPPVE"
+  cookie-consent:
+    type: implied
   
   ### Sharing ###
   open-graph:
@@ -143,6 +143,8 @@ format:
     number-sections: true
     number-depth: 3
     code-link: true
+    code-line-numbers: false
+    code-annotations: false
     fig-dpi: 400
     fig-format: svg
     fig-align: center

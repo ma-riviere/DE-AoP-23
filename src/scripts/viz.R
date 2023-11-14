@@ -769,7 +769,7 @@ ppc_stat_plots <- function(mod, simulations, term = "Condition", type = "fixed",
       ncol = n_cols, guides = 'auto'
     ) + 
       # plot_annotation(title = "Simulation-based Predictive Checks (on statistics)", subtitle = str_glue("For [{term}]")) & 
-      theme(legend.position = 'bottom', axis.text.x = element_text(size = rel(1.5), angle = 30, hjust = 1))
+      theme(legend.position = 'right', axis.text.x = element_text(size = rel(1.5), angle = 30, hjust = 1))
   )
 }
 

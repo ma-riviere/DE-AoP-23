@@ -27,14 +27,15 @@ distribution_summary <- function(data, dvs, between = "Condition") {
 }
 
 get_model_based_outliers <- function(data, mod, mod_dharma, responses) {
-  return(
-    get_data(mod) 
-    |> rownames_to_column("ID") 
-    |> filter(ID %in% DHARMa::outliers(mod_dharma)) 
-    |> utils::type.convert(as.is = TRUE) 
-    |> semi_join(data, y = _) 
-    |> select(-setdiff(responses, find_response(mod)))
-  )
+  
+  outliers <- get_data(mod) |> 
+    rownames_to_column("ID") |> 
+    filter(ID %in% DHARMa::outliers(mod_dharma)) |> 
+    utils::type.convert(as.is = TRUE) 
+  
+  if (nrow(outliers) > 0) outliers <- semi_join(data, y = outliers) |> select(-setdiff(responses, find_response(mod)))
+  
+  return(outliers)
 }
 
 #--------------------------------------------#

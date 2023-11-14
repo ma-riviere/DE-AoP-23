@@ -45,6 +45,10 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+# VSCode
+.vscode/
+
+TODO.md
 /.quarto/
 /_freeze/
 /site_libs/

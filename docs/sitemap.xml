@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ma-riviere.github.io/DE-AoP-23/index.html</loc>
-    <lastmod>2023-11-13T23:26:58.214Z</lastmod>
+    <lastmod>2023-11-14T14:40:24.728Z</lastmod>
   </url>
   <url>
     <loc>https://ma-riviere.github.io/DE-AoP-23/content/paper/index.html</loc>
@@ -10,11 +10,43 @@
   </url>
   <url>
     <loc>https://ma-riviere.github.io/DE-AoP-23/content/extras/coms/index.html</loc>
-    <lastmod>2023-11-13T22:58:29.174Z</lastmod>
+    <lastmod>2023-11-14T10:55:55.062Z</lastmod>
   </url>
   <url>
     <loc>https://ma-riviere.github.io/DE-AoP-23/content/data/PCR/OS.html</loc>
     <lastmod>2023-11-13T22:08:48.055Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/data/IHC/Casp.html</loc>
+    <lastmod>2023-11-13T12:11:01.488Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/index.html</loc>
+    <lastmod>2023-11-13T22:31:44.685Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/PCR/ND.html</loc>
+    <lastmod>2023-11-14T14:24:12.008Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/IHC/Calb.html</loc>
+    <lastmod>2023-11-14T14:17:42.008Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/about.html</loc>
+    <lastmod>2023-11-12T17:05:07.556Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/IHC/Casp.html</loc>
+    <lastmod>2023-11-14T14:29:33.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/PCR/OS.html</loc>
+    <lastmod>2023-11-14T14:24:03.498Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ma-riviere.github.io/DE-AoP-23/content/data/IHC/Calb.html</loc>
+    <lastmod>2023-11-13T12:11:53.518Z</lastmod>
   </url>
   <url>
     <loc>https://ma-riviere.github.io/DE-AoP-23/content/data/PCR/ND.html</loc>
@@ -26,14 +58,6 @@
   </url>
   <url>
     <loc>https://ma-riviere.github.io/DE-AoP-23/content/extras/figures/index.html</loc>
-    <lastmod>2023-11-13T22:57:43.944Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/IHC/Casp.html</loc>
-    <lastmod>2023-11-13T23:26:41.124Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ma-riviere.github.io/DE-AoP-23/content/analysis/IHC/Calb.html</loc>
-    <lastmod>2023-11-13T23:26:50.034Z</lastmod>
+    <lastmod>2023-11-14T10:54:01.332Z</lastmod>
   </url>
 </urlset>
