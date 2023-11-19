@@ -30,24 +30,11 @@ get_regulation_type <- function(fold, p_value) {
   )
 }
 
-## Computing fold change between N & IH conditions, for a given Gene, in a given Layer, at a given Stage
-# add_fold_change <- function(data) {
-#   cli_alert_info("[DATA] Computing Fold change values")
-#   return(
-#     data
-#     |> select(Stage, Layer, Gene, Condition, DCq)
-#     |> pivot_wider(id_cols = c(Stage, Layer, Gene), names_from = Condition, values_from = DCq, values_fn = \(x) mean(x, na.rm = TRUE))
-#     |> summarize(Fold = 2**(-1 * (IH - N)), .by = c(Stage, Layer, Gene))
-#     |> left_join(data, y = _, join_by(Stage, Layer, Gene))
-#     |> mutate(Fold = if_else(Condition == "N", 1, Fold))
-#   )
-# }
-
 #-------------------------------#
 ####🔺Data loading functions ####
 #-------------------------------#
 
-## TODO: ???
+## Loading the supplementary data (animal_data, gene_data, & layer_families)
 load_supplementary_data <- function() {
   
   res <- list()
@@ -77,10 +64,11 @@ load_supplementary_data <- function() {
 
 ## Loading the PCR data
 # @target: which data to load (i.e. OS or ND)
-# @reprocess: if TRUE, re-process the raw data, else simply load it from the processed data (careful, refitting takes upward to 10 minutes)
+# @reprocess: if TRUE, re-process the raw data, else simply load it from the processed data 
+# @refit: if TRUE, refit the models and extract their predictions (careful, refitting takes upward to 10 minutes)
 # @max_cq_clean: maximum Cq value allowed for the clean data
 # @model: the model to fit to the data. Only required if reprocess = TRUE
-load_pcr_data <- function(target, reprocess = FALSE, max_cq_clean = 33, model) {
+load_pcr_data <- function(target, reprocess = FALSE, max_cq_clean = 33, refit = FALSE, model) {
   
   possible_targets <- configs$data$PCR |> 
     names() |> 
@@ -92,9 +80,6 @@ load_pcr_data <- function(target, reprocess = FALSE, max_cq_clean = 33, model) {
     cli_abort("[DATA] Incorrect {.var target} provided: possible values are {.pkg {possible_targets}}")
   
   if (reprocess) {
-    
-    if (missing(model)) 
-      cli_abort("[DATA] Please provide a model to fit the data on.")
     
     path <- configs$data$PCR[[str_glue("{target}_raw")]]
     
@@ -124,49 +109,55 @@ load_pcr_data <- function(target, reprocess = FALSE, max_cq_clean = 33, model) {
       |> arrange(Stage, Layer, Gene, Mouse)
     )
     
-    compute_fold_change <- function(mod) {
-      return(
-        get_data(mod) 
-        |> select(Condition, DCq) 
-        |> pivot_wider(names_from = Condition, values_from = DCq, values_fn = \(x) mean(x, na.rm = TRUE)) 
-        |> summarize(Fold = 2**(-1 * (IH - N))) 
-        |> pull(Fold) 
+    if (refit) {
+      
+      if (missing(model)) 
+        cli_abort("[DATA] Please provide a model to fit the data on.")
+      
+      compute_fold_change <- function(mod) {
+        return(
+          get_data(mod) 
+          |> select(Condition, DCq) 
+          |> pivot_wider(names_from = Condition, values_from = DCq, values_fn = \(x) mean(x, na.rm = TRUE)) 
+          |> summarize(Fold = 2**(-1 * (IH - N))) 
+          |> pull(Fold) 
+        )
+      }
+      
+      ## Fitting the provided model to each Gene, for each Layer and Stage
+      res$models <- (
+        res$clean
+        |> group_split(Stage, Layer, Gene)
+        |> map_dfr(
+          \(d) suppressMessages({summarize(d, Mod = list(model(pick(everything()))), .by = c(Stage, Layer, Gene))}), 
+          .progress = "Fitting models:"
+        )
+        |> filter(!has_na_coefs(Mod))
+        |> mutate(Fold = map_dbl(Mod, compute_fold_change))
+        |> select(Stage, Layer, Gene, Fold, Mod)
+      )
+      
+      get_emmeans_data <- function(mod) {
+        return(
+          emmeans(mod, specs = "Condition", type = "response")
+          |> contrast(method = "pairwise", adjust = "none", infer = TRUE)
+          |> as.data.frame()
+          |> pivot_wider(names_from = contrast, values_from = estimate)
+          |> select(last_col(), LCB = lower.CL, UCB = upper.CL, p.value)
+          |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
+        )
+      }
+      
+      ## Extracting model predictions
+      res$predictions <- (
+        res$models
+        |> group_split(Stage, Layer, Gene)
+        |> map_dfr(\(d) mutate(d, get_emmeans_data(Mod[[1]])), .progress = "Extracting model predictions:")
+        |> filter(!is.na(p.value))
+        |> mutate(Expression = get_regulation_type(Fold, p.value))
+        |> select(Stage, Layer, Gene, Fold, Expression, matches("-|/"), LCB, UCB, p.value)
       )
     }
-    
-    ## Fitting the provided model to each Gene, for each Layer and Stage
-    res$models <- (
-      res$clean
-      |> group_split(Stage, Layer, Gene)
-      |> map_dfr(
-        \(d) suppressMessages({summarize(d, Mod = list(model(pick(everything()))), .by = c(Stage, Layer, Gene))}), 
-        .progress = "Fitting models:"
-      )
-      |> filter(!has_na_coefs(Mod))
-      |> mutate(Fold = map_dbl(Mod, compute_fold_change))
-      |> select(Stage, Layer, Gene, Fold, Mod)
-    )
-    
-    get_emmeans_data <- function(mod) {
-      return(
-        emmeans(mod, specs = "Condition", type = "response")
-        |> contrast(method = "pairwise", adjust = "none", infer = TRUE)
-        |> as.data.frame()
-        |> pivot_wider(names_from = contrast, values_from = estimate)
-        |> select(last_col(), LCB = lower.CL, UCB = upper.CL, p.value)
-        |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
-      )
-    }
-    
-    ## Extracting model predictions
-    res$predictions <- (
-      res$models
-      |> group_split(Stage, Layer, Gene)
-      |> map_dfr(\(d) mutate(d, get_emmeans_data(Mod[[1]])), .progress = "Extracting model predictions:")
-      |> filter(!is.na(p.value))
-      |> mutate(Expression = get_regulation_type(Fold, p.value))
-      |> select(Stage, Layer, Gene, Fold, Expression, matches("-|/"), LCB, UCB, p.value)
-    )
     
     return(res)
     
@@ -227,9 +218,9 @@ load_casp_data <- function(path = configs$data$IHC$casp) {
   return(res)
 }
 
-#--------------------------------#
-####🔺Data checking functions ####
-#--------------------------------#
+#----------------------------------#
+####🔺Data validation functions ####
+#----------------------------------#
 
 check_na <- function(data, col = NULL) {
   nrow_na <- data |> filter(is.na({{col}})) |> nrow()

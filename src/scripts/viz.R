@@ -495,7 +495,7 @@ make_signif_boxplot <- function(
       pos.y = max + step * 0.1 * (max - min)
     ) 
     |> ungroup()
-    |> filter(p.signif <= alpha)
+    |> filter(p.signif <= .05)
   )
   
   # -----------[ Plot ]----------- #

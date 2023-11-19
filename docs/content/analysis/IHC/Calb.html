@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.502">
+<meta name="generator" content="quarto-1.4.506">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>AoP Transcriptomics - Calbindin</title>
 <style>
@@ -401,13 +401,19 @@ cookieconsent.run({
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span><span class="va">N_CC_mod</span>, check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>, detrend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-4-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Calb_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-4-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Calb_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">N_CC_mod</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-5-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Calb_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-5-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Calb_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
@@ -430,13 +436,19 @@ cookieconsent.run({
 <div class="cell">
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span><span class="va">N_CC_mod</span>, simulations <span class="op">=</span> <span class="va">N_CC_mod_dharma_t</span>, term <span class="op">=</span> <span class="st">"Condition"</span>, is_count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-8-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Calb_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-8-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Calb_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span><span class="va">N_CC_mod</span>, simulations <span class="op">=</span> <span class="va">N_CC_mod_dharma_t</span>, term <span class="op">=</span> <span class="st">"Condition"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-9-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Calb_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-9-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Calb_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 </section><section id="potential-outliers" class="level3" data-number="2.1.3"><h3 data-number="2.1.3" class="anchored" data-anchor-id="potential-outliers">
@@ -1918,7 +1930,10 @@ Conditional R2: 0.089; Marginal R2: 0.012</td>
 <div class="cell">
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">N_CC_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-18-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Calb_files/figure-html/unnamed-chunk-18-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-18-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Calb_files/figure-html/unnamed-chunk-18-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 </section></section></section><section id="purkinje-marked-volume-10-4-µm3-per-purkinje-cell" class="level1" data-number="3"><h1 data-number="3">
@@ -1940,13 +1955,19 @@ Conditional R2: 0.089; Marginal R2: 0.012</td>
 <div class="cell">
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span><span class="va">Vol_PC_mod</span>, check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>, detrend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-20-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Calb_files/figure-html/unnamed-chunk-20-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-20-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Calb_files/figure-html/unnamed-chunk-20-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">Vol_PC_mod</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-21-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="Calb_files/figure-html/unnamed-chunk-21-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-21-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="Calb_files/figure-html/unnamed-chunk-21-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 </section><section id="predictive-checks-1" class="level3" data-number="3.1.2"><h3 data-number="3.1.2" class="anchored" data-anchor-id="predictive-checks-1">
@@ -1959,13 +1980,19 @@ Conditional R2: 0.089; Marginal R2: 0.012</td>
 <div class="cell">
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span><span class="va">Vol_PC_mod</span>, simulations <span class="op">=</span> <span class="va">Vol_PC_mod_dharma_t</span>, term <span class="op">=</span> <span class="st">"Condition"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-23-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="Calb_files/figure-html/unnamed-chunk-23-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-23-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="Calb_files/figure-html/unnamed-chunk-23-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span><span class="va">Vol_PC_mod</span>, simulations <span class="op">=</span> <span class="va">Vol_PC_mod_dharma_t</span>, term <span class="op">=</span> <span class="st">"Condition"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-24-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="Calb_files/figure-html/unnamed-chunk-24-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-24-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="Calb_files/figure-html/unnamed-chunk-24-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 </section><section id="potential-outliers-1" class="level3" data-number="3.1.3"><h3 data-number="3.1.3" class="anchored" data-anchor-id="potential-outliers-1">
@@ -3447,7 +3474,10 @@ Conditional R2: 0.285; Marginal R2: 7.920e-05</td>
 <div class="cell">
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">Vol_PC_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><a href="Calb_files/figure-html/unnamed-chunk-33-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="Calb_files/figure-html/unnamed-chunk-33-1.svg" class="img-fluid"></a></p>
+<div>
+<figure class="figure"><p><a href="Calb_files/figure-html/unnamed-chunk-33-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="Calb_files/figure-html/unnamed-chunk-33-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
 </div>
 </div>
 
@@ -3898,7 +3928,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <p>Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i>, <i class="fa-brands fa-js" aria-label="js"></i>, and <a href="https://quarto.org/">Quarto</a></p>
 </div>
   </div>
-</footer><script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom","descPosition":"bottom"});</script>
+</footer><script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom","closeEffect":"zoom"});</script>
 
 
 </body></html>

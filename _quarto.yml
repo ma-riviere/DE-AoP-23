@@ -175,13 +175,14 @@ knitr:
   opts_chunk:
     warning: false
     message: false
-    # fig.align: center # WARN: ☣️ DO NOT USE THAT OPTION
+    # fig.align: center # WARN: ☣️ DO NOT USE THAT OPTION. It breaks loops rendering plots within tabsets
     dpi: 400
     dev: svg
     dev.args:
       bg: transparent
-    # R.options:
-    #   scipen: 999
+    R.options:
+      seed: 256
+      digits: 4
   opts_knit:
     verbose: false
 

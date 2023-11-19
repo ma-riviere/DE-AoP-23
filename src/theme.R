@@ -192,14 +192,5 @@ options(
       "&[aria-sort='ascending'], &[aria-sort='descending']" = list(background = "hsl(0, 0%, 96%)"),
       borderColor = "#555"
     )
-    #   color = "hsl(233, 9%, 87%)",
-    #   backgroundColor = "hsl(233, 9%, 19%)",
-    #   borderColor = "hsl(233, 9%, 22%)",
-    #   stripedColor = "hsl(233, 12%, 22%)",
-    #   highlightColor = "hsl(233, 12%, 24%)",
-    #   inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
-    #   selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
-    #   pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
-    #   pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
   )
 )

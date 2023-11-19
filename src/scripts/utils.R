@@ -14,22 +14,6 @@ cli_h2("┗ [SCRIPTS] Loading helper functions")
 
 "%ne%" <- \(lhs, rhs) if(is.null(lhs) || rlang::is_empty(lhs) || (length(lhs) == 1 && lhs == "")) return(rhs) else return(lhs)
 
-#---------------#
-####🔺Images ####
-#---------------#
-
-save_png <- function(plot, filename = NULL, subfolder = NULL, device = "png", dpi = 600, width = 8, height = 8, display = TRUE) {
-  if(is.null(filename)) filename <- as.list(match.call()[-1])$plot
-  
-  file_path <- here("fig", paste0(filename, ".", device))
-  if(!is.null(subfolder)) {
-    if(!dir.exists(here::here("fig", subfolder))) dir.create(here::here("fig", subfolder), recursive = TRUE)
-    file_path <- here("fig", subfolder, paste0(filename, ".", device))
-  }
-  
-  ggsave(filename = file_path, plot = plot, device = device, scale = 1, dpi = dpi, width = width, height = height)
-  if(display) return(plot)
-}
 
 #-------------------------#
 ####🔺Formatting utils ####

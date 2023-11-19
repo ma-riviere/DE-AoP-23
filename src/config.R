@@ -34,8 +34,6 @@ knitr::opts_chunk$set(
   # , dev.args = list(bg = "transparent")
 )
 
-dpi_save_png <- knitr::opts_chunk$get("dpi")
-
 #------------------------#
 ####🔺Package options ####
 #------------------------#
@@ -53,11 +51,3 @@ emmeans::emm_options(
 #----------------#
 
 get <- base::get
-
-#------------------#
-####🔺Constants ####
-#------------------#
-
-alpha <- 0.05
-trend <- 0.1
-threshold.reg <- 1
