@@ -357,7 +357,7 @@ Here, we chose to model `A_EGL`, which is a strictly positive continuous measure
 
 ```{r}
 A_EGL_P4_mod <- glmmTMB(
-  A_EGL ~ Condition * Z + (1 | Mouse),
+  A_EGL ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P4"),
   REML = TRUE
@@ -497,7 +497,7 @@ Here, we chose to model `A_EGL`, which is a strictly positive continuous measure
 
 ```{r}
 A_EGL_P8_mod <- glmmTMB(
-  A_EGL ~ Condition * Z + (1 | Mouse),
+  A_EGL ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P8"),
   REML = TRUE
@@ -643,7 +643,7 @@ Here, we chose to model `A_ML_PCL`, which is a strictly positive continuous meas
 
 ```{r}
 A_ML_PCL_P4_mod <- glmmTMB(
-  A_ML_PCL ~ Condition * Z + (1 | Mouse),
+  A_ML_PCL ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P4"),
   REML = TRUE
@@ -783,7 +783,7 @@ Here, we chose to model `A_ML_PCL`, which is a strictly positive continuous meas
 
 ```{r}
 A_ML_PCL_P8_mod <- glmmTMB(
-  A_ML_PCL ~ Condition * Z + (1 | Mouse),
+  A_ML_PCL ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P8"),
   REML = TRUE
@@ -928,7 +928,7 @@ Here, we chose to model `A_IGL`, which is a strictly positive continuous measure
 
 ```{r}
 A_IGL_P4_mod <- glmmTMB(
-  A_IGL ~ Condition * Z + (1 | Mouse),
+  A_IGL ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P4"),
   REML = TRUE
@@ -1068,7 +1068,7 @@ Here, we chose to model `A_IGL`, which is a strictly positive continuous measure
 
 ```{r}
 A_IGL_P8_mod <- glmmTMB(
-  A_IGL ~ Condition * Z + (1 | Mouse),
+  A_IGL ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P8"),
   REML = TRUE
@@ -1214,7 +1214,7 @@ Here, we chose to model `A_WM`, which is a strictly positive continuous measure,
 
 ```{r}
 A_WM_P4_mod <- glmmTMB(
-  A_WM ~ Condition * Z + (1 | Mouse),
+  A_WM ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P4"),
   REML = TRUE
@@ -1354,7 +1354,7 @@ Here, we chose to model `A_WM`, which is a strictly positive continuous measure,
 
 ```{r}
 A_WM_P8_mod <- glmmTMB(
-  A_WM ~ Condition * Z + (1 | Mouse),
+  A_WM ~ Condition * Z + offset(log(A_Tot)) + (1 | Mouse),
   family = Gamma("log"),
   data = filter(casp_data$clean, Stage == "P8"),
   REML = TRUE

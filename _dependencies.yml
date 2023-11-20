@@ -23,6 +23,7 @@ packages:
   ## ===[ Model Fitting ]=== ##
   - car
   - forecast
+  - Matrix@1.6-1.1 # More recent versions will cause glmmTMB model fitting to fail
   - glmmTMB@1.1.5
   
   ## ===[ Model Analysis ]=== ##
