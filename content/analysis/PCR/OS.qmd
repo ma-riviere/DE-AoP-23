@@ -203,7 +203,7 @@ We can get a general overview of which `Gene` are up or down-regulated through a
 generate_function_code("make_suburst_plot")
 ```
 
-::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=780 end-line=840}
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-ghp/src/scripts/viz.R" start-line=741 end-line=801}
 ```{.R code-fold="true" code-summary="make_suburst_plot"}
 ```
 :::
@@ -231,7 +231,7 @@ To get a better idea of how each `Gene`'s regulation changes through time, we ca
 generate_function_code("make_fold_timeline_plot")
 ```
 
-::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-test/src/scripts/viz.R" start-line=82 end-line=136}
+::: {add-from="/home/mar/Dev/Projects/R/DE-AoP-23-ghp/src/scripts/viz.R" start-line=43 end-line=97}
 ```{.R code-fold="true" code-summary="make_fold_timeline_plot"}
 ```
 :::

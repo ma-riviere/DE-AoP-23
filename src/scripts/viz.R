@@ -4,9 +4,9 @@
 
 cli_h2("┗ [SCRIPTS] Loading vizualisation functions")
 
-#----------------------------------#
-####🔺Correlation / composition ####
-#----------------------------------#
+#--------------------#
+####🔺Correlation ####
+#--------------------#
 
 corr_matrix_plot <- function(df, vars, title = "") {
   return(df
@@ -34,45 +34,6 @@ corr_matrix_plot <- function(df, vars, title = "") {
         , axis.text.y = element_text(face = "bold", angle = 45, hjust = 1, size = 8)
       )
   )
-}
-
-compositional_plot <- function(dat, responses, prefix) {
-  
-  pattern <- paste0("^(", paste0(prefix, collapse = "|"), ")_(", ".*)$")
-  pattern_prop <- paste0("^Prop_(", paste0(prefix, collapse = "|"), ")_(", ".*)$")
-  responses <- str_subset(responses, paste0("^(", paste0(prefix, collapse = "|"), ")", "_[^Tot]"))
-  
-  dat <- dat |> select(Sample, Mouse, Stage, Condition, any_of(responses))
-  
-  dat_long <- (left_join(
-      dat |>
-        pivot_longer(cols = any_of(responses), names_pattern = pattern, names_to = c("Type", "Layer"), values_to = "Value") |>
-        filter(Layer %ni% c("Tot", "Total")) |> 
-        mutate(Type = factor(Type, levels = prefix)),
-      dat |>
-        group_by(Stage, Sample) |>
-        mutate(map_dfc(prefix, \(pre) across(matches(str_glue("^{pre}_[^Tot]")), \(x) x / sum(c_across(matches(str_glue("^{pre}_[^Tot]"))), na.rm = T), .names = "Prop_{.col}"))) |>
-        ungroup() |>
-        pivot_longer(cols = matches("Prop_"), names_pattern = pattern_prop, names_to = c("Type", "Layer"), values_to = "Percentage") |> 
-        select(Stage, Sample, Mouse, Condition, Type, Layer, Percentage)
-    )
-    |> group_by(Stage, Layer, Type, Condition) 
-    |> summarize(
-        Value = mean(Value, na.rm = TRUE),
-        Percentage = mean(Percentage, na.rm = TRUE)
-      ) 
-    |> ungroup()
-  )
-  
-  plot <- ggplot(dat_long, aes(x = Condition, y = Value, fill = Layer)) +
-    geom_col() +
-    geom_text(aes(label = scales::percent(Percentage, accuracy	= 0.1)), position = position_stack(vjust = 0.5), color = "white") +
-    labs(x = " ", y = " ")
-  
-  if (length(unique(dat_long$Stage)) == 1) plot <- plot + facet_wrap(vars(Type), scales = "free_y", ncol = length(unique(dat_long$Type)))
-  if (length(unique(dat_long$Stage)) > 1) plot <- plot + facet_grid(vars(Type), vars(Stage), scales = "free_y")
-  
-  return(plot)
 }
 
 #------------------#

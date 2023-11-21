@@ -192,7 +192,7 @@ ND_data$models |>
 The distribution of `DCq` values for a `Gene`, at a certain `Stage` and `Layer`
 
 ```{r}
-ND_shared <- SharedData$new(ND_data$clean) # TODO: mutate(ND_data, ID = str_glue("Layer: {Layer}, Stage: {Stage}, Gene: {Gene}"), .by = c(Stage, Layer, Gene))
+ND_shared <- SharedData$new(ND_data$clean)
 
 bscols(
   widths = c(1, 3, 3, 3),

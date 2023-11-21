@@ -190,7 +190,7 @@ OS_data$models |>
 The distribution of `DCq` values for a `Gene`, at a certain `Stage` and `Layer`
 
 ```{r}
-OS_shared <- SharedData$new(OS_data$clean) # TODO: mutate(OS_data, ID = str_glue("Layer: {Layer}, Stage: {Stage}, Gene: {Gene}"), .by = c(Stage, Layer, Gene))
+OS_shared <- SharedData$new(OS_data$clean)
 
 bscols(
   widths = c(1, 3, 3, 3),
