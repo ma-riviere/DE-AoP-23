@@ -44,12 +44,3 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
-
-TODO.md
-/fig/
-/.quarto/
-/_freeze/
-/site_libs/
-quarto/*_files/
-quarto/content/*_files/
-quarto/content/*.html

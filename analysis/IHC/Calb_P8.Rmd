@@ -1,165 +1,114 @@
 ```{r}
 source("../../src/setup.R", echo = FALSE)
-
-Calb_P8_fig_path <- "IHC/Calb-P8"
-stage = "P8"
 ```
 
 <!------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------>
-***
 # I. Data:
 ***
 
 ```{r}
-(Calb_P8_data <- load_Calb())
+(Calb_P8_data <- load_calb_data() |> map(\(x) filter(x, Stage == "P8")))
 
-### Variables:
-
-Calb_P8_responses <- c("N_CC", "Dens_CC", "Vol_PC_per_cell", "Vol_PC_per_cell", "A_PCL_ML", "A_Cortex")
-Calb_P8_predictors <- c("Condition", "Mouse")
-
-N_CC_name <- "Number of Purkinje cell bodies  \n *(per 250x10<sup>3</sup> µm<sup>3</sup>)*"
-A_PC_per_cell_name <- "Purkinje marked area *(10<sup>-4</sup> µm²)*  \n per Purkinje cell"
-Vol_PC_per_cell_name <- "Purkinje marked volume *(10<sup>-4</sup> µm<sup>3</sup>)*  \n per Purkinje cell"
-A_PCL_ML_name <- "Area of the PCL and ML *(μm²)*"
-A_Cortex_name <- "Area of the Cortex *(μm²)*"
-
-contrasts(Calb_P8_data$Condition) <- contr.sum
-
-### Averaged data:
-
-(Calb_P8_data_agg <- Calb_P8_data |> 
-  summarize(across(any_of(Calb_P8_responses), \(x) mean(x, na.rm = TRUE)), .by = c(Mouse, Condition)) |> 
-  mutate(
-    ID = row_number(),
-    dCondition = as.numeric(Condition == "IH"),
-    .before = 1
-  )
-)
+Calb_P8_responses <- c("N_CC", "Vol_PC_per_cell")
+Calb_P8_predictors <- c("Condition")
 ```
 
 
 <!------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------>
-***
-# II. N_CC / Dens:
+# II. N_CC
 ***
 
 <!------------------------------------------------------------------------------>
 ## 1. Models
 ***
 
-### Welch t-test:
-
-On data averaged by Mouse.
-Data is assumed heteroscedastic in relation to `Condition`.
-
-```{r}
-Calb_P8_mod_N_CC_agg <- afex::mixed(
-  N_CC ~ Condition + (0 + dCondition | ID),
-  data = Calb_P8_data_agg,
-  control = lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.nRE = "ignore"),
-  check_contrasts = FALSE,
-  method = "S",
-  type = 3,
-  test_intercept = FALSE
-)
-
-parameters(Calb_P8_mod_N_CC_agg$full_model, effects = "fixed", ci_method = "satterthwaite", drop = "Intercept")
-```
-
-
-### GLMM:
-
-**On the counts:**
-
-Poisson:
+**Poisson**
 
 ```{r}
 Calb_P8_mod_N_CC_poiss <- glmmTMB::glmmTMB(
   N_CC ~ Condition + (1 | Mouse),
   family = poisson("log"),
-  data = Calb_P8_data,
+  data = Calb_P8_data$clean,
   REML = TRUE
 )
 
+cli_h1("[Parameters]")
 parameters(Calb_P8_mod_N_CC_poiss)
-cat("\n")
+cli_h1("[Fitness]")
 performance(Calb_P8_mod_N_CC_poiss)
-cat("\n")
+cli_h1("[Dispersion]")
 check_overdispersion(Calb_P8_mod_N_CC_poiss)
 ```
 
-Negative binomial:
+**Negative binomial**
 
 ```{r}
 Calb_P8_mod_N_CC_nb <- glmmTMB::glmmTMB(
   N_CC ~ Condition + (1 | Mouse),
   family = nbinom1("log"),
-  data = Calb_P8_data,
+  data = Calb_P8_data$clean,
   REML = TRUE
 )
 
+cli_h1("[Parameters]")
 parameters(Calb_P8_mod_N_CC_nb)
-cat("\n")
+cli_h1("[Fitness]")
 performance(Calb_P8_mod_N_CC_nb)
-cat("\n")
+cli_h1("[Dispersion]")
 check_overdispersion(Calb_P8_mod_N_CC_nb)
 ```
 
-Generalized Poisson:
+**Generalized Poisson**
 
 ```{r}
 Calb_P8_mod_N_CC_gp <- glmmTMB::glmmTMB(
   N_CC ~ Condition + (1 | Mouse),
   family = genpois("log"),
-  data = Calb_P8_data,
+  data = Calb_P8_data$clean,
   REML = TRUE
 )
 
+cli_h1("[Parameters]")
 parameters(Calb_P8_mod_N_CC_gp)
-cat("\n")
+cli_h1("[Fitness]")
 performance(Calb_P8_mod_N_CC_gp)
-cat("\n")
+cli_h1("[Dispersion]")
 check_overdispersion(Calb_P8_mod_N_CC_gp)
 ```
 
 <!------------------------------------------------------------------------------>
-## 2. Model Diagnostics:
+## 2. Model Diagnostics
 ***
 
 **Model comparison:**
 
-Counts:
-
 ```{r}
-performance::compare_performance(Calb_P8_mod_N_CC_poiss, Calb_P8_mod_N_CC_nb, Calb_P8_mod_N_CC_gp)
+compare_performance(Calb_P8_mod_N_CC_poiss, Calb_P8_mod_N_CC_nb, Calb_P8_mod_N_CC_gp)
 ```
 
-Best model:
+**Most plausible model:**
 
 ```{r}
 Calb_P8_mod_N_CC <- Calb_P8_mod_N_CC_gp
 ```
 
 
-#### Residuals:
+### Residual diagnostics
 
-```{r fig.width = 8}
-performance::check_model(Calb_P8_mod_N_CC)
+```{r fig.width = 10}
+check_model(Calb_P8_mod_N_CC)
 
 make_acf_plot(Calb_P8_mod_N_CC)
 ```
 
 
-#### Predictions:
+### Predictive checks
 
 ```{r}
-nsim <- 300
-
-Calb_P8_mod_N_CC_dharma <- DHARMa::simulateResiduals(Calb_P8_mod_N_CC, plot = F, n = nsim, seed = getOption("seed"))
-Calb_P8_mod_N_CC_dharma_t <- Calb_P8_mod_N_CC_dharma$simulatedResponse |> t()
+Calb_P8_mod_N_CC_dharma <- DHARMa::simulateResiduals(Calb_P8_mod_N_CC, plot = FALSE, n = 300, seed = getOption("seed"))
+Calb_P8_mod_N_CC_dharma_t <- t(Calb_P8_mod_N_CC_dharma$simulatedResponse)
 ```
 
 ```{r fig.width = 10}
@@ -170,25 +119,23 @@ ppc_plots(Calb_P8_mod_N_CC, simulations = Calb_P8_mod_N_CC_dharma_t, term = "Con
 ppc_stat_plots(Calb_P8_mod_N_CC, simulations = Calb_P8_mod_N_CC_dharma_t, term = "Condition")
 ```
 
-**Potential outliers:**
+### Potential outliers
 
-```{r fig.width = 10}
-insight::get_data(Calb_P8_mod_N_CC) |> 
-  rownames_to_column("ID") |> 
-  filter(ID %in% DHARMa::outliers(Calb_P8_mod_N_CC_dharma))
+```{r}
+get_model_based_outliers(Calb_P8_data$clean, Calb_P8_mod_N_CC, Calb_P8_mod_N_CC_dharma, Calb_P8_responses)
 ```
 
 
 <!------------------------------------------------------------------------------>
-## 3. Effects Analysis:
+## 3. Model Analysis
 ***
 
-### Coefficients:
+### Model parameters
 
 **All effects (Wald):**
 
 ```{r}
-parameters::parameters(
+parameters(
   Calb_P8_mod_N_CC, exponentiate = should_exp(Calb_P8_mod_N_CC),
   ci_method = "Wald", p_adjust = "none", summary = TRUE, digits = 3
 )
@@ -200,178 +147,141 @@ parameters::parameters(
 car::Anova(Calb_P8_mod_N_CC, type = 3)
 ```
 
-**Main effects (LRT):**
+### Marginal means
 
 ```{r}
-LRT(Calb_P8_mod_N_CC, pred = "Condition")
+cli_h1("[Observed]")
+
+distribution_summary(get_data(Calb_P8_mod_N_CC), dvs = find_response(Calb_P8_mod_N_CC), between = "Condition")
+
+cli_h1("[Emmeans]")
+
+emmeans(Calb_P8_mod_N_CC, specs = "Condition", type = "response")
 ```
 
-
-### Marginal Effects:
-
-**Condition:**
-
-Marginal Means:
+### Contrasts
 
 ```{r}
-log.main("===[Observed]===\n")
+cli_h1("[Link scale]")
 
-distribution_summary(insight::get_data(Calb_P8_mod_N_CC), dvs = insight::find_response(Calb_P8_mod_N_CC), between = "Condition")
+emmeans(Calb_P8_mod_N_CC, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE)
 
-log.main("===[Emmeans]===\n")
+cli_h1("[Response scale]")
 
-emmeans::emmeans(Calb_P8_mod_N_CC, specs = "Condition", type = "response")
-```
-
-Marginal Contrasts:
-
-```{r}
-log.main("===[Link scale]===\n")
-
-emmeans::emmeans(Calb_P8_mod_N_CC, specs = "Condition", type = "response") |> 
-  emmeans::contrast(method = "pairwise", adjust = "none", infer = TRUE)
-
-log.main("===[Response scale]===\n")
-
-emmeans::emmeans(Calb_P8_mod_N_CC, specs = "Condition", trans = "response") |>
-  emmeans::contrast(method = "pairwise", adjust = "none", infer = TRUE)
+emmeans(Calb_P8_mod_N_CC, specs = "Condition", regrid = "response") |>
+  contrast(method = "pairwise", adjust = "none", infer = TRUE)
 ```
 
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Calb_P8_mod_N_CC, xaxis = "Condition", subtitle = stage) |> 
-  save_png(filename = glue("[{get_model_tag(Calb_P8_mod_N_CC)}] Boxplots - by [Condition]"), subfolder = Calb_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
+make_signif_boxplot(Calb_P8_mod_N_CC, xaxis = "Condition", subtitle = unique(Calb_P8_data$clean$Stage))
 ```
 
 
 
 <!------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------>
-***
-# III. Vol_PC_per_cell:
+# III. Vol_PC_per_cell
 ***
 
 <!------------------------------------------------------------------------------>
 ## 1. Models
 ***
 
-### Welch t-test:
-
-On data averaged by Mouse.
-Data is assumed heteroscedastic in relation to `Condition`.
-
-```{r}
-Calb_P8_mod_Vol_PC_per_cell_agg <- afex::mixed(
-  Vol_PC_per_cell ~ Condition + (0 + dCondition | ID),
-  data = Calb_P8_data_agg,
-  control = lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.nRE = "ignore"),
-  check_contrasts = FALSE,
-  method = "S",
-  type = 3,
-  test_intercept = FALSE
-)
-
-parameters(Calb_P8_mod_Vol_PC_per_cell_agg$full_model, effects = "fixed", ci_method = "satterthwaite", drop = "Intercept")
-```
-
-
-### GLMM:
-
 **Gaussian:**
 
 ```{r}
-Calb_P8_mod_Vol_PC_per_cell_gauss <- glmmTMB(
+Calb_P8_mod_Vol_PC_gauss <- glmmTMB(
   Vol_PC_per_cell ~ Condition + (1 | Mouse),
   family = gaussian("log"),
-  data = Calb_P8_data,
+  data = Calb_P8_data$clean,
   REML = TRUE
 )
 
-parameters(Calb_P8_mod_Vol_PC_per_cell_gauss)
-cat("\n")
-performance(Calb_P8_mod_Vol_PC_per_cell_gauss)
+cli_h1("[Parameters]")
+parameters(Calb_P8_mod_Vol_PC_gauss)
+cli_h1("[Fitness]")
+performance(Calb_P8_mod_Vol_PC_gauss)
 ```
 
 **Gamma:**
 
 ```{r}
-Calb_P8_mod_Vol_PC_per_cell_gamma <- glmmTMB(
+Calb_P8_mod_Vol_PC_gamma <- glmmTMB(
   Vol_PC_per_cell ~ Condition + (1 | Mouse),
   family = Gamma("log"),
-  data = Calb_P8_data,
+  data = Calb_P8_data$clean,
   REML = TRUE
 )
 
-parameters(Calb_P8_mod_Vol_PC_per_cell_gamma)
-cat("\n")
-performance(Calb_P8_mod_Vol_PC_per_cell_gamma)
+cli_h1("[Parameters]")
+parameters(Calb_P8_mod_Vol_PC_gamma)
+cli_h1("[Fitness]")
+performance(Calb_P8_mod_Vol_PC_gamma)
 ```
 
 
 <!------------------------------------------------------------------------------>
-## 2. Model Diagnostics:
+## 2. Model Diagnostics
 ***
 
 **Model comparison:**
 
 ```{r}
-performance::compare_performance(Calb_P8_mod_Vol_PC_per_cell_gauss, Calb_P8_mod_Vol_PC_per_cell_gamma)
+compare_performance(Calb_P8_mod_Vol_PC_gauss, Calb_P8_mod_Vol_PC_gamma)
 ```
 
 Best model:
 
 ```{r}
-Calb_P8_mod_Vol_PC_per_cell <- Calb_P8_mod_Vol_PC_per_cell_gamma
+Calb_P8_mod_Vol_PC <- Calb_P8_mod_Vol_PC_gamma
 ```
 
 
-### Residuals:
+### Residual diagnostics
 
-```{r fig.width = 8}
-performance::check_model(Calb_P8_mod_Vol_PC_per_cell)
+```{r fig.width = 10}
+check_model(Calb_P8_mod_Vol_PC)
 
-make_acf_plot(Calb_P8_mod_Vol_PC_per_cell)
+make_acf_plot(Calb_P8_mod_Vol_PC)
 ```
 
 
-### Predictions:
+### Predictive checks
 
 ```{r}
-nsim <- 300
-
-Calb_P8_mod_Vol_PC_per_cell_dharma <- DHARMa::simulateResiduals(Calb_P8_mod_Vol_PC_per_cell, plot = F, n = nsim, seed = getOption("seed"))
-Calb_P8_mod_Vol_PC_per_cell_dharma_t <- Calb_P8_mod_Vol_PC_per_cell_dharma$simulatedResponse |> t()
+Calb_P8_mod_Vol_PC_dharma <- DHARMa::simulateResiduals(Calb_P8_mod_Vol_PC, plot = FALSE, n = 300, seed = getOption("seed"))
+Calb_P8_mod_Vol_PC_dharma_t <- t(Calb_P8_mod_Vol_PC_dharma$simulatedResponse)
 ```
 
 ```{r fig.width = 10}
-ppc_plots(Calb_P8_mod_Vol_PC_per_cell, simulations = Calb_P8_mod_Vol_PC_per_cell_dharma_t, term = "Condition")
+ppc_plots(Calb_P8_mod_Vol_PC, simulations = Calb_P8_mod_Vol_PC_dharma_t, term = "Condition")
 ```
 
 ```{r fig.width = 10}
-ppc_stat_plots(Calb_P8_mod_Vol_PC_per_cell, simulations = Calb_P8_mod_Vol_PC_per_cell_dharma_t, term = "Condition")
+ppc_stat_plots(Calb_P8_mod_Vol_PC, simulations = Calb_P8_mod_Vol_PC_dharma_t, term = "Condition")
 ```
 
-**Potential outliers:**
+### Potential outliers
 
-```{r fig.width = 10}
-insight::get_data(Calb_P8_mod_Vol_PC_per_cell) |> 
-  rownames_to_column("ID") |> 
-  filter(ID %in% DHARMa::outliers(Calb_P8_mod_Vol_PC_per_cell_dharma))
+```{r}
+get_model_based_outliers(Calb_P8_data$clean, Calb_P8_mod_Vol_PC, Calb_P8_mod_Vol_PC_dharma, Calb_P8_responses)
 ```
 
 
 <!------------------------------------------------------------------------------>
-## 3. Effects Analysis:
+## 3. Model Analysis
 ***
 
-### Coefficients:
+### Model parameters
 
 **All effects (Wald):**
 
 ```{r}
-parameters::parameters(
-  Calb_P8_mod_Vol_PC_per_cell, exponentiate = should_exp(Calb_P8_mod_Vol_PC_per_cell),
+parameters(
+  Calb_P8_mod_Vol_PC, exponentiate = should_exp(Calb_P8_mod_Vol_PC),
   ci_method = "Wald", p_adjust = "none", summary = TRUE, digits = 3
 )
 ```
@@ -379,50 +289,41 @@ parameters::parameters(
 **Main effects (Wald):**
 
 ```{r}
-car::Anova(Calb_P8_mod_Vol_PC_per_cell, type = 3)
+car::Anova(Calb_P8_mod_Vol_PC, type = 3)
 ```
 
-**Main effects (LRT):**
+
+### Marginal means
 
 ```{r}
-LRT(Calb_P8_mod_Vol_PC_per_cell, pred = "Condition")
+cli_h1("[Observed]")
+
+distribution_summary(get_data(Calb_P8_mod_Vol_PC), dvs = find_response(Calb_P8_mod_Vol_PC), between = "Condition")
+
+cli_h1("[Emmeans]")
+
+emmeans(Calb_P8_mod_Vol_PC, specs = "Condition", type = "response")
 ```
 
 
-### Marginal Effects:
-
-**Condition:**
-
-Marginal Means:
+### Contrasts
 
 ```{r}
-log.main("===[Observed]===\n")
+cli_h1("[Link scale]")
 
-distribution_summary(insight::get_data(Calb_P8_mod_Vol_PC_per_cell), dvs = insight::find_response(Calb_P8_mod_Vol_PC_per_cell), between = "Condition")
+emmeans(Calb_P8_mod_Vol_PC, specs = "Condition", type = "response") |> 
+  contrast(method = "pairwise", adjust = "none", infer = TRUE)
 
-log.main("===[Emmeans]===\n")
+cli_h1("[Response scale]")
 
-emmeans::emmeans(Calb_P8_mod_Vol_PC_per_cell, specs = "Condition", type = "response")
+emmeans(Calb_P8_mod_Vol_PC, specs = "Condition", regrid = "response") |>
+  contrast(method = "pairwise", adjust = "none", infer = TRUE)
 ```
 
-Marginal Contrasts:
-
-```{r}
-log.main("===[Link scale]===\n")
-
-emmeans::emmeans(Calb_P8_mod_Vol_PC_per_cell, specs = "Condition", type = "response") |> 
-  emmeans::contrast(method = "pairwise", adjust = "none", infer = TRUE)
-
-log.main("===[Response scale]===\n")
-
-emmeans::emmeans(Calb_P8_mod_Vol_PC_per_cell, specs = "Condition", trans = "response") |>
-  emmeans::contrast(method = "pairwise", adjust = "none", infer = TRUE)
-```
 
 Plot:
 
 ```{r fig.width = 4, fig.height = 7}
-make_signif_boxplot(Calb_P8_mod_Vol_PC_per_cell, xaxis = "Condition", subtitle = stage) |> 
-  save_png(filename = glue("[{get_model_tag(Calb_P8_mod_Vol_PC_per_cell)}] Boxplots - by [Condition]"), subfolder = Calb_P8_fig_path, dpi = dpi_save_png, width = 5, height = 8)
+make_signif_boxplot(Calb_P8_mod_Vol_PC, xaxis = "Condition", subtitle = unique(Calb_P8_data$clean$Stage))
 ```
 

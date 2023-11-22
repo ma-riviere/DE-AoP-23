@@ -1,231 +1,200 @@
 ```{r}
 source("../../src/setup.R", echo = FALSE)
-
-OS_fig_path <- "PCR/OS"
 ```
 
 <!---------------------------------------------------------->
 <!---------------------------------------------------------->
-# I. Whole Cerebellum:
-***
-
-<!---------------------------------------------------------->
-## 1. Data:
+# I. Data
 ***
 
 ```{r}
-(OS_Tot_data_raw <- load_OS_Tot(layer = "Tot", max_cq = 33, hk_genes = c("Hsp90", "Ppia"), update_with_cal = TRUE))
+(supplementary_data <- load_supplementary_data())
+```
+
+```{r}
+(OS_data <- load_pcr_data("OS", reprocess = TRUE, max_cq_clean = 33, refit = FALSE))
 ```
 
 <!---------------------------------------------------------->
-## 2. Models:
+<!---------------------------------------------------------->
+# II. Model fitting
 ***
 
-**Fit the chosen model to each Gene:**
+Let's define the model we will fit to each `Gene`'s `DCq` data. 
+
+Here, we will fit a Linear Mixed Effect Model, with a random effect per Experiment, to account for potential clustering:
 
 ```{r}
-OS_Tot_model_cond <- function(data) {
+OS_model <- function(data) {
   form <- "DCq ~ Condition"
-  if ("Experiment" %in% colnames(data) && n_distinct(data$Experiment) >= 2) form <- str_c(form, " + (1 | Experiment)")
+  
+  # If the data contains an Experiment variable with more than two levels, add a random effect by Experiment
+  if ("Experiment" %in% colnames(data) && n_distinct(data$Experiment) >= 2) 
+    form <- str_c(form, " + (1 | Experiment)")
 
-  return(glmmTMB(as.formula(form), family = gaussian("identity"), data = data, contrasts = list(Condition = "contr.sum")))
+  glmmTMB(as.formula(form), family = gaussian("identity"), data = data, contrasts = list(Condition = "contr.sum"))
 }
-
-(OS_Tot_mods_cond <- OS_Tot_data_raw 
-  |> filter(n() >= 3, .by = c(Stage, Layer, Gene, Condition)) # Checking that there are at least 3 values per Condition
-  |> group_by(Stage, Layer, Gene)
-  |> filter(n_distinct(Condition) >= 2) # Checking that both conditions are present for each Gene
-  |> group_split()
-  |> map_dfr(\(d) suppressMessages({summarize(d, mod = list(OS_Tot_model_cond(pick(everything()))), .by = c(Stage, Layer, Gene))}), .progress = "Fitting models:")
-  |> filter(!has_na_coefs(mod))
-  |> ungroup()
-)
 ```
 
-**Extract the contrasts, p.values, and CI:**
+Now, let's fit said model to each `Gene`'s data, for a given `Stage` and `Layer`:
 
 ```{r}
-(OS_Tot_data_cond <- OS_Tot_mods_cond
- |> group_split(Stage, Layer, Gene)
- |> map_dfr(\(d)
-      mutate(d,
-        emmeans(mod[[1]], specs = "Condition", type = "response") |> 
-          contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
-          as.data.frame() |> 
-          select(Condition.cont = matches("estimate|risk|odds|^ratio|^difference"), Condition.LCB = lower.CL, Condition.UCB = upper.CL, Condition.p = p.value)
-      ) |> select(-mod),
-      .progress = "Extracting model predictions:"
+compute_fold_change <- function(mod) {
+  return(
+    get_data(mod)
+    |> select(Condition, DCq)
+    |> pivot_wider(names_from = Condition, values_from = DCq, values_fn = mean)
+    |> summarize(Fold = 2**(-1 * (IH - N)))
+    |> pull(Fold)
   )
- |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
- |> right_join(OS_Tot_data_raw, by = join_by(Stage, Layer, Gene))
- |> filter(if_all(matches(".p$"), \(x) !is.na(x)))
- |> add_expression("Condition.p")
- |> mutate(Effect = case_when(
-      str_detect(Expression, "Downregulated") & Effect == "Good" ~ "Bad",
-      str_detect(Expression, "Downregulated") & Effect == "Bad" ~ "Good",
-      .default = Effect
-    )
-  )
-)
-```
-
-<!---------------------------------------------------------->
-## 3. Plots:
-***
-
-**Generate boxplots (with p-values) for every gene, split by Layer & Stage:**
-
-```{r}
-OS_Tot_data_cond |> 
-  group_by(Layer, Stage) |> 
-  group_walk(\(d, g) {
-    n.genes <- n_distinct(d$Gene)
-    max.cols <- 10
-    n.cols <- min(n.genes, max.cols)
-    n.rows <- ceiling(n.genes / max.cols)
-    
-    make_boxplot_panel(d, n.cols, n.rows, display_labels = TRUE) |>
-    save_png(
-      glue("[OS-Tot] BoxPlots [Condition] - {g$Layer} & {g$Stage}"),
-      subfolder = OS_fig_path, width = 1 + n.cols * 2, height = 1 + n.rows * 4
-    )
-  }, .keep = TRUE
-)
-```
-
-**Generate Fold change timelines for each Layer and Pathway:**
-
-```{r fig.width = 7, fig.height = 5}
-OS_Tot_data_cond |> 
-  filter(any(Condition.p <= alpha), .by = c(Gene, Figure)) |> 
-  mutate(Fold = if_else(Condition.p <= alpha, Fold, NA)) |> 
-  group_by(Figure) |> 
-  group_walk(
-    \(d, g) {
-      width <- 2 + n_distinct(d$Stage)
-      height <- d |> group_by(Pathway) |> group_map(\(d, g) n_distinct(d$Gene) * 0.1 + 1) |> flatten_dbl() |> sum()
-      
-      if (g$Figure[[1]] == "Cellular Response") 
-        d <- mutate(d, Pathway = factor(Pathway, levels = c("Cell Death and Protection", "Apoptotic Pathways", "Inflammation Pathways", "Autophagy and Mitophagy")))
-      
-      make_vertical_fold_timeline(d, trans = "log", color_by = "Effect", colors = colors_effect, title = g$Figure[[1]], size_boost = 2) |> 
-        save_png(
-          glue("[OS-Tot] Timeline of Fold Change by [Pathway] - {str_replace_all(g$Figure[[1]], '/', ', ')}"), 
-          subfolder = OS_fig_path, width = width, height = height
-        )
-    }
-  )
-```
-
-
-<!---------------------------------------------------------->
-<!---------------------------------------------------------->
-***
-# II. Purkinje Cells:
-***
-
-<!---------------------------------------------------------->
-## 1. Data:
-***
-
-```{r}
-(OS_PC_data_raw <- load_OS_PC(layer = "PC", max_cq = 40))
-```
-
-
-<!---------------------------------------------------------->
-## 2. Models:
-***
-
-**Fit the chosen model to each Gene:**
-
-```{r}
-OS_PC_model_cond <- function(data) {
-  form <- "DCq ~ Condition"
-  if ("Experiment" %in% colnames(data) && n_distinct(data$Experiment) >= 2) form <- str_c(form, " + (1 | Experiment)")
-
-  return(glmmTMB(as.formula(form), family = gaussian("identity"), data = data, contrasts = list(Condition = "contr.sum")))
 }
+```
 
-(OS_PC_mods_cond <- OS_PC_data_raw 
-  |> filter(n() >= 3, .by = c(Stage, Layer, Gene, Condition)) # Checking that there are at least 3 values per Condition
-  |> group_by(Stage, Layer, Gene)
-  |> filter(n_distinct(Condition) >= 2) # Checking that both conditions are present for each Gene
-  |> group_split()
-  |> map_dfr(\(d) suppressMessages({summarize(d, mod = list(OS_PC_model_cond(pick(everything()))), .by = c(Stage, Layer, Gene))}), .progress = "Fitting models:")
-  |> filter(!has_na_coefs(mod))
-  |> ungroup()
+```{r}
+(OS_data$models <- OS_data$clean
+  |> group_split(Stage, Layer, Gene)
+  |> map_dfr(
+    \(d) summarize(d, Mod = pick(Experiment, Condition, DCq) |> OS_model() |> list(), .by = c(Stage, Layer, Gene)), 
+    .progress = "Fitting models:"
+  )
+  |> filter(!has_na_coefs(Mod)) # Removing models that did not fit properly
+  |> mutate(Fold = map_dbl(Mod, compute_fold_change)) # Adding the Fold change
+  |> select(Stage, Layer, Gene, Fold, Mod)
 )
 ```
 
-**Extract the contrasts, p.values, and CI:**
+# Model analysis
+
+## Predictions
+
+For each model we fit, we can then extract the CI and p.value for the relevant contrasts, and use those to establish if a `Gene` was up or down-regulated:
 
 ```{r}
-(OS_PC_data_cond <- OS_PC_mods_cond
- |> group_split(Stage, Layer, Gene)
- |> map_dfr(\(d) 
-      mutate(d,
-        emmeans(mod[[1]], specs = "Condition", type = "response") |> 
-          contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
-          as.data.frame() |> 
-          select(Condition.cont = matches("estimate|risk|odds|^ratio|^difference"), Condition.LCB = lower.CL, Condition.UCB = upper.CL, Condition.p = p.value)
-      ) |> select(-mod),
-      .progress = "Extracting model predictions:"
+get_emmeans_data <- function(mod) {
+  return(
+    emmeans(mod, specs = "Condition", type = "response")
+    |> contrast(method = "pairwise", adjust = "none", infer = TRUE)
+    |> as.data.frame()
+    |> pivot_wider(names_from = contrast, values_from = estimate)
+    |> select(last_col(), LCB = lower.CL, UCB = upper.CL, p.value)
+    |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
   )
- |> mutate(across(where(is.character), \(x) na_if(x, "NaN")))
- |> right_join(OS_PC_data_raw, by = join_by(Stage, Layer, Gene))
- |> filter(if_all(matches(".p$"), \(x) !is.na(x)))
- |> add_expression("Condition.p")
- |> mutate(Effect = case_when(
-      str_detect(Expression, "Downregulated") & Effect == "Good" ~ "Bad",
-      str_detect(Expression, "Downregulated") & Effect == "Bad" ~ "Good",
-      .default = Effect
-    )
-  )
+}
+```
+
+```{r}
+(OS_data$predictions <- OS_data$models
+  |> group_split(Stage, Layer, Gene)
+  |> map_dfr(\(d) mutate(d, get_emmeans_data(Mod[[1]])), .progress = "Extracting model predictions:")
+  |> filter(!is.na(p.value))
+  |> mutate(Expression = get_regulation_type(Fold, p.value))
+  |> select(Stage, Layer, Gene, Fold, Expression, matches("-|/"), LCB, UCB, p.value)
 )
 ```
 
+## Boxplots
 
-<!---------------------------------------------------------->
-## 3. Plots:
-***
+Generating boxplots for every `Gene` (with a statistically significant difference between N and IH), split by `Layer` & `Stage`:
 
-**Generate boxplots (with p-values) for every gene, split by Layer & Stage:**
-
-```{r}
-OS_PC_data_cond |> 
-  group_by(Layer, Stage) |> 
-  group_walk(\(d, g) {
+```{r fig.width = 15, fig.height = 25}
+(
+  OS_data$clean 
+  |> left_join(OS_data$predictions, join_by(Stage, Layer, Gene))
+  |> filter(p.value <= .05)
+  |> group_by(Layer, Stage)
+  |> group_map(\(d, g) {
     n.genes <- n_distinct(d$Gene)
     max.cols <- 6
     n.cols <- min(n.genes, max.cols)
     n.rows <- ceiling(n.genes / max.cols)
   
-    make_boxplot_panel(d, n.cols, n.rows, display_labels = TRUE) |>
-    save_png(
-      glue("[OS-PC] BoxPlots [Condition] - {g$Layer} & {g$Stage}"),
-      subfolder = OS_fig_path, width = 1 + n.cols * 2, height = 1 + n.rows * 4
-    )
-  }, .keep = TRUE
+    make_boxplot_panel(d, n.cols, n.rows, display_labels = TRUE)
+    }, .keep = TRUE
+  )
 )
 ```
 
-**Generate Fold change timelines for each Layer and Pathway:**
 
-```{r fig.width = 7, fig.height = 5}
-OS_PC_data_cond |> 
-  filter(any(Condition.p <= alpha), .by = c(Gene, Layer)) |> 
-  mutate(Fold = if_else(Condition.p <= alpha, Fold, NA)) |> 
-  group_by(Layer) |> 
-  group_walk(
-    \(d, g) {
-      width <- 2 + n_distinct(d$Stage)
-      height <- d |> group_by(Pathway) |> group_map(\(d, g) n_distinct(d$Gene) * 0.1 + 1) |> flatten_dbl() |> sum()
-      make_vertical_fold_timeline(d, trans = "log", color_by = "Effect", title = g$Layer[[1]], size_boost = 1.5) |>
-        save_png(
-          glue("[OS-PC] Timeline of Fold Change by [Pathway] - {g$Layer[[1]]}"),
-          subfolder = OS_fig_path, width = width, height = height
-        )
+## Gene regulation timeline
+
+To get a better idea of how each `Gene`'s regulation changes through time, we can plot a timeline of their expression, split by `Layer` and `Pathway`.
+
+```{r fig.width = 12, fig.height = 8}
+plot_OS_timeline <- function(dat, group, size_boost = 1.2) {
+  
+  if (group[[1]][1] == "Whole") {
+    
+    dat |>
+      group_by(Figure) |> 
+      group_map(\(d, g) plot_OS_timeline(d, str_glue("Whole Cerebellum - {first(g[[1]])}"), 1.5))
+  }
+  else {
+    
+    group_name <- group[[1]][1]
+    if (group_name == "PC") group_name <- "Purkinje Cells"
+    
+    if (group_name == "Cellular Response") {
+      cell_resp_levels <- c("Cell Death and Protection", "Apoptotic Pathways", "Inflammation Pathways", "Autophagy and Mitophagy")
+      dat <- mutate(dat, Pathway = factor(Pathway, levels = cell_resp_levels))
+    }
+    
+    make_fold_timeline_plot(dat, facet_rows = "Pathway", trans = "log", color_by = "Effect", size_boost = size_boost)
+  }
+}
+```
+
+### Whole Cerebellum
+
+```{r fig.width = 12, fig.height = 8}
+(
+  OS_data$predictions 
+  |> left_join(supplementary_data$gene_data$OS, join_by(Gene))
+  |> left_join(supplementary_data$layer_families, join_by(Layer))
+  |> filter(p.value <= .05 & Layer == "Whole")
+  |> mutate(Effect = case_when(
+      str_detect(Expression, "Downregulated") & Effect == "Beneficial" ~ "Deleterious",
+      str_detect(Expression, "Downregulated") & Effect == "Deleterious" ~ "Beneficial",
+      .default = Effect
+    )
+  )
+  |> select(Stage, Layer, Gene, Fold, p.value, Expression, Effect, Pathway, Figure)
+  |> group_by(Figure)
+  |> group_map(\(d, g) {
+      
+      if (g$Figure[[1]] == "Cellular Response") 
+        d <- mutate(d, Pathway = factor(Pathway, levels = c("Cell Death and Protection", "Apoptotic Pathways", "Inflammation Pathways", "Autophagy and Mitophagy")))
+    
+      make_fold_timeline_plot(d, facet_rows = "Pathway", trans = "log", color_by = "Effect", colors = colors_effect, size_boost = 2) +
+        labs(title = g$Figure[[1]])
     }
   )
+)
+```
+
+### Purkinje Cells
+
+```{r fig.width = 9, fig.height = 6}
+(
+  OS_data$predictions 
+  |> left_join(supplementary_data$gene_data$OS, join_by(Gene))
+  |> left_join(supplementary_data$layer_families, join_by(Layer))
+  |> filter(p.value <= .05 & Layer == "PC")
+  |> mutate(Effect = case_when(
+      str_detect(Expression, "Downregulated") & Effect == "Beneficial" ~ "Deleterious",
+      str_detect(Expression, "Downregulated") & Effect == "Deleterious" ~ "Beneficial",
+      .default = Effect
+    )
+  )
+  |> select(Stage, Layer, Gene, Fold, p.value, Expression, Effect, Pathway)
+  |> group_by(Layer)
+  |> group_map(\(d, g) make_fold_timeline_plot(d, facet_rows = "Pathway", trans = "log", color_by = "Effect", size_boost = 1.5) + labs(title = g$Layer[[1]]))
+)
+```
+
+# Temporal & Spatial dynamics
+
+```{r fig.width = 8, fig.height = 15}
+
+left_join(OS_data$clean, OS_data$predictions, join_by(Stage, Layer, Gene)) |> 
+  make_heatmap("Layer", "Stage")
 ```

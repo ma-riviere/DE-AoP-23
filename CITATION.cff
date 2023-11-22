@@ -4,19 +4,19 @@ cff-version: 1.2.0
 message: >-
   If you use this software, please cite it using the metadata from this file.
 title:  >-
-  ma-riviere/DE-AoP-23: Pre-publication release
-abstract: Data & Analysis code for Rodriguez-Duboc & al. (2023)
+  ma-riviere/DE-AoP-23: public release
+abstract: Data & R code associated with Rodriguez-Duboc et al. (2023)
 type: software
 license: Creative Commons Attribution 4.0 International
-version: v0.3
-url: https://zenodo.org/doi/10.5281/zenodo.10040019
+version: v1.0
+url: https://zenodo.org/doi/10.5281/zenodo.8139284
 authors: 
   - family-names: Rivière
     given-names: Marc-Aurèle
   - family-names: Rodriguez-Duboc
     given-names: Agalic
-date-released: 2023-10-25
+date-released: 2023-11-22
 identifiers: 
   - type: doi
-    value: 10.5281/ZENODO.10040019
+    value: 10.5281/zenodo.8139284
 

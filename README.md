@@ -22,12 +22,12 @@
 ## 💻 Repository structure:
 
 - `DE-AoP-23.RProj`: R Studio project (open this first).
-- `analysis`: Analysis (R Markdown) files, split by data type (PCR & IHC). 
-  - The first code chunk of any of the .Rmd files will install and load all the packages required for the project.
-- `data`: The raw and transformed data.
-- `fig`: The figures outputted by the RMarkdown files.
+- `analysis`: R Markdown files for the data analysis, split by data type (PCR & IHC). 
+  - The first code chunk of any of the .Rmd files will install and load all the packages required for the project, based on the `renv.lock` file.
+- `data`: The PCR and IHC data, both raw and processed (when applicable).
 - `src`: R scripts declaring the functions called within the analysis files (e.g. `viz.R` for the figures, `data.R` for the data loading).
-- `_config.yml`: Lists the paths to various external files used within the code (e.g. data, templates, ...).
+- `_configs.yml`: Lists the paths to various external files used within the code (e.g. data).
+- `_dependencies.yml`: Lists the packages required for this project (which will be auto-installed based on the existing `renv.lock` file).
 
 
 ## 📜 Licence:
@@ -39,7 +39,7 @@
 
 - **Paper:** Rodriguez-Duboc, A., Basille-Dugay, M., Debonne, A., Rivière, M.-A., Vaudry, D., & Burel, D. (2023). Apnea of prematurity induces short and long-term development-related transcriptional changes in the murine cerebellum. *Current Research in Neurobiology, 5*, 100113. https://doi.org/10.1016/j.crneur.2023.100113
 
-- **Code:** Marc-Aurèle Rivière, & Agalic Rodriguez-Duboc. (2023). ma-riviere/DE-AoP-23: Pre-publication release (v0.3). Zenodo. https://doi.org/10.5281/zenodo.8139284
+- **Code:** Marc-Aurèle Rivière, & Agalic Rodriguez-Duboc. (2023). ma-riviere/DE-AoP-23: public release (v1.0). Zenodo. https://doi.org/10.5281/zenodo.8139284
 
 
 ## ✨ Contributors:
