@@ -23,7 +23,9 @@ packages:
   ## ===[ Model Fitting ]=== ##
   - car
   - forecast
-  - Matrix@1.6-1.1 # More recent versions will cause glmmTMB model fitting to fail
+  - Matrix
+  # Pinned: glmmTMB >= 1.1.6 changed the df used by emmeans for non-Gaussian models (z instead of t tests),
+  # which alters the reported CIs and p-values compared to the published paper
   - glmmTMB@1.1.5
   
   ## ===[ Model Analysis ]=== ##
@@ -35,7 +37,7 @@ packages:
   - parameters
   - correlation
   - psych         # For categorical correlations
-  - DHARMa
+  - DHARMa@0.4.6 # Pinned: newer versions require glmmTMB >= 1.1.8 (set_simcodes)
   
   ## ===[ Plots & Tables ]=== ##
   - ggplot2
@@ -69,5 +71,6 @@ packages:
   ## ===[ Misc ]=== ##
   - gtools
 
+# Dated Posit Package Manager snapshot, so that every install resolves the same versions as renv.lock
 repos:
-  - CRAN: https://cloud.r-project.org/
+  - PPM: https://packagemanager.posit.co/cran/2026-09-15

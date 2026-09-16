@@ -15,7 +15,7 @@
 
 ## ❔ Requirements:
 
-- R 4.3.x (the package versions are pinned in `renv.lock` for that release)
+- R 4.6.x (the package versions are pinned in `renv.lock`, resolved from a dated Posit Package Manager snapshot)
 - [Quarto](https://quarto.org/) 1.10 or newer
 
 Optional, for development: [air](https://posit-dev.github.io/air/) (R formatter), [jarl](https://jarl.etiennebacher.com/) (R linter) and [panache](https://github.com/jolars/panache) (Quarto formatter and linter). Their settings live in `air.toml`, `jarl.toml` and `panache.toml`.

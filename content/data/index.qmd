@@ -12,6 +12,8 @@ source(here::here("src", "setup.R"), echo = FALSE)
 ```
 
 ```{r}
+#| html-table-processing: none
+
 get_contents_list <- function(link) {
     params <- list(pattern = str_extract(link, '.*\\/(.*)\\.zip', 1))
     if (params$pattern == "supplementary") {

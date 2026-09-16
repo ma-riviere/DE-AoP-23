@@ -880,7 +880,7 @@ make_signif_boxplot_inter <- function(
 #--------------------------#
 
 make_acf_plot <- function(mod) {
-    forecast::ggAcf(residuals(mod, type = "response", retype = "normalized"), color = "#1b6ca8") +
+    forecast::ggAcf(residuals(mod, type = "response"), color = "#1b6ca8") +
         geom_point() +
         labs(
             title = "Autocorrelation of residuals",
@@ -1147,8 +1147,10 @@ make_diag_reactable <- function(dat) {
 
         return(
             map(diag_list, \(x) {
+                # Simulated (DHARMa) residuals: the default "normal" residuals need deviance residuals, which the
+                # pinned glmmTMB (1.1.5) does not provide
                 plot(suppressMessages({
-                    check_model(mod, check = x, panel = FALSE)
+                    check_model(mod, check = x, panel = FALSE, residual_type = "simulated")
                 }))[[1]]
             }) |>
                 wrap_plots(ncol = 2) |>

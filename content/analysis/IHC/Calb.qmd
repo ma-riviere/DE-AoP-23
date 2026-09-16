@@ -96,7 +96,7 @@ make_acf_plot(N_CC_mod)
 ```
 
 ```{r}
-check_overdispersion(N_CC_mod)
+check_overdispersion(N_CC_mod, residual_type = "normal")
 ```
 
 ### Predictive checks
