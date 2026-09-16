@@ -20,38 +20,6 @@ options(
 
 Sys.setenv(MAKEFLAGS = paste0("-j", getOption("Ncpus")))
 
-#-------------------#
-####🔺GitHub PAT ####
-#-------------------#
-
-secrets <- load_yml(here("../_secrets.yml"))
-
-# TODO:
-## - Use gitcreds::gitcreds_get() ?
-## - See: https://gitcreds.r-lib.org/
-set_github_pat <- function() {
-    github_pat <- Sys.getenv("GITHUB_PAT")
-
-    if (!nzchar(github_pat) && isTRUE(nzchar(secrets$github_pat))) {
-        github_pat <- secrets$github_pat
-    }
-
-    if (nzchar(github_pat)) {
-        cli_alert_success("[PACKAGES] GITHUB Access Token found")
-        Sys.setenv(GITHUB_PAT = github_pat)
-    } else {
-        cli_warn(
-            c(
-                "[PACKAGES] GITHUB Access Token not found in default locations",
-                ">" = "Package loading might fail due to Github download cap",
-                "i" = "Define the environment variable {.emph GITHUB_PAT} to lift this cap"
-            )
-        )
-    }
-}
-
-set_github_pat()
-
 #----------------------------#
 ####🔺Installing packages ####
 #----------------------------#
