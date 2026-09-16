@@ -1,0 +1,7 @@
+linters: linters_with_defaults(
+    indentation_linter = indentation_linter(4L),
+    line_length_linter = line_length_linter(120L),
+    object_usage_linter = NULL
+  )
+exclusions: list("renv", "docs", "_freeze", "_extensions")
+encoding: "UTF-8"

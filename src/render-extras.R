@@ -2,21 +2,25 @@
 ####💠 Extra-render 💠####
 ####╚═════      ═════╝####
 
-suppressPackageStartupMessages({library(here)})
-suppressPackageStartupMessages({library(fs)})
+suppressPackageStartupMessages({
+    library(here)
+})
+suppressPackageStartupMessages({
+    library(fs)
+})
 
 #----------------------------------#
 ####🔺Generating data README.md ####
 #----------------------------------#
 
 knitr::knit(
-  text = "# Contents
+    text = "# Contents
 
 ```{r echo = FALSE}
 read.csv(here::here('data', '_data_file_desc.csv')) |> insight::print_md()
 ```
 ",
-output = here("data", "README.md")
+    output = here("data", "README.md")
 )
 
 #-----------------------------------#
@@ -30,11 +34,15 @@ output_dir <- Sys.getenv("QUARTO_PROJECT_OUTPUT_DIR")
 dir_create(here(output_dir, "res", "data"))
 
 zip(
-  here("res", "data", "supplementary.zip"), 
-  configs$data |> purrr::keep_at(\(x) stringr::str_detect(x, "PCR|IHC", TRUE)) |> unlist(), 
-  extras = '-j'
+    here("res", "data", "supplementary.zip"),
+    configs$data |> purrr::keep_at(\(x) stringr::str_detect(x, "PCR|IHC", TRUE)) |> unlist(),
+    extras = '-j'
 )
-file_copy(here("res", "data", "supplementary.zip"), here(output_dir, "res", "data", "supplementary.zip"), overwrite = TRUE)
+file_copy(
+    here("res", "data", "supplementary.zip"),
+    here(output_dir, "res", "data", "supplementary.zip"),
+    overwrite = TRUE
+)
 
 zip(here("res", "data", "IHC.zip"), unlist(configs$data$IHC), extras = '-j')
 file_copy(here("res", "data", "IHC.zip"), here(output_dir, "res", "data", "IHC.zip"), overwrite = TRUE)

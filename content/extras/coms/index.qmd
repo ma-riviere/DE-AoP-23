@@ -12,7 +12,7 @@ subtitle: "Talks and posters related to the paper"
   </iframe>
 </object>
 
-***
+------------------------------------------------------------------------------------------------------------------------
 
 # Poster (LARC'19) {.unnumbered .unlisted}
 

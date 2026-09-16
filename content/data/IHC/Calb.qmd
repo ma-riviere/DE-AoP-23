@@ -22,17 +22,15 @@ Most of the tables and figures on this page are **interactive** !
 Our raw Calbindin data, including some computed variables such as `Vol_PC_per_cell`, which is defined as the `r get_response_name("Vol_PC", "IHC", "Description")` (`Vol_PC`) divided by the `r get_response_name("N_CC", "IHC", "Description")` (`N_CC`).
 
 ```{r}
-(
-  calb_data$clean
-  |> select(-ID)
-  |> datatable(
-    rownames = FALSE,
-    class = 'cell-border stripe compact',
-    filter = 'top',
-    options = list(pageLength = 10, autoWidth = TRUE)
-  ) 
-  |> formatRound(calb_responses, 4)
-)
+(calb_data$clean |>
+    select(-ID) |>
+    datatable(
+        rownames = FALSE,
+        class = 'cell-border stripe compact',
+        filter = 'top',
+        options = list(pageLength = 10, autoWidth = TRUE)
+    ) |>
+    formatRound(calb_responses, 4))
 ```
 
 ## Data Dictionary
@@ -48,12 +46,20 @@ make_data_dict_reactable(calb_data$clean, configs$data$IHC$data_dict)
 # Data Summary
 
 ```{r}
-calb_shared <- calb_data$clean |> pivot_longer(cols = calb_responses, names_to = "Response") |> SharedData$new(data = _)
+calb_shared <- calb_data$clean |>
+    pivot_longer(cols = calb_responses, names_to = "Response") |>
+    SharedData$new(data = _)
 
 bscols(
-  widths = c(1, 5),
-  div(),
-  filter_select("resp_filter_calb", "Response", calb_shared, ~ Response, multiple = FALSE)
+    widths = c(1, 5),
+    div(),
+    filter_select(
+        "resp_filter_calb",
+        "Response",
+        calb_shared,
+        ~Response,
+        multiple = FALSE
+    )
 )
 ```
 
@@ -61,7 +67,10 @@ bscols(
 //| output: false
 
 function filter_default() {
-  document.getElementById("resp_filter_calb").getElementsByClassName("selectized")[0].selectize.setValue("N_CC", false)
+    document
+        .getElementById("resp_filter_calb")
+        .getElementsByClassName("selectized")[0]
+        .selectize.setValue("N_CC", false);
 }
 
 window.onload = filter_default;
@@ -73,20 +82,19 @@ window.onload = filter_default;
 
 (plot_ly(
     calb_shared,
-    x = ~ Condition,
-    y = ~ value,
-    color = ~ Condition,
+    x = ~Condition,
+    y = ~value,
+    color = ~Condition,
     type = "box",
-    boxpoints = "all", 
+    boxpoints = "all",
     jitter = 0.3,
     colors = c(N = "#02ccae", IH = "#9965db")
-  )
-  |> layout(
-    autosize = TRUE, 
-    showlegend = FALSE, 
-    xaxis = list(title = NA, type = "category")
-  )
-)
+) |>
+    layout(
+        autosize = TRUE,
+        showlegend = FALSE,
+        xaxis = list(title = NA, type = "category")
+    ))
 ```
 
 # Correlations

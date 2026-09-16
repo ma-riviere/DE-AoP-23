@@ -24,7 +24,7 @@ categories:
   - "R"
 
 abstract: |
-  This website showcases the data and analyses of our paper:  
+  This website showcases the data and analyses of our paper:
 
   [*"Apnea of Prematurity induces short and long-term development-related transcriptional changes in the murine cerebellum"*]{#paper-title}
 
@@ -42,7 +42,7 @@ toc: false
 title-block-banner: true
 ---
 
-***
+------------------------------------------------------------------------------------------------------------------------
 
 # Structure of this website {.unnumbered}
 

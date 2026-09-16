@@ -3,25 +3,28 @@
 ####╚══════     ══════╝####
 
 load_package_if_installed <- function(pkg) {
-  suppressPackageStartupMessages({ require(pkg, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE) })
+    suppressPackageStartupMessages({
+        require(pkg, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)
+    })
 }
 
 install_if_missing_then_load <- function(pkgs) {
-  for (pkg in pkgs) {
-    if (!load_package_if_installed(pkg)) 
-      install.packages(pkg, verbose = FALSE, prompt = FALSE)
-    
-    load_package_if_installed(pkg)
-  }
+    for (pkg in pkgs) {
+        if (!load_package_if_installed(pkg)) {
+            install.packages(pkg, verbose = FALSE, prompt = FALSE)
+        }
+
+        load_package_if_installed(pkg)
+    }
 }
 
 load_yml <- function(fp) {
-  if (file.exists(fp)) 
-    return(yaml::read_yaml(fp, eval.expr = TRUE))
-  else {
-    cli_alert_warning("[SETUP] YAML file {.path {fp}} not found !")
-    return(list())
-  }
+    if (file.exists(fp)) {
+        return(yaml::read_yaml(fp, eval.expr = TRUE))
+    } else {
+        cli_alert_warning("[SETUP] YAML file {.path {fp}} not found !")
+        return(list())
+    }
 }
 
 #-------------------------------#
@@ -30,8 +33,9 @@ load_yml <- function(fp) {
 
 install_if_missing_then_load(c("here", "renv"))
 
-if (is.null(renv::project())) 
-  renv::init(project = here(), bare = TRUE, restart = FALSE)
+if (is.null(renv::project())) {
+    renv::init(project = here(), bare = TRUE, restart = FALSE)
+}
 
 install_if_missing_then_load(c("cli", "yaml"))
 
@@ -62,7 +66,7 @@ cli_h1("[SCRIPTS] Loading project scripts")
 
 scripts_dir <- here("src", "scripts")
 
-list.files(scripts_dir, pattern = "*.R") |> 
-  grep(pattern = 'setup|init|config|theme|pakman', invert = TRUE, value = TRUE) |> 
-  sapply(\(file) source(here(scripts_dir, file), echo = FALSE)) |> 
-  invisible()
+list.files(scripts_dir, pattern = "*.R") |>
+    grep(pattern = 'setup|init|config|theme|pakman', invert = TRUE, value = TRUE) |>
+    sapply(\(file) source(here(scripts_dir, file), echo = FALSE)) |>
+    invisible()

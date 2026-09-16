@@ -13,12 +13,12 @@
 > **Note**  
 > This repository contains the data and R code for the *"Apnea of Prematurity induces short and long-term development-related transcriptional changes in the murine cerebellum"* paper
 
-
 ## ❔ Requirements:
 
-- R version 4.3 or newer
-- R Studio version 2022.07 or newer
+- R 4.3.x (the package versions are pinned in `renv.lock` for that release)
+- [Quarto](https://quarto.org/) 1.10 or newer
 
+Optional, for development: [air](https://posit-dev.github.io/air/) (R formatter), [jarl](https://jarl.etiennebacher.com/) (R linter) and [panache](https://github.com/jolars/panache) (Quarto formatter and linter). Their settings live in `air.toml`, `jarl.toml` and `panache.toml`.
 
 ## 💻 Repository structure:
 
@@ -26,9 +26,13 @@
 - `content`: The contents (`qmd` files) of the documentation.
 - `data`: The PCR and IHC data, both raw and processed (when applicable).
 - `src`: R scripts declaring the functions called within the analysis files (e.g. `viz.R` for the figures, `data.R` for the data loading).
+- `docs`: The rendered website, served through GitHub Pages.
 - `_configs.yml`: Lists the paths to various external files used within the code (e.g. data, templates, ...).
 - `_dependencies.yml`: Lists the packages required for this project (which will be auto-installed based on the existing `renv.lock` file).
 
+## 🛠️ Rendering the website:
+
+Run `quarto render` at the root of the project. The first code chunk of each page sources `src/setup.R`, which restores the packages listed in `renv.lock` before loading them, so the first render takes a while.
 
 ## 📖 Documentation structure:
 
@@ -42,11 +46,9 @@ The documentation is divided into 4 major sections, accessible through the top n
 
 4) [**Extras**](https://ma-riviere.github.io/DE-AoP-23/content/extras/figures/): Talks, posters and figures related to our paper and its overarching project.
 
-
 ## 📜 Licence:
 
 [CC-BY](LICENSE)
-
 
 ## 💬 Citation:
 
@@ -54,23 +56,20 @@ The documentation is divided into 4 major sections, accessible through the top n
 
 - **Code:** Marc-Aurèle Rivière, & Agalic Rodriguez-Duboc. (2023). ma-riviere/DE-AoP-23: public release (v1.0). Zenodo. https://doi.org/10.5281/zenodo.8139284
 
-
 ## ✨ Contributors:
 
 - **Marc-Aurèle Rivière**:  
-[![ORCID](https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&labelColor=white&logo=orcid&logoColor=A6CE39)][ORCID_MAR]
-[![Research Gate](https://img.shields.io/badge/ResearchGate-00CCBB?style=flat-square&labelColor=white&logo=researchgate&logoColor=00CCBB)][RG_MAR]
+  [![ORCID](https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&labelColor=white&logo=orcid&logoColor=A6CE39)][ORCID_MAR]
+  [![Research Gate](https://img.shields.io/badge/ResearchGate-00CCBB?style=flat-square&labelColor=white&logo=researchgate&logoColor=00CCBB)][RG_MAR]
 
 - **Agalic Rodriguez-Duboc**:  
-[![ORCID](https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&labelColor=white&logo=orcid&logoColor=A6CE39)][ORCID_ARD]
-[![Research Gate](https://img.shields.io/badge/ResearchGate-00CCBB?style=flat-square&labelColor=white&logo=researchgate&logoColor=00CCBB)][RG_ARD]
-
+  [![ORCID](https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&labelColor=white&logo=orcid&logoColor=A6CE39)][ORCID_ARD]
+  [![Research Gate](https://img.shields.io/badge/ResearchGate-00CCBB?style=flat-square&labelColor=white&logo=researchgate&logoColor=00CCBB)][RG_ARD]
 
 ## 📫 Contact:
 
 For any questions, please contact the primary author of the paper, **Agalic Rodriguez-Duboc**:  
 <a href="mailto:agalic.rd@gmail.com?subject=Apnea%20of%20Prematurity%20and%20transcriptional%20cerebellar%20changes">![Gmail](https://img.shields.io/badge/Gmail-C71610?style=flat-square&labelColor=white&logo=Gmail&logoColor=C71610)</a>
-
 
 <!----------------------------------->
 

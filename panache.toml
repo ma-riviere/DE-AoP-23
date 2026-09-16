@@ -1,0 +1,33 @@
+# Markdown flavor and line width
+flavor = "quarto"
+line-width = 120
+
+exclude = ["renv/**", "docs/**", "_freeze/**", "_extensions/**", "data/README.md"]
+
+# Formatting style
+[format]
+blank-lines = "collapse" # Blankline handling. Options: "collapse", "preserve"
+wrap = "preserve" # Prose paragraphs stay on one line (soft-wrap), only code chunks get re-formatted
+
+# External code formatters (opt-in)
+[formatters]
+r = "air"
+js = "prettier"
+javascript = "prettier"
+
+# Pipe chunks through stdin with a (fake) in-project path, so air discovers the project's air.toml
+# (the default preset writes chunks to a temp file outside the project, where air.toml is not found)
+[formatters.air]
+stdin = true
+args = ["format", "--stdin-file-path", "chunk.R"]
+
+[formatters.prettier]
+args = ["--parser", "babel"]
+
+# Lint rules
+[lint.rules]
+missing-chunk-labels = false
+
+# External code linters
+[linters]
+r = "jarl"

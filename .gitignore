@@ -48,9 +48,13 @@ rsconnect/
 # VSCode
 .vscode/
 
+# Agent / maintainer notes
+CLAUDE.md
+NOTES.md
 TODO.md
 /.quarto/
 /_freeze/
 /site_libs/
 /content/*.html
 /content/analysis/*_files/
+**/*.quarto_ipynb

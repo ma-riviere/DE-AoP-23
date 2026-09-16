@@ -1,0 +1,7 @@
+[lint]
+select = ["PERF", "CORR", "SUSP"]
+default-exclude = true
+exclude = ["renv/**", "docs/**", "_freeze/**", "_extensions/**"]
+
+[lint.assignment]
+operator = "<-"

@@ -39,7 +39,6 @@ calb_responses <- c("N_CC", "Vol_PC_per_cell")
 calb_data <- load_calb_data()
 ```
 
-
 # Clean Data
 
 Here, we only keep the variables that will be used (either as predictor or response) in the analyses.
@@ -47,16 +46,19 @@ Here, we only keep the variables that will be used (either as predictor or respo
 ```{r}
 #| echo: false
 
-(calb_data$clean
-  |> select(Sample, Mouse, Condition, any_of(calb_responses))
-  |> datatable(
-    rownames = FALSE,
-    class = 'cell-border stripe compact',
-    filter = 'top',
-    options = list(pageLength = 10, autoWidth = TRUE, fixedColumns = list(leftColumns = 1))
-  ) 
-  |> formatRound(calb_responses, 4)
-)
+(calb_data$clean |>
+    select(Sample, Mouse, Condition, any_of(calb_responses)) |>
+    datatable(
+        rownames = FALSE,
+        class = 'cell-border stripe compact',
+        filter = 'top',
+        options = list(
+            pageLength = 10,
+            autoWidth = TRUE,
+            fixedColumns = list(leftColumns = 1)
+        )
+    ) |>
+    formatRound(calb_responses, 4))
 ```
 
 # `r get_response_name("N_CC", "IHC", "Description")`
@@ -67,10 +69,10 @@ Here, we chose to model `N_CC`, which are counts, with a Generalized Poisson fam
 
 ```{r}
 N_CC_mod <- glmmTMB(
-  N_CC ~ Condition + (1 | Mouse),
-  family = genpois("log"),
-  data = calb_data$clean,
-  REML = TRUE
+    N_CC ~ Condition + (1 | Mouse),
+    family = genpois("log"),
+    data = calb_data$clean,
+    REML = TRUE
 )
 ```
 
@@ -82,7 +84,11 @@ Checking the model's quality of fit through the behavior of its residuals:
 #| fig-width: 12
 #| fig-height: 9
 
-check_model(N_CC_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+check_model(
+    N_CC_mod,
+    check = c("homogeneity", "qq", "reqq", "pp_check"),
+    detrend = FALSE
+)
 ```
 
 ```{r}
@@ -93,13 +99,17 @@ make_acf_plot(N_CC_mod)
 check_overdispersion(N_CC_mod)
 ```
 
-
 ### Predictive checks
 
 Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
 
 ```{r}
-N_CC_mod_dharma <- simulateResiduals(N_CC_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+N_CC_mod_dharma <- simulateResiduals(
+    N_CC_mod,
+    plot = FALSE,
+    n = 300,
+    seed = getOption("seed")
+)
 N_CC_mod_dharma_t <- t(N_CC_mod_dharma$simulatedResponse)
 ```
 
@@ -107,7 +117,12 @@ N_CC_mod_dharma_t <- t(N_CC_mod_dharma$simulatedResponse)
 #| fig-width: 10
 #| fig-height: 8
 
-ppc_plots(N_CC_mod, simulations = N_CC_mod_dharma_t, term = "Condition", is_count = FALSE)
+ppc_plots(
+    N_CC_mod,
+    simulations = N_CC_mod_dharma_t,
+    term = "Condition",
+    is_count = FALSE
+)
 ```
 
 ```{r}
@@ -124,9 +139,16 @@ According to the fitted model, the following observations are potential outliers
 ```{r}
 #| echo: false
 
-outliers <- get_model_based_outliers(calb_data$clean, N_CC_mod, N_CC_mod_dharma, calb_responses)
+outliers <- get_model_based_outliers(
+    calb_data$clean,
+    N_CC_mod,
+    N_CC_mod_dharma,
+    calb_responses
+)
 
-if (nrow(outliers) >= 1) outliers
+if (nrow(outliers) >= 1) {
+    outliers
+}
 ```
 
 ```{r}
@@ -134,7 +156,9 @@ if (nrow(outliers) >= 1) outliers
 #| eval: !expr (nrow(outliers) >= 1)
 #| output: asis
 
-cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+cat(
+    "\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model."
+)
 ```
 
 ```{r}
@@ -151,50 +175,54 @@ cat("✔ No potential outliers were reported.")
 
 ```{r}
 (parameters(
-    N_CC_mod, component = "conditional", effects = "fixed",
-    exponentiate = should_exp(N_CC_mod), p_adjust = "none", summary = TRUE, digits = 3
-  )
-  |> print_html() 
-  |> tab_header(title = NULL)
-)
+    N_CC_mod,
+    component = "conditional",
+    effects = "fixed",
+    exponentiate = should_exp(N_CC_mod),
+    p_adjust = "none",
+    summary = TRUE,
+    digits = 3
+) |>
+    print_html() |>
+    tab_header(title = NULL))
 ```
 
 ### Marginal means
 
 ```{r}
-emmeans(N_CC_mod, specs = "Condition", type = "response") |> 
-  as.data.frame() |> 
-  gt()
+emmeans(N_CC_mod, specs = "Condition", type = "response") |>
+    as.data.frame() |>
+    gt()
 ```
 
 ```{r}
 #| echo: false
 
-emmeans(N_CC_mod, specs = "Condition", type = "response") |> 
-  summary() |> 
-  attr("mesg") |> 
-  paste0("- ", ..2 = _) |> 
-  cat(sep = "\n")
+emmeans(N_CC_mod, specs = "Condition", type = "response") |>
+    summary() |>
+    attr("mesg") |>
+    paste0("- ", ..2 = _) |>
+    cat(sep = "\n")
 ```
 
 ### Contrasts
 
 ```{r}
-emmeans(N_CC_mod, specs = "Condition", type = "response") |> 
-  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
-  as.data.frame() |> 
-  gt()
+emmeans(N_CC_mod, specs = "Condition", type = "response") |>
+    contrast(method = "pairwise", adjust = "none", infer = TRUE) |>
+    as.data.frame() |>
+    gt()
 ```
 
 ```{r}
 #| echo: false
 
-emmeans(N_CC_mod, specs = "Condition", type = "response") |> 
-  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
-  summary() |> 
-  attr("mesg") |> 
-  paste0("- ", ..2 = _) |> 
-  cat(sep = "\n")
+emmeans(N_CC_mod, specs = "Condition", type = "response") |>
+    contrast(method = "pairwise", adjust = "none", infer = TRUE) |>
+    summary() |>
+    attr("mesg") |>
+    paste0("- ", ..2 = _) |>
+    cat(sep = "\n")
 ```
 
 ```{r}
@@ -204,7 +232,6 @@ emmeans(N_CC_mod, specs = "Condition", type = "response") |>
 make_signif_boxplot(N_CC_mod, "Condition")
 ```
 
-
 # `r get_response_name("Vol_PC_per_cell", "IHC", "Description")`
 
 ## Model fitting & diagnostics
@@ -213,10 +240,10 @@ Here, we chose to model `Vol_PC_per_cell`, which is a strictly positive continuo
 
 ```{r}
 Vol_PC_mod <- glmmTMB(
-  Vol_PC_per_cell ~ Condition + (1 | Mouse),
-  family = Gamma("log"),
-  data = calb_data$clean,
-  REML = TRUE
+    Vol_PC_per_cell ~ Condition + (1 | Mouse),
+    family = Gamma("log"),
+    data = calb_data$clean,
+    REML = TRUE
 )
 ```
 
@@ -228,7 +255,11 @@ Checking the model's quality of fit through the behavior of its residuals:
 #| fig-width: 12
 #| fig-height: 9
 
-check_model(Vol_PC_mod, check = c("homogeneity", "qq", "reqq", "pp_check"), detrend = FALSE)
+check_model(
+    Vol_PC_mod,
+    check = c("homogeneity", "qq", "reqq", "pp_check"),
+    detrend = FALSE
+)
 ```
 
 ```{r}
@@ -240,7 +271,12 @@ make_acf_plot(Vol_PC_mod)
 Checking the model's quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:
 
 ```{r}
-Vol_PC_mod_dharma <- DHARMa::simulateResiduals(Vol_PC_mod, plot = FALSE, n = 300, seed = getOption("seed"))
+Vol_PC_mod_dharma <- DHARMa::simulateResiduals(
+    Vol_PC_mod,
+    plot = FALSE,
+    n = 300,
+    seed = getOption("seed")
+)
 Vol_PC_mod_dharma_t <- t(Vol_PC_mod_dharma$simulatedResponse)
 ```
 
@@ -255,7 +291,11 @@ ppc_plots(Vol_PC_mod, simulations = Vol_PC_mod_dharma_t, term = "Condition")
 #| fig-width: 12
 #| fig-height: 8
 
-ppc_stat_plots(Vol_PC_mod, simulations = Vol_PC_mod_dharma_t, term = "Condition")
+ppc_stat_plots(
+    Vol_PC_mod,
+    simulations = Vol_PC_mod_dharma_t,
+    term = "Condition"
+)
 ```
 
 ### Potential outliers
@@ -265,9 +305,16 @@ According to the fitted model, the following observations are potential outliers
 ```{r}
 #| echo: false
 
-outliers <- get_model_based_outliers(calb_data$clean, Vol_PC_mod, Vol_PC_mod_dharma, calb_responses)
+outliers <- get_model_based_outliers(
+    calb_data$clean,
+    Vol_PC_mod,
+    Vol_PC_mod_dharma,
+    calb_responses
+)
 
-if (nrow(outliers) >= 1) outliers
+if (nrow(outliers) >= 1) {
+    outliers
+}
 ```
 
 ```{r}
@@ -275,7 +322,9 @@ if (nrow(outliers) >= 1) outliers
 #| eval: !expr (nrow(outliers) >= 1)
 #| output: asis
 
-cat("\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model.")
+cat(
+    "\nHowever, we have already removed the data points we had a biological/theoretical reason to believe to be outliers *before* fitting our model."
+)
 ```
 
 ```{r}
@@ -292,50 +341,54 @@ cat("✔ No potential outliers were reported.")
 
 ```{r}
 (parameters(
-    Vol_PC_mod, component = "conditional", effects = "fixed",
-    exponentiate = should_exp(Vol_PC_mod), p_adjust = "none", summary = TRUE, digits = 3
-  )
-  |> print_html() 
-  |> tab_header(title = NULL)
-)
+    Vol_PC_mod,
+    component = "conditional",
+    effects = "fixed",
+    exponentiate = should_exp(Vol_PC_mod),
+    p_adjust = "none",
+    summary = TRUE,
+    digits = 3
+) |>
+    print_html() |>
+    tab_header(title = NULL))
 ```
 
 ### Marginal means
 
 ```{r}
-emmeans(Vol_PC_mod, specs = "Condition", type = "response") |> 
-  as.data.frame() |> 
-  gt()
+emmeans(Vol_PC_mod, specs = "Condition", type = "response") |>
+    as.data.frame() |>
+    gt()
 ```
 
 ```{r}
 #| echo: false
 
-emmeans(Vol_PC_mod, specs = "Condition", type = "response") |> 
-  summary() |> 
-  attr("mesg") |> 
-  paste0("- ", ..2 = _) |> 
-  cat(sep = "\n")
+emmeans(Vol_PC_mod, specs = "Condition", type = "response") |>
+    summary() |>
+    attr("mesg") |>
+    paste0("- ", ..2 = _) |>
+    cat(sep = "\n")
 ```
 
 ### Contrasts
 
 ```{r}
-emmeans(Vol_PC_mod, specs = "Condition", type = "response") |> 
-  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
-  as.data.frame() |> 
-  gt()
+emmeans(Vol_PC_mod, specs = "Condition", type = "response") |>
+    contrast(method = "pairwise", adjust = "none", infer = TRUE) |>
+    as.data.frame() |>
+    gt()
 ```
 
 ```{r}
 #| echo: false
 
-emmeans(Vol_PC_mod, specs = "Condition", type = "response") |> 
-  contrast(method = "pairwise", adjust = "none", infer = TRUE) |> 
-  summary() |> 
-  attr("mesg") |> 
-  paste0("- ", ..2 = _) |> 
-  cat(sep = "\n")
+emmeans(Vol_PC_mod, specs = "Condition", type = "response") |>
+    contrast(method = "pairwise", adjust = "none", infer = TRUE) |>
+    summary() |>
+    attr("mesg") |>
+    paste0("- ", ..2 = _) |>
+    cat(sep = "\n")
 ```
 
 ```{r}
