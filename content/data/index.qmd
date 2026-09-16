@@ -40,7 +40,7 @@ get_contents_list <- function(link) {
     #   Icon = "database"
     # )
     mutate(Contents = map_chr(Link, get_contents_list)) |>
-    gt() |>
+    gt(id = "download-table") |>
     fmt_markdown(columns = Contents) |>
     fmt_url(
         columns = Link,
