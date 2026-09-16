@@ -500,9 +500,10 @@ cookieconsent.run({
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">N_CC_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">fix_genpois_r2</span><span class="op">(</span><span class="va">N_CC_mod</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -956,6 +957,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -982,6 +991,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.307</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: N_CC ~ Condition (268 Observations)<br>
+Sigma: 0.574 (df = 266)<br>
+RMSE : 2.636<br>
+Conditional R2: 0.089; Marginal R2: 0.012</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -2075,7 +2090,7 @@ cookieconsent.run({
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">Vol_PC_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -2531,6 +2546,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -2557,6 +2580,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.960</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: Vol_PC_per_cell ~ Condition (268 Observations)<br>
+Sigma: 0.284 (df = 266)<br>
+RMSE : 0.035<br>
+Conditional R2: 0.294; Marginal R2: 8.143e-05</td>
+</tr></tfoot>
 </table>
 </div>
 </div>

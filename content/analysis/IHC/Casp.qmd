@@ -179,7 +179,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(Dens_Tot_P4_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -350,7 +350,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(Dens_Tot_P8_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -525,7 +525,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_EGL_P4_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -696,7 +696,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_EGL_P8_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -871,7 +871,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_ML_PCL_P4_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -1042,7 +1042,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_ML_PCL_P8_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -1217,7 +1217,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_IGL_P4_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -1388,7 +1388,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_IGL_P8_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -1563,7 +1563,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_WM_P4_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
@@ -1734,7 +1734,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(A_WM_P8_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>

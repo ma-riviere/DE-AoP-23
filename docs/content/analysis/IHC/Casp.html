@@ -455,7 +455,7 @@ cookieconsent.run({
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">Dens_Tot_P4_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -911,6 +911,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -969,6 +977,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.497</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: Dens_Tot ~ Condition * Z (34 Observations)<br>
+Sigma: 0.508 (df = 32)<br>
+RMSE : 84.590<br>
+Conditional R2: 0.591; Marginal R2: 0.431</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -2061,7 +2075,7 @@ cookieconsent.run({
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">Dens_Tot_P8_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -2517,6 +2531,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -2575,6 +2597,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.782</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: Dens_Tot ~ Condition * Z (32 Observations)<br>
+Sigma: 0.821 (df = 30)<br>
+RMSE : 182.629<br>
+Conditional R2: 0.191; Marginal R2: 0.180</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -3678,11 +3706,14 @@ cookieconsent.run({
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_EGL_P4_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random effect variances not available. Returned R2 does not account for random effects.</code></pre>
+</div>
 <div class="cell-output-display">
 <div id="qzbtnepfvz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#qzbtnepfvz table {
@@ -4134,6 +4165,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -4192,6 +4231,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.731</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_EGL ~ Condition * Z + offset(log(A_Tot)) (34 Observations)<br>
+Sigma: 0.290 (df = 32)<br>
+RMSE : 0.135<br>
+Conditional R2: ; Marginal R2: 0.374</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -4199,7 +4244,7 @@ cookieconsent.run({
 </section><section id="marginal-means-2" class="level3" data-number="3.2.2"><h3 data-number="3.2.2" class="anchored" data-anchor-id="marginal-means-2">
 <span class="header-section-number">3.2.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -4693,7 +4738,7 @@ cookieconsent.run({
 </section><section id="contrasts-2" class="level3" data-number="3.2.3"><h3 data-number="3.2.3" class="anchored" data-anchor-id="contrasts-2">
 <span class="header-section-number">3.2.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5183,7 +5228,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_EGL_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_EGL_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-47-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-15"><img src="Casp_files/figure-html/unnamed-chunk-47-1.svg" class="img-fluid figure-img"></a></p>
@@ -5198,7 +5243,7 @@ cookieconsent.run({
 <span class="header-section-number">3.3</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_EGL</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_EGL_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_EGL_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_EGL</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P8"</span><span class="op">)</span>,</span>
@@ -5209,7 +5254,7 @@ cookieconsent.run({
 <span class="header-section-number">3.3.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_EGL_P8_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -5222,7 +5267,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_EGL_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_EGL_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-50-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-17"><img src="Casp_files/figure-html/unnamed-chunk-50-1.svg" class="img-fluid figure-img"></a></p>
@@ -5234,7 +5279,7 @@ cookieconsent.run({
 <span class="header-section-number">3.3.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_EGL_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_EGL_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_EGL_P8_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -5243,7 +5288,7 @@ cookieconsent.run({
 <span><span class="va">A_EGL_P8_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_EGL_P8_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_EGL_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_EGL_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -5257,7 +5302,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_EGL_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_EGL_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -5278,13 +5323,13 @@ cookieconsent.run({
 <section id="model-parameters-3" class="level3" data-number="3.4.1"><h3 data-number="3.4.1" class="anchored" data-anchor-id="model-parameters-3">
 <span class="header-section-number">3.4.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_EGL_P8_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_EGL_P8_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -5740,6 +5785,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -5798,6 +5851,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.304</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_EGL ~ Condition * Z + offset(log(A_Tot)) (32 Observations)<br>
+Sigma: 0.161 (df = 30)<br>
+RMSE : 0.143<br>
+Conditional R2: 0.552; Marginal R2: 0.212</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -5805,7 +5864,7 @@ cookieconsent.run({
 </section><section id="marginal-means-3" class="level3" data-number="3.4.2"><h3 data-number="3.4.2" class="anchored" data-anchor-id="marginal-means-3">
 <span class="header-section-number">3.4.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -6299,7 +6358,7 @@ cookieconsent.run({
 </section><section id="contrasts-3" class="level3" data-number="3.4.3"><h3 data-number="3.4.3" class="anchored" data-anchor-id="contrasts-3">
 <span class="header-section-number">3.4.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_EGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -6789,7 +6848,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_EGL_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_EGL_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-62-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-20"><img src="Casp_files/figure-html/unnamed-chunk-62-1.svg" class="img-fluid figure-img"></a></p>
@@ -6815,7 +6874,7 @@ cookieconsent.run({
 <span class="header-section-number">4.1</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_ML_PCL</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P4_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P4_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P4"</span><span class="op">)</span>,</span>
@@ -6826,7 +6885,7 @@ cookieconsent.run({
 <span class="header-section-number">4.1.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P4_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -6839,7 +6898,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-65-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-22"><img src="Casp_files/figure-html/unnamed-chunk-65-1.svg" class="img-fluid figure-img"></a></p>
@@ -6851,7 +6910,7 @@ cookieconsent.run({
 <span class="header-section-number">4.1.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P4_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P4_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P4_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -6860,7 +6919,7 @@ cookieconsent.run({
 <span><span class="va">A_ML_PCL_P4_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P4_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_ML_PCL_P4_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -6874,7 +6933,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P4_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_ML_PCL_P4_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -6904,17 +6963,20 @@ cookieconsent.run({
 <section id="model-parameters-4" class="level3" data-number="4.2.1"><h3 data-number="4.2.1" class="anchored" data-anchor-id="model-parameters-4">
 <span class="header-section-number">4.2.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P4_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random effect variances not available. Returned R2 does not account for random effects.</code></pre>
+</div>
 <div class="cell-output-display">
 <div id="xnnsifzkyh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#xnnsifzkyh table {
@@ -7366,6 +7428,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -7424,6 +7494,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.235</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_ML_PCL ~ Condition * Z + offset(log(A_Tot)) (34 Observations)<br>
+Sigma: 0.232 (df = 32)<br>
+RMSE : 0.076<br>
+Conditional R2: ; Marginal R2: 0.234</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -7431,7 +7507,7 @@ cookieconsent.run({
 </section><section id="marginal-means-4" class="level3" data-number="4.2.2"><h3 data-number="4.2.2" class="anchored" data-anchor-id="marginal-means-4">
 <span class="header-section-number">4.2.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -7925,7 +8001,7 @@ cookieconsent.run({
 </section><section id="contrasts-4" class="level3" data-number="4.2.3"><h3 data-number="4.2.3" class="anchored" data-anchor-id="contrasts-4">
 <span class="header-section-number">4.2.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -8415,7 +8491,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_ML_PCL_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-77-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-25"><img src="Casp_files/figure-html/unnamed-chunk-77-1.svg" class="img-fluid figure-img"></a></p>
@@ -8430,7 +8506,7 @@ cookieconsent.run({
 <span class="header-section-number">4.3</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_ML_PCL</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P8"</span><span class="op">)</span>,</span>
@@ -8441,7 +8517,7 @@ cookieconsent.run({
 <span class="header-section-number">4.3.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P8_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -8454,7 +8530,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-80-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-27"><img src="Casp_files/figure-html/unnamed-chunk-80-1.svg" class="img-fluid figure-img"></a></p>
@@ -8466,7 +8542,7 @@ cookieconsent.run({
 <span class="header-section-number">4.3.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_ML_PCL_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P8_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -8475,7 +8551,7 @@ cookieconsent.run({
 <span><span class="va">A_ML_PCL_P8_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_ML_PCL_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -8489,7 +8565,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_ML_PCL_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -8510,13 +8586,13 @@ cookieconsent.run({
 <section id="model-parameters-5" class="level3" data-number="4.4.1"><h3 data-number="4.4.1" class="anchored" data-anchor-id="model-parameters-5">
 <span class="header-section-number">4.4.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_ML_PCL_P8_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -8972,6 +9048,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -9030,6 +9114,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.720</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_ML_PCL ~ Condition * Z + offset(log(A_Tot)) (32 Observations)<br>
+Sigma: 0.166 (df = 30)<br>
+RMSE : 0.199<br>
+Conditional R2: 0.494; Marginal R2: 0.409</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -9037,7 +9127,7 @@ cookieconsent.run({
 </section><section id="marginal-means-5" class="level3" data-number="4.4.2"><h3 data-number="4.4.2" class="anchored" data-anchor-id="marginal-means-5">
 <span class="header-section-number">4.4.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -9531,7 +9621,7 @@ cookieconsent.run({
 </section><section id="contrasts-5" class="level3" data-number="4.4.3"><h3 data-number="4.4.3" class="anchored" data-anchor-id="contrasts-5">
 <span class="header-section-number">4.4.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -10021,7 +10111,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_ML_PCL_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-92-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-30"><img src="Casp_files/figure-html/unnamed-chunk-92-1.svg" class="img-fluid figure-img"></a></p>
@@ -10047,7 +10137,7 @@ cookieconsent.run({
 <span class="header-section-number">5.1</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_IGL</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb74"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P4_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb76"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P4_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P4"</span><span class="op">)</span>,</span>
@@ -10058,7 +10148,7 @@ cookieconsent.run({
 <span class="header-section-number">5.1.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P4_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -10071,7 +10161,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb76"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_IGL_P4_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb78"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_IGL_P4_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-95-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-32"><img src="Casp_files/figure-html/unnamed-chunk-95-1.svg" class="img-fluid figure-img"></a></p>
@@ -10083,7 +10173,7 @@ cookieconsent.run({
 <span class="header-section-number">5.1.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P4_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb79"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P4_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P4_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -10092,7 +10182,7 @@ cookieconsent.run({
 <span><span class="va">A_IGL_P4_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_IGL_P4_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb78"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb80"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P4_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_IGL_P4_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -10106,7 +10196,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb79"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb81"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P4_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_IGL_P4_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -10127,17 +10217,20 @@ cookieconsent.run({
 <section id="model-parameters-6" class="level3" data-number="5.2.1"><h3 data-number="5.2.1" class="anchored" data-anchor-id="model-parameters-6">
 <span class="header-section-number">5.2.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb80"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb82"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P4_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_IGL_P4_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random effect variances not available. Returned R2 does not account for random effects.</code></pre>
+</div>
 <div class="cell-output-display">
 <div id="rytznjvmus" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#rytznjvmus table {
@@ -10589,6 +10682,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -10647,6 +10748,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.638</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_IGL ~ Condition * Z + offset(log(A_Tot)) (34 Observations)<br>
+Sigma: 0.143 (df = 32)<br>
+RMSE : 0.168<br>
+Conditional R2: ; Marginal R2: 0.377</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -10654,7 +10761,7 @@ cookieconsent.run({
 </section><section id="marginal-means-6" class="level3" data-number="5.2.2"><h3 data-number="5.2.2" class="anchored" data-anchor-id="marginal-means-6">
 <span class="header-section-number">5.2.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb81"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb84"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -11148,7 +11255,7 @@ cookieconsent.run({
 </section><section id="contrasts-6" class="level3" data-number="5.2.3"><h3 data-number="5.2.3" class="anchored" data-anchor-id="contrasts-6">
 <span class="header-section-number">5.2.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb83"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb86"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -11638,7 +11745,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb85"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_IGL_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb88"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_IGL_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-107-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-35"><img src="Casp_files/figure-html/unnamed-chunk-107-1.svg" class="img-fluid figure-img"></a></p>
@@ -11653,7 +11760,7 @@ cookieconsent.run({
 <span class="header-section-number">5.3</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_IGL</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb86"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb89"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P8"</span><span class="op">)</span>,</span>
@@ -11664,7 +11771,7 @@ cookieconsent.run({
 <span class="header-section-number">5.3.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb87"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb90"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P8_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -11677,7 +11784,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb88"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_IGL_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb91"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_IGL_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-110-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-37"><img src="Casp_files/figure-html/unnamed-chunk-110-1.svg" class="img-fluid figure-img"></a></p>
@@ -11689,7 +11796,7 @@ cookieconsent.run({
 <span class="header-section-number">5.3.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb89"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb92"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_IGL_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P8_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -11698,7 +11805,7 @@ cookieconsent.run({
 <span><span class="va">A_IGL_P8_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_IGL_P8_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb90"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb93"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_IGL_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -11712,7 +11819,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb91"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb94"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_IGL_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -11733,17 +11840,20 @@ cookieconsent.run({
 <section id="model-parameters-7" class="level3" data-number="5.4.1"><h3 data-number="5.4.1" class="anchored" data-anchor-id="model-parameters-7">
 <span class="header-section-number">5.4.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb92"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb95"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_IGL_P8_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_IGL_P8_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random effect variances not available. Returned R2 does not account for random effects.</code></pre>
+</div>
 <div class="cell-output-display">
 <div id="cggcrrjnjk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#cggcrrjnjk table {
@@ -12195,6 +12305,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -12253,6 +12371,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.406</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_IGL ~ Condition * Z + offset(log(A_Tot)) (32 Observations)<br>
+Sigma: 0.133 (df = 30)<br>
+RMSE : 0.306<br>
+Conditional R2: ; Marginal R2: 0.450</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -12260,7 +12384,7 @@ cookieconsent.run({
 </section><section id="marginal-means-7" class="level3" data-number="5.4.2"><h3 data-number="5.4.2" class="anchored" data-anchor-id="marginal-means-7">
 <span class="header-section-number">5.4.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb93"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb97"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -12754,7 +12878,7 @@ cookieconsent.run({
 </section><section id="contrasts-7" class="level3" data-number="5.4.3"><h3 data-number="5.4.3" class="anchored" data-anchor-id="contrasts-7">
 <span class="header-section-number">5.4.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb95"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb99"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_IGL_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -13244,7 +13368,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb97"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_IGL_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb101"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_IGL_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-122-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-40"><img src="Casp_files/figure-html/unnamed-chunk-122-1.svg" class="img-fluid figure-img"></a></p>
@@ -13270,7 +13394,7 @@ cookieconsent.run({
 <span class="header-section-number">6.1</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_WM</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb98"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P4_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb102"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P4_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P4"</span><span class="op">)</span>,</span>
@@ -13281,7 +13405,7 @@ cookieconsent.run({
 <span class="header-section-number">6.1.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb99"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb103"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P4_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -13294,7 +13418,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb100"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_WM_P4_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb104"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_WM_P4_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-125-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-42"><img src="Casp_files/figure-html/unnamed-chunk-125-1.svg" class="img-fluid figure-img"></a></p>
@@ -13306,7 +13430,7 @@ cookieconsent.run({
 <span class="header-section-number">6.1.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb101"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P4_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb105"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P4_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P4_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -13315,7 +13439,7 @@ cookieconsent.run({
 <span><span class="va">A_WM_P4_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_WM_P4_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb102"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb106"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P4_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_WM_P4_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -13329,7 +13453,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb103"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb107"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P4_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_WM_P4_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -13350,17 +13474,20 @@ cookieconsent.run({
 <section id="model-parameters-8" class="level3" data-number="6.2.1"><h3 data-number="6.2.1" class="anchored" data-anchor-id="model-parameters-8">
 <span class="header-section-number">6.2.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb104"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb108"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P4_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_WM_P4_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random effect variances not available. Returned R2 does not account for random effects.</code></pre>
+</div>
 <div class="cell-output-display">
 <div id="welgtdlbld" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#welgtdlbld table {
@@ -13812,6 +13939,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -13870,6 +14005,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.875</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_WM ~ Condition * Z + offset(log(A_Tot)) (34 Observations)<br>
+Sigma: 0.540 (df = 32)<br>
+RMSE : 0.228<br>
+Conditional R2: ; Marginal R2: 0.381</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -13877,7 +14018,7 @@ cookieconsent.run({
 </section><section id="marginal-means-8" class="level3" data-number="6.2.2"><h3 data-number="6.2.2" class="anchored" data-anchor-id="marginal-means-8">
 <span class="header-section-number">6.2.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb105"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb110"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -14371,7 +14512,7 @@ cookieconsent.run({
 </section><section id="contrasts-8" class="level3" data-number="6.2.3"><h3 data-number="6.2.3" class="anchored" data-anchor-id="contrasts-8">
 <span class="header-section-number">6.2.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb107"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb112"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P4_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -14861,7 +15002,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb109"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_WM_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb114"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_WM_P4_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-137-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-45"><img src="Casp_files/figure-html/unnamed-chunk-137-1.svg" class="img-fluid figure-img"></a></p>
@@ -14876,7 +15017,7 @@ cookieconsent.run({
 <span class="header-section-number">6.3</span> Model fitting &amp; diagnostics</h2>
 <p>Here, we chose to model <code>A_WM</code>, which is a strictly positive continuous measure, with a Gamma family. We use a random intercept per Mouse to account for pseudo-replication.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb110"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb115"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P8_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html">glmmTMB</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM</span> <span class="op">~</span> <span class="va">Condition</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/offset.html">offset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">A_Tot</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Mouse</span><span class="op">)</span>,</span>
 <span>    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">Gamma</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">casp_data</span><span class="op">$</span><span class="va">clean</span>, <span class="va">Stage</span> <span class="op">==</span> <span class="st">"P8"</span><span class="op">)</span>,</span>
@@ -14887,7 +15028,7 @@ cookieconsent.run({
 <span class="header-section-number">6.3.1</span> Residual diagnostics</h3>
 <p>Checking the model’s quality of fit through the behavior of its residuals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb111"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb116"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P8_mod</span>,</span>
 <span>    check <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"homogeneity"</span>, <span class="st">"qq"</span>, <span class="st">"reqq"</span>, <span class="st">"pp_check"</span><span class="op">)</span>,</span>
 <span>    detrend <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -14900,7 +15041,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb112"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_WM_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb117"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_acf_plot</span><span class="op">(</span><span class="va">A_WM_P8_mod</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-140-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-47"><img src="Casp_files/figure-html/unnamed-chunk-140-1.svg" class="img-fluid figure-img"></a></p>
@@ -14912,7 +15053,7 @@ cookieconsent.run({
 <span class="header-section-number">6.3.2</span> Predictive checks</h3>
 <p>Checking the model’s quality of fit by emulate Bayesian Posterior Predictive Checks (PPC): we simulate predictions from the model and plot how accurately they match the observed data, or statistics of the observed data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb113"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb118"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">A_WM_P8_mod_dharma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DHARMa/man/simulateResiduals.html">simulateResiduals</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P8_mod</span>,</span>
 <span>    plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    n <span class="op">=</span> <span class="fl">300</span>,</span>
@@ -14921,7 +15062,7 @@ cookieconsent.run({
 <span><span class="va">A_WM_P8_mod_dharma_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">A_WM_P8_mod_dharma</span><span class="op">$</span><span class="va">simulatedResponse</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb114"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb119"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_WM_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span>,</span>
@@ -14935,7 +15076,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb115"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb120"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ppc_stat_plots</span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P8_mod</span>,</span>
 <span>    simulations <span class="op">=</span> <span class="va">A_WM_P8_mod_dharma_t</span>,</span>
 <span>    term <span class="op">=</span> <span class="st">"Condition"</span></span>
@@ -14956,13 +15097,13 @@ cookieconsent.run({
 <section id="model-parameters-9" class="level3" data-number="6.4.1"><h3 data-number="6.4.1" class="anchored" data-anchor-id="model-parameters-9">
 <span class="header-section-number">6.4.1</span> Model parameters</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb116"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb121"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/parameters/reference/model_parameters.html">parameters</a></span><span class="op">(</span></span>
 <span>    <span class="va">A_WM_P8_mod</span>,</span>
 <span>    component <span class="op">=</span> <span class="st">"conditional"</span>,</span>
 <span>    effects <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>    exponentiate <span class="op">=</span> <span class="fu">should_exp</span><span class="op">(</span><span class="va">A_WM_P8_mod</span><span class="op">)</span>,</span>
 <span>    p_adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>    summary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    digits <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://easystats.github.io/insight/reference/display.html">print_html</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -15418,6 +15559,14 @@ cookieconsent.run({
 }
 </style>
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
 <thead><tr class="gt_col_headings header">
 <th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
 <th id="Coefficient" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient</th>
@@ -15476,6 +15625,12 @@ cookieconsent.run({
 <td class="gt_row gt_center" headers="p">0.473</td>
 </tr>
 </tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Model: A_WM ~ Condition * Z + offset(log(A_Tot)) (32 Observations)<br>
+Sigma: 0.308 (df = 30)<br>
+RMSE : 0.205<br>
+Conditional R2: 0.757; Marginal R2: 0.685</td>
+</tr></tfoot>
 </table>
 </div>
 </div>
@@ -15483,7 +15638,7 @@ cookieconsent.run({
 </section><section id="marginal-means-9" class="level3" data-number="6.4.2"><h3 data-number="6.4.2" class="anchored" data-anchor-id="marginal-means-9">
 <span class="header-section-number">6.4.2</span> Marginal means</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb117"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb122"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -15977,7 +16132,7 @@ cookieconsent.run({
 </section><section id="contrasts-9" class="level3" data-number="6.4.3"><h3 data-number="6.4.3" class="anchored" data-anchor-id="contrasts-9">
 <span class="header-section-number">6.4.3</span> Contrasts</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb119"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb124"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">A_WM_P8_mod</span>, specs <span class="op">=</span> <span class="st">"Condition"</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pairwise"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, infer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -16467,7 +16622,7 @@ cookieconsent.run({
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb121"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_WM_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb126"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">make_signif_boxplot</span><span class="op">(</span><span class="va">A_WM_P8_mod</span>, <span class="st">"Condition"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><a href="Casp_files/figure-html/unnamed-chunk-152-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-50"><img src="Casp_files/figure-html/unnamed-chunk-152-1.svg" class="img-fluid figure-img"></a></p>

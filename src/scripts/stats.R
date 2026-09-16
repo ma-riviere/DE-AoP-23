@@ -78,6 +78,30 @@ get_model_based_outliers <- function(data, mod, mod_dharma, responses) {
 # Should we exponentiate the coefficients of a model (based on its link function)
 should_exp <- \(mod) insight::get_family(mod)$link %in% c("log", "logit")
 
+## Recompute Nakagawa's R2 for a Generalized Poisson model, and overwrite the value that
+## `parameters(include_info = TRUE)` shows in its table footer.
+## glmmTMB's genpois variance is mu * phi^2, where `sigma()` returns the index of dispersion phi^2.
+## insight's `.variance_distributional()` groups `genpois` with the negative-binomial families and
+## uses (1/mu + 1/phi) for the observation-level variance instead. On an under-dispersed fit that
+## inflates it ~24x and collapses the R2 (0.089 -> 0.004 for the Calbindin N_CC model).
+fix_genpois_r2 <- function(params, mod) {
+    if (!identical(insight::get_family(mod)$family, "genpois")) {
+        cli::cli_abort("{.fn fix_genpois_r2} only applies to {.val genpois} models.")
+    }
+
+    variances <- insight::get_variance(mod)
+    # Nakagawa's lognormal approximation, log(1 + V(mu) / mu^2), with V(mu) / mu^2 = phi^2 / mu
+    var_distribution <- mean(log1p(sigma(mod) / fitted(mod)))
+    total_variance <- variances$var.fixed + variances$var.random + var_distribution
+
+    r2 <- attr(params, "r2")
+    r2$R2_conditional[[1]] <- (variances$var.fixed + variances$var.random) / total_variance
+    r2$R2_marginal[[1]] <- variances$var.fixed / total_variance
+    attr(params, "r2") <- r2
+
+    return(params)
+}
+
 ## Check which (if any) models have any NA as fixed effect coefficients (which signals that the model fitting failed silently)
 has_na_coefs <- function(mods) {
     map_lgl(

@@ -180,9 +180,10 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(N_CC_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
+    fix_genpois_r2(N_CC_mod) |>
     print_html() |>
     tab_header(title = NULL))
 ```
@@ -346,7 +347,7 @@ cat("✔ No potential outliers were reported.")
     effects = "fixed",
     exponentiate = should_exp(Vol_PC_mod),
     p_adjust = "none",
-    summary = TRUE,
+    include_info = TRUE,
     digits = 3
 ) |>
     print_html() |>
